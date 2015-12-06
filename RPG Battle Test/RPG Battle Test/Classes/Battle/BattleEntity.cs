@@ -48,6 +48,7 @@ namespace RPG_Battle_Test
         public bool IsPlayer => EntityType == EntityTypes.Player;
 
         public bool IsTurn => this == BattleManager.Instance.CurrentEntityTurn;
+        public bool IsDead => CurHP <= 0;
 
         //Battle-turn related methods
         public virtual void StartTurn()
@@ -72,6 +73,17 @@ namespace RPG_Battle_Test
             CurMP = Helper.Clamp(CurMP + (int)mp, 0, MaxMP);
         }
 
+        /// <summary>
+        /// The update called during the entity's turn; for input and other stuff
+        /// </summary>
+        public virtual void TurnUpdate()
+        {
+
+        }
+
+        /// <summary>
+        /// This update is for animations, status effects, and so on; nothing turn related
+        /// </summary>
         public virtual void Update()
         {
             
@@ -79,6 +91,7 @@ namespace RPG_Battle_Test
 
         public virtual void Draw()
         {
+            if (IsDead == false)
             EntitySprite?.Draw(GameCore.GameWindow, RenderStates.Default);
         }
     }

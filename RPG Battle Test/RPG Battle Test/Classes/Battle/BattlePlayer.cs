@@ -31,7 +31,7 @@ namespace RPG_Battle_Test
             {
                 case CecilK:
                     Name = "CecilK";
-                    Speed = -3;
+                    Speed = 3;
                     MaxHP = 20;
                     MaxMP = 0;
                     Attack = 6;
@@ -39,7 +39,7 @@ namespace RPG_Battle_Test
                     break;
                 case CecilP:
                     Name = "CecilP";
-                    Speed = -2;
+                    Speed = 1;
                     MaxHP = 15;
                     MaxMP = 10;
                     Attack = 4;
@@ -55,6 +55,15 @@ namespace RPG_Battle_Test
             EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + Name + ".png"), false, rect);
             EntitySprite.Position = new Vector2f(GameCore.GameWindow.Size.X - GameCore.GameWindow.Size.X / 4f, GameCore.GameWindow.Size.Y / 2f);
             EntitySprite.Scale *= 3f;
+        }
+
+        public override void TurnUpdate()
+        {
+            base.TurnUpdate();
+            if (Input.PressedKey(Keyboard.Key.A))
+            {
+                EndTurn();
+            }
         }
 
         public override void Update()

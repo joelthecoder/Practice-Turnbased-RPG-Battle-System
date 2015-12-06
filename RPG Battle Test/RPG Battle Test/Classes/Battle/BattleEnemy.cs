@@ -32,7 +32,7 @@ namespace RPG_Battle_Test
             {
                 Name = "Gargoyle";
                 rect = new IntRect(990, 346, 62, 48);
-                Speed = 0;
+                Speed = 2;
             }
 
             EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + "Enemies.png"), true, rect);
@@ -44,13 +44,18 @@ namespace RPG_Battle_Test
             PrevWait = GameCore.ActiveSeconds + WaitTime;
         }
 
-        public override void Update()
+        public override void TurnUpdate()
         {
-            base.Update();
-            if (IsTurn == true && GameCore.ActiveSeconds >= PrevWait)
+            base.TurnUpdate();
+            if (GameCore.ActiveSeconds >= PrevWait)
             {
                 EndTurn();
             }
+        }
+
+        public override void Update()
+        {
+            base.Update();
         }
 
         public override void Draw()

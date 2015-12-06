@@ -17,7 +17,7 @@ namespace RPG_Battle_Test
     {
         public enum BattleStates
         {
-            Init, Combat, Victory, GameOver
+            Init, Combat, TurnDone, Victory, GameOver
         }
 
         public static BattleManager Instance
@@ -44,7 +44,7 @@ namespace RPG_Battle_Test
         private List<BattlePlayer> Players = new List<BattlePlayer>();
         private int CurEntityTurn = 0;
 
-        private TextBox HeaderBox = new TextBox(Helper.CreateText("Smell", "arial.ttf", new Vector2f(), Color.White), 40, 20,
+        public readonly TextBox HeaderBox = new TextBox(Helper.CreateText("Smell", "arial.ttf", new Vector2f(), Color.White), 40, 20,
                                           new Vector2f(GameCore.GameWindow.Size.X / 2, GameCore.GameWindow.Size.Y / 16));
 
         //The current state of the battle
@@ -109,7 +109,7 @@ namespace RPG_Battle_Test
                 }
             }
 
-            TurnStart();
+            BattleState = BattleStates.TurnDone;
         }
 
         private void TurnStart()
@@ -119,10 +119,13 @@ namespace RPG_Battle_Test
             HeaderBox.SetText(entity.Name + "'s turn!");
 
             entity.StartTurn();
+            BattleState = BattleStates.Combat;
         }
 
         public void TurnEnd()
         {
+            BattleState = BattleStates.TurnDone;
+
             UpdateBattleState();
 
             if (BattleState == BattleStates.Victory)
@@ -138,17 +141,27 @@ namespace RPG_Battle_Test
                 return;
             }
 
-            CurEntityTurn = Helper.Wrap(CurEntityTurn + 1, 0, EntityOrder.Count - 1);
+            //Failsafe if all entities are dead
+            int deadattempts = 0;
 
-            Debug.Log(CurEntityTurn);
+            //Check for the next entity that isn't dead
+            do
+            {
+                CurEntityTurn = Helper.Wrap(CurEntityTurn + 1, 0, EntityOrder.Count - 1);
+                deadattempts++;
+            }
+            while (CurrentEntityTurn.IsDead == true && deadattempts < EntityOrder.Count);
 
-            TurnStart();
+            //Everyone is dead, so update the battle state, which will make the players lose
+            if (deadattempts >= EntityOrder.Count)
+            {
+                UpdateBattleState();
+            }
         }
 
         //Update the battle state after each turn
         private void UpdateBattleState()
         {
-            return;
             if (BattleState == BattleStates.Victory || BattleState == BattleStates.GameOver)
                 return;
 
@@ -158,6 +171,11 @@ namespace RPG_Battle_Test
             for (int i = 0; i < Players.Count; i++)
             {
                 //Check for Dead status
+                if (Players[i].IsDead == false)
+                {
+                    allDead = false;
+                    break;
+                }
             }
 
             //All players are dead - GameOver
@@ -172,6 +190,10 @@ namespace RPG_Battle_Test
             for (int i = 0; i < Enemies.Count; i++)
             {
                 //Check for Dead status
+                if (Enemies[i].IsDead == false)
+                {
+                    allDead = false;
+                }
             }
 
             //All enemies are dead - Victory
@@ -183,6 +205,13 @@ namespace RPG_Battle_Test
 
         public void Update()
         {
+            if (BattleState == BattleStates.TurnDone)
+                TurnStart();
+
+            //This update is for the current entity's turn
+            CurrentEntityTurn.TurnUpdate();
+
+            //This update is for animations, effects, and etc.
             for (int i = 0; i < EntityOrder.Count; i++)
             {
                 EntityOrder[i].Update();
