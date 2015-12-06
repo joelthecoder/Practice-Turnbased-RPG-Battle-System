@@ -1,0 +1,4 @@
+Turn-based RPG Status Effects:
+
+Poison - each turn, -10% max hp
+Dead - Entity is dead and its turns are skipped; if all party members are dead then Game Over, if all enemies are dead then Victory

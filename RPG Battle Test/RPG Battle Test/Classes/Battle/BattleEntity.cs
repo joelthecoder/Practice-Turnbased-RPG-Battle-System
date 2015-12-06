@@ -18,6 +18,18 @@ namespace RPG_Battle_Test
             None, Player, Enemy
         }
 
+        public Vector2f Position
+        {
+            get
+            {
+                return EntitySprite.Position;
+            }
+            set
+            {
+                EntitySprite.Position = value;
+            }
+        }
+        
         public Sprite EntitySprite = null;
         public int NumActions = 1;
 
@@ -50,6 +62,9 @@ namespace RPG_Battle_Test
         public bool IsTurn => this == BattleManager.Instance.CurrentEntityTurn;
         public bool IsDead => CurHP <= 0;
 
+        //The entity being targeted in battle
+        public BattleEntity Target { get; protected set; } = null;
+
         //Battle-turn related methods
         public virtual void StartTurn()
         {
@@ -58,15 +73,38 @@ namespace RPG_Battle_Test
 
         public void EndTurn()
         {
+            Target = null;
             BattleManager.Instance.TurnEnd();
+        }
+
+        /// <summary>
+        /// Calculates damage based on this entity's Attack and the damaged entity's Defense. Cannot go below 0
+        /// </summary>
+        /// <param name="entity">The entity being dealt damage</param>
+        /// <returns>The amount of total damage dealt to entity</returns>
+        private int CalculateDamageDealt(BattleEntity entity)
+        {
+            return Helper.Clamp(Attack - entity.Defense, 0, int.MaxValue);
+        }
+
+        /// <summary>
+        /// Deals damage to an entity
+        /// </summary>
+        /// <param name="entity">The entity to deal damage to. Minimum damage is 0</param>
+        public void AttackEntity(BattleEntity entity)
+        {
+            int damage = CalculateDamageDealt(entity);
+            entity.CurHP -= damage;
+
+            Debug.Log(Name + " attacked " + entity.Name + " for " + damage + " damage!");
         }
 
         //Battle-combat related methods
         /// <summary>
         /// Restores an Entity's HP and MP values by the given amount
         /// </summary>
-        /// <param name="hp"></param>
-        /// <param name="mp"></param>
+        /// <param name="hp">The amount of HP to restore</param>
+        /// <param name="mp">The amount of MP to restore</param>
         public void Restore(uint hp, uint mp)
         {
             CurHP = Helper.Clamp(CurHP + (int)hp, 0, MaxHP);

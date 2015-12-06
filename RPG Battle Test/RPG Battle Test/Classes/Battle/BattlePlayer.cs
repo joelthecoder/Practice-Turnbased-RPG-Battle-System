@@ -19,12 +19,16 @@ namespace RPG_Battle_Test
             None, CecilK, CecilP
         }
 
+        protected const float ArrowVerticalDist = 100f;
+
         public Characters Character { get; private set; } = Characters.None;
+        protected Sprite Arrow = null;
+        protected int? CurSelection = null;
 
         public BattlePlayer(Characters character)
         {
             EntityType = EntityTypes.Player;
-
+            
             IntRect rect = new IntRect(5, 55, 16, 24);
 
             switch (character)
@@ -32,17 +36,18 @@ namespace RPG_Battle_Test
                 case CecilK:
                     Name = "CecilK";
                     Speed = 3;
-                    MaxHP = 20;
+                    MaxHP = 30;
                     MaxMP = 0;
-                    Attack = 6;
-                    Defense = 2;
+                    Attack = 7;
+                    Defense = 3;
                     break;
                 case CecilP:
                     Name = "CecilP";
                     Speed = 1;
-                    MaxHP = 15;
+                    MaxHP = 25;
                     MaxMP = 10;
-                    Attack = 4;
+                    Attack = 5;
+                    Defense = 1;
                     MagicAtk = 3;
                     MagicDef = 2;
                     rect = new IntRect(7, 44, 16, 24);
@@ -55,14 +60,61 @@ namespace RPG_Battle_Test
             EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + Name + ".png"), false, rect);
             EntitySprite.Position = new Vector2f(GameCore.GameWindow.Size.X - GameCore.GameWindow.Size.X / 4f, GameCore.GameWindow.Size.Y / 2f);
             EntitySprite.Scale *= 3f;
+
+            Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
         }
 
         public override void TurnUpdate()
         {
             base.TurnUpdate();
-            if (Input.PressedKey(Keyboard.Key.A))
+
+            if (CurSelection.HasValue)
             {
-                EndTurn();
+                //Cancel selection
+                if (Input.PressedKey(Keyboard.Key.X))
+                {
+                    CurSelection = null;
+                }
+                else
+                {
+                    //Move up a selection
+                    if (Input.PressedKey(Keyboard.Key.Up))
+                    {
+                        do CurSelection = Helper.Wrap(CurSelection.Value - 1, 0, BattleManager.Instance.Enemies.Count - 1);
+                        while (BattleManager.Instance.GetEnemy(CurSelection.Value).IsDead == true);
+                        Arrow.Position = new Vector2f(BattleManager.Instance.GetEnemy(CurSelection.Value).Position.X, BattleManager.Instance.GetEnemy(CurSelection.Value).Position.Y - ArrowVerticalDist);
+                    }
+                    //Move down a selection
+                    if (Input.PressedKey(Keyboard.Key.Down))
+                    {
+                        do CurSelection = Helper.Wrap(CurSelection.Value + 1, 0, BattleManager.Instance.Enemies.Count - 1);
+                        while (BattleManager.Instance.GetEnemy(CurSelection.Value).IsDead == true);
+                        Arrow.Position = new Vector2f(BattleManager.Instance.GetEnemy(CurSelection.Value).Position.X, BattleManager.Instance.GetEnemy(CurSelection.Value).Position.Y - ArrowVerticalDist);
+                    }
+                }
+            }
+
+            if (Input.PressedKey(Keyboard.Key.Z))
+            {
+                if (CurSelection.HasValue == false)
+                {
+                    for (int i = 0; i < BattleManager.Instance.Enemies.Count; i++)
+                    {
+                        BattleEnemy enemy = BattleManager.Instance.Enemies[i];
+                        if (enemy.IsDead == false)
+                        {
+                            CurSelection = i;
+                            Arrow.Position = new Vector2f(enemy.Position.X, enemy.Position.Y - ArrowVerticalDist);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    AttackEntity(BattleManager.Instance.GetEnemy(CurSelection.Value));
+                    CurSelection = null;
+                    EndTurn();
+                }
             }
         }
 
@@ -74,6 +126,10 @@ namespace RPG_Battle_Test
         public override void Draw()
         {
             base.Draw();
+            if (CurSelection.HasValue)
+            {
+                Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
+            }
         }
     }
 }

@@ -40,12 +40,15 @@ namespace RPG_Battle_Test
         //Begin instance members
         //Determines turn order
         private List<BattleEntity> EntityOrder = null;
-        private List<BattleEnemy> Enemies = new List<BattleEnemy>();
+        public List<BattleEnemy> Enemies = new List<BattleEnemy>();
         private List<BattlePlayer> Players = new List<BattlePlayer>();
         private int CurEntityTurn = 0;
 
         public readonly TextBox HeaderBox = new TextBox(Helper.CreateText("Smell", "arial.ttf", new Vector2f(), Color.White), 40, 20,
                                           new Vector2f(GameCore.GameWindow.Size.X / 2, GameCore.GameWindow.Size.Y / 16));
+
+        public readonly MessageBox ActionBox = new MessageBox(796, 150,
+                                             new Vector2f(GameCore.GameWindow.Size.X / 2f, GameCore.GameWindow.Size.Y - 77));
 
         //The current state of the battle
         public BattleStates BattleState { get; private set; } = BattleStates.Init;
@@ -58,15 +61,15 @@ namespace RPG_Battle_Test
         {
             EnemyPositions = new List<Vector2f>()
             {
-                new Vector2f(325, 225),
-                new Vector2f(200, 300),
-                new Vector2f(300, 375)
+                new Vector2f(300, 175),
+                new Vector2f(175, 250),
+                new Vector2f(275, 325)
             };
 
             PlayerPositions = new List<Vector2f>()
             {
-                new Vector2f(550, 275),
-                new Vector2f(550, 375)
+                new Vector2f(525, 225),
+                new Vector2f(525, 325)
             };
         }
 
@@ -98,18 +101,21 @@ namespace RPG_Battle_Test
                 if (entity.IsEnemy)
                 {
                     Enemies.Add((BattleEnemy)entity);
-                    entity.EntitySprite.Position = EnemyPositions[enemyindex];
+                    entity.Position = EnemyPositions[enemyindex];
                     enemyindex++;
                 }
                 else
                 {
                     Players.Add((BattlePlayer)entity);
-                    entity.EntitySprite.Position = PlayerPositions[playerindex];
+                    entity.Position = PlayerPositions[playerindex];
                     playerindex++;
                 }
             }
 
             BattleState = BattleStates.TurnDone;
+            //Background = Helper.CreateSprite(new Texture(Constants.ContentPath + "background.png"), false);
+            //Background.Position = new Vector2f(GameCore.GameWindow.Size.X / 2, GameCore.GameWindow.Size.Y / 2);
+            //Background.Scale *= 5f;
         }
 
         private void TurnStart()
@@ -203,13 +209,58 @@ namespace RPG_Battle_Test
             }
         }
 
+        //Helper method for SelectRandomEntity
+        private List<BattleEntity> FillList<T>(List<T> originalList) where T: BattleEntity
+        {
+            List<BattleEntity> aliveList = new List<BattleEntity>();
+            for (int i = 0; i < originalList.Count; i++)
+            {
+                if (originalList[i].IsDead == false)
+                    aliveList.Add(originalList[i]);
+            }
+
+            return aliveList;
+        }
+
+        /// <summary>
+        /// Returns a random entity specified by entitytype. This does not select entities that are Dead
+        /// </summary>
+        /// <param name="entitytype">The type of entity to select. If None is passed in, choose from any entity in the battle</param>
+        public BattleEntity SelectRandomEntity(BattleEntity.EntityTypes entitytype)
+        {
+            List<BattleEntity> entitylist = null;
+            
+            if (entitytype == BattleEntity.EntityTypes.None)
+            {
+                entitylist = FillList(EntityOrder);
+            }
+            else if (entitytype == BattleEntity.EntityTypes.Enemy)
+            {
+                entitylist = FillList(Enemies);
+            }
+            else if (entitytype == BattleEntity.EntityTypes.Player)
+            {
+                entitylist = FillList(Players);
+            }
+
+            return entitylist?[new Random().Next(0, entitylist.Count)];
+        }
+
+        public BattleEnemy GetEnemy(int index)
+        {
+            return Enemies?[index];
+        }
+
         public void Update()
         {
             if (BattleState == BattleStates.TurnDone)
                 TurnStart();
 
-            //This update is for the current entity's turn
-            CurrentEntityTurn.TurnUpdate();
+            if (BattleState != BattleStates.GameOver && BattleState != BattleStates.Victory)
+            {
+                //This update is for the current entity's turn
+                CurrentEntityTurn.TurnUpdate();
+            }
 
             //This update is for animations, effects, and etc.
             for (int i = 0; i < EntityOrder.Count; i++)
@@ -222,6 +273,7 @@ namespace RPG_Battle_Test
         {
             Background?.Draw(GameCore.GameWindow, RenderStates.Default);
             HeaderBox?.Draw();
+            ActionBox?.Draw();
 
             for (int i = 0; i < EntityOrder.Count; i++)
             {
