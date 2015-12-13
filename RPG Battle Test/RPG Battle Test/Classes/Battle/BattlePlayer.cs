@@ -64,6 +64,18 @@ namespace RPG_Battle_Test
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
         }
 
+        public override void StartTurn()
+        {
+            base.StartTurn();
+            BattleManager.Instance.MenuHidden = false;
+        }
+
+        public override void OnTurnEnd()
+        {
+            base.OnTurnEnd();
+            BattleManager.Instance.MenuHidden = true;
+        }
+
         public override void TurnUpdate()
         {
             base.TurnUpdate();
@@ -74,6 +86,7 @@ namespace RPG_Battle_Test
                 if (Input.PressedKey(Keyboard.Key.X))
                 {
                     CurSelection = null;
+                    BattleManager.Instance.HeaderBox.SetText(Name + "'s turn!");
                 }
                 else
                 {
@@ -83,6 +96,7 @@ namespace RPG_Battle_Test
                         do CurSelection = Helper.Wrap(CurSelection.Value - 1, 0, BattleManager.Instance.Enemies.Count - 1);
                         while (BattleManager.Instance.GetEnemy(CurSelection.Value).IsDead == true);
                         Arrow.Position = new Vector2f(BattleManager.Instance.GetEnemy(CurSelection.Value).Position.X, BattleManager.Instance.GetEnemy(CurSelection.Value).Position.Y - ArrowVerticalDist);
+                        BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[CurSelection.Value].Name + "?");
                     }
                     //Move down a selection
                     if (Input.PressedKey(Keyboard.Key.Down))
@@ -90,6 +104,7 @@ namespace RPG_Battle_Test
                         do CurSelection = Helper.Wrap(CurSelection.Value + 1, 0, BattleManager.Instance.Enemies.Count - 1);
                         while (BattleManager.Instance.GetEnemy(CurSelection.Value).IsDead == true);
                         Arrow.Position = new Vector2f(BattleManager.Instance.GetEnemy(CurSelection.Value).Position.X, BattleManager.Instance.GetEnemy(CurSelection.Value).Position.Y - ArrowVerticalDist);
+                        BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[CurSelection.Value].Name + "?");
                     }
                 }
             }
@@ -105,6 +120,7 @@ namespace RPG_Battle_Test
                         {
                             CurSelection = i;
                             Arrow.Position = new Vector2f(enemy.Position.X, enemy.Position.Y - ArrowVerticalDist);
+                            BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[i].Name + "?");
                             break;
                         }
                     }

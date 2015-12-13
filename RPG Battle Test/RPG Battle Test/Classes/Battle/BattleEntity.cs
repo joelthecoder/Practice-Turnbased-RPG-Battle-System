@@ -71,10 +71,16 @@ namespace RPG_Battle_Test
             
         }
 
+        public virtual void OnTurnEnd()
+        {
+            
+        }
+
         public void EndTurn()
         {
             Target = null;
             BattleManager.Instance.TurnEnd();
+            OnTurnEnd();
         }
 
         /// <summary>

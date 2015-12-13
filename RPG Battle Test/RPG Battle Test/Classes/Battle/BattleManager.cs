@@ -50,6 +50,11 @@ namespace RPG_Battle_Test
         public readonly MessageBox ActionBox = new MessageBox(796, 150,
                                              new Vector2f(GameCore.GameWindow.Size.X / 2f, GameCore.GameWindow.Size.Y - 77));
 
+        public BattleMenu Menu = new BattleMenu(new Vector2f(20f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical,
+                                 new BattleMenu.MenuOption("Attack", null), new BattleMenu.MenuOption("Item", null));
+
+        public bool MenuHidden = true;
+
         //The current state of the battle
         public BattleStates BattleState { get; private set; } = BattleStates.Init;
 
@@ -279,6 +284,9 @@ namespace RPG_Battle_Test
             {
                 EntityOrder[i].Draw();
             }
+
+            if (MenuHidden == false)
+                Menu?.Draw();
         }
     }
 }

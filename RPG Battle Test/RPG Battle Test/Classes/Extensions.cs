@@ -16,6 +16,9 @@ namespace RPG_Battle_Test
     /// </summary>
     public static class Extensions
     {
-        
+        public static void UpdateOrigin(this Text text)
+        {
+            text.Origin = Helper.GetTextOrigin(text);
+        }
     }
 }

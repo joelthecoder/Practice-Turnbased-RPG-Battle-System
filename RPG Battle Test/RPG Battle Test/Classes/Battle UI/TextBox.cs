@@ -51,7 +51,7 @@ namespace RPG_Battle_Test
                 return;
 
             TextMessage.DisplayedString = message;
-            TextMessage.Origin = Helper.GetTextOrigin(TextMessage);
+            TextMessage.UpdateOrigin();
             FloatRect rect = TextMessage.GetLocalBounds();
             Resize((uint)rect.Width + SpacingX, (uint)rect.Height + SpacingY);
         }
