@@ -68,6 +68,12 @@ namespace RPG_Battle_Test
             return spriteobj;
         }
 
+        public static Vector2f GetSpriteOrigin(Sprite sprite, float xPercent = .5f, float yPercent = .5f)
+        {
+            FloatRect rect = sprite.GetLocalBounds();
+            return new Vector2f(rect.Left + (rect.Width * xPercent), rect.Top + (rect.Height * yPercent));
+        }
+
         /// <summary>
         /// Creates a Sprite object using a portion of a texture with its origin centered
         /// </summary>

@@ -19,6 +19,25 @@ namespace RPG_Battle_Test
             None, CecilK, CecilP
         }
 
+        /// <summary>
+        /// Possible BattleActions for players to have.
+        /// Every character has Attack, Item, Magic, and Run, but more can be obtained or specific to characters (Ex. Steal).
+        /// </summary>
+        public enum BattleActions
+        {
+            Attack, Item, Magic, Steal, Run
+        }
+
+        /// <summary>
+        /// The main battle menu
+        /// </summary>
+        public static BattleMenu MainBattleMenu = null;
+        public static BattleMenu ItemMenu = null;
+
+        public static Stack<BattleMenu> Menus = null;
+
+        public static BattleMenu CurrentMenu => Menus.Peek();
+
         protected const float ArrowVerticalDist = 100f;
 
         public Characters Character { get; private set; } = Characters.None;
@@ -64,16 +83,36 @@ namespace RPG_Battle_Test
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
         }
 
+        /// <summary>
+        /// Called when the battle is started
+        /// </summary>
+        public static void OnBattleStart()
+        {
+            Menus = new Stack<BattleMenu>();
+            MainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical);
+            ItemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
+
+            Menus.Push(MainBattleMenu);
+        }
+
         public override void StartTurn()
         {
             base.StartTurn();
-            BattleManager.Instance.MenuHidden = false;
+            BattleMenu.Active = true;
+
+            //Set the basic options
+            MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Item", ItemSelect));
+            ItemMenu.SetOptions(new BattleMenu.MenuOption("Poison", null));
         }
 
         public override void OnTurnEnd()
         {
             base.OnTurnEnd();
-            BattleManager.Instance.MenuHidden = true;
+            BattleMenu.Active = false;
+            while (Menus.Count > 1)
+            {
+                Menus.Pop();
+            }
         }
 
         public override void TurnUpdate()
@@ -87,6 +126,7 @@ namespace RPG_Battle_Test
                 {
                     CurSelection = null;
                     BattleManager.Instance.HeaderBox.SetText(Name + "'s turn!");
+                    return;
                 }
                 else
                 {
@@ -109,29 +149,36 @@ namespace RPG_Battle_Test
                 }
             }
 
-            if (Input.PressedKey(Keyboard.Key.Z))
+            if (Input.PressedKey(Keyboard.Key.Z) && CurSelection.HasValue == true)
             {
-                if (CurSelection.HasValue == false)
+                AttackEntity(BattleManager.Instance.GetEnemy(CurSelection.Value));
+                CurSelection = null;
+                EndTurn();
+                return;
+            }
+
+            if (CurSelection.HasValue == false)
+                CurrentMenu.Update();
+        }
+
+        protected void AttackSelect()
+        {
+            for (int i = 0; i < BattleManager.Instance.Enemies.Count; i++)
+            {
+                BattleEnemy enemy = BattleManager.Instance.Enemies[i];
+                if (enemy.IsDead == false)
                 {
-                    for (int i = 0; i < BattleManager.Instance.Enemies.Count; i++)
-                    {
-                        BattleEnemy enemy = BattleManager.Instance.Enemies[i];
-                        if (enemy.IsDead == false)
-                        {
-                            CurSelection = i;
-                            Arrow.Position = new Vector2f(enemy.Position.X, enemy.Position.Y - ArrowVerticalDist);
-                            BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[i].Name + "?");
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    AttackEntity(BattleManager.Instance.GetEnemy(CurSelection.Value));
-                    CurSelection = null;
-                    EndTurn();
+                    CurSelection = i;
+                    Arrow.Position = new Vector2f(enemy.Position.X, enemy.Position.Y - ArrowVerticalDist);
+                    BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[i].Name + "?");
+                    break;
                 }
             }
+        }
+
+        protected void ItemSelect()
+        {
+            Menus.Push(ItemMenu);
         }
 
         public override void Update()

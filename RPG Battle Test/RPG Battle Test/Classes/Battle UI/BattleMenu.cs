@@ -22,6 +22,11 @@ namespace RPG_Battle_Test
             Vertical, Horizontal
         }
 
+        public delegate void OptionSelect();
+        public delegate void BackOut();
+
+        public BackOut OnBackOut = null;
+
         public List<MenuOption> Options = null;
         public MenuTypes MenuType = MenuTypes.Vertical;
 
@@ -44,9 +49,12 @@ namespace RPG_Battle_Test
         /// </summary>
         public Vector2f Offset = new Vector2f(0, 0);
 
+        public static bool Active = false;
+        public static bool HideArrow = false;
+
         public int CurOption = 0;
 
-        public delegate void OptionSelect();
+        protected Sprite Arrow = null;
 
         /// <summary>
         /// Menu option
@@ -68,14 +76,30 @@ namespace RPG_Battle_Test
             }
         }
 
-        public BattleMenu(Vector2f position, Vector2f spacing, MenuTypes menutype, params MenuOption[] options)
+        public BattleMenu(Vector2f position, Vector2f spacing, MenuTypes menutype, BackOut onbackout = null)
         {
             MenuType = menutype;
 
             Position = position;
             Spacing = spacing;
 
+            Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
+            Arrow.Rotation = 270f;
+            Arrow.Origin = Helper.GetSpriteOrigin(Arrow, yPercent: 0f);
+
+            Active = HideArrow = false;
+            OnBackOut = onbackout;
+        }
+
+        public void SetOptions(params MenuOption[] options)
+        {
             Options = options.ToList();
+            CurOption = 0;
+        }
+
+        public void AddOptions(params MenuOption[] options)
+        {
+            Options.AddRange(options);
         }
 
         public void MoveCursor(bool forward)
@@ -84,8 +108,40 @@ namespace RPG_Battle_Test
             else CurOption = Helper.Wrap(CurOption - 1, 0, Options.Count - 1);
         }
 
+        public void Update()
+        {
+            if (MenuType == MenuTypes.Vertical)
+            {
+                if (Input.PressedKey(Keyboard.Key.Up))
+                    MoveCursor(false);
+                if (Input.PressedKey(Keyboard.Key.Down))
+                    MoveCursor(true);
+            }
+            else if (MenuType == MenuTypes.Horizontal)
+            {
+                if (Input.PressedKey(Keyboard.Key.Left))
+                    MoveCursor(false);
+                if (Input.PressedKey(Keyboard.Key.Right))
+                    MoveCursor(true);
+            }
+
+            //Select menu
+            if (Input.PressedKey(Keyboard.Key.Z))
+            {
+                Options?[CurOption].Select();
+            }
+            //Back out of menu
+            else if (Input.PressedKey(Keyboard.Key.X))
+            {
+                OnBackOut?.Invoke();
+            }
+        }
+
         public void Draw()
         {
+            if (Active == false)
+                return;
+
             for (int i = 0; i < Options.Count; i++)
             {
                 Text textstring = Options[i].TextString;
@@ -102,6 +158,12 @@ namespace RPG_Battle_Test
 
                     textstring.Draw(GameCore.GameWindow, RenderStates.Default);
                 }
+            }
+
+            if (HideArrow == false)
+            {
+                Arrow.Position = new Vector2f(Options[CurOption].TextString.Position.X - 35, Options[CurOption].TextString.Position.Y + 18);
+                Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
             }
         }
     }
