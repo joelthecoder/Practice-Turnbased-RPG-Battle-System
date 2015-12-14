@@ -14,6 +14,7 @@ namespace RPG_Battle_Test
     internal class GameCore
     {
         public static RenderWindow GameWindow { get; private set; } = null;
+        public static SpriteSorter spriteSorter { get; private set; } = null;
         public static bool TimeEnabled { get; private set; } = true;
         private static Time GameTime = default(Time);
         //public static 
@@ -25,6 +26,7 @@ namespace RPG_Battle_Test
         public GameCore(RenderWindow renderWindow)
         {
             GameWindow = renderWindow;
+            spriteSorter = new SpriteSorter();
         }
         
         public void OnGameClose(object sender, EventArgs e)
@@ -105,6 +107,14 @@ namespace RPG_Battle_Test
 
             //We would put this here in the "Battle" game state
             BattleManager.Instance.Draw();
+        }
+
+        /// <summary>
+        /// Called every frame immediately after Draw(). Here's where a SpriteBatch would output everything to the GPU
+        /// </summary>
+        public void PostDraw()
+        {
+            spriteSorter.DrawAll();
         }
     }
 }

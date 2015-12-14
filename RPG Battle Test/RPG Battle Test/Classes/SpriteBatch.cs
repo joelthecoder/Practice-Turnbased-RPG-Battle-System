@@ -16,14 +16,14 @@ namespace RPG_Battle_Test
     {
         private List<BatchObject> Batch = null;
 
-        private class BatchObject
+        private struct BatchObject
         {
-            public Drawable DrawableObj = null;
+            public Drawable DrawableObj;
 
             /// <summary>
             /// Depth, 0 being behind and higher numbers being in front
             /// </summary>
-            public int Depth = 0;
+            public int Depth;
 
             public BatchObject(Drawable drawableobj, int depth)
             {
@@ -69,14 +69,24 @@ namespace RPG_Battle_Test
             Batch.Add(batchobj);
         }
 
-        public void Draw(Sprite sprite, Vector2f position, float rotation, Vector2f origin, int depth)
+        public void Draw(Sprite sprite, Vector2f position, float rotation, Vector2f originRelative, int depth)
         {
             Sprite newsprite = new Sprite(sprite);
             sprite.Position = position;
             sprite.Rotation = rotation;
-            sprite.Origin = origin;
+            sprite.Origin = Helper.GetSpriteOrigin(sprite, originRelative.X, originRelative.Y);
             BatchObject batchobj = new BatchObject(newsprite, depth);
             Batch.Add(batchobj);
+        }
+
+        public void DrawText(string text, Vector2f position, int depth)
+        {
+            DrawText(new Text(text, new Font(Constants.ContentPath + "arial.ttf")), position, depth);
+        }
+
+        public void DrawText(string text, Vector2f position, Vector2f originRelative, int depth)
+        {
+            DrawText(new Text(text, new Font(Constants.ContentPath + "arial.ttf")), position, originRelative, depth);
         }
 
         public void DrawText(Text text, Vector2f position, int depth)
@@ -87,11 +97,11 @@ namespace RPG_Battle_Test
             Batch.Add(batchobj);
         }
 
-        public void DrawText(Text text, Vector2f position, Vector2f origin, int depth)
+        public void DrawText(Text text, Vector2f position, Vector2f originRelative, int depth)
         {
             Text newtext = new Text(text);
             text.Position = position;
-            text.Origin = origin;
+            text.Origin = Helper.GetTextOrigin(text, originRelative.X, originRelative.Y);
             BatchObject batchobj = new BatchObject(text, depth);
             Batch.Add(batchobj);
         }

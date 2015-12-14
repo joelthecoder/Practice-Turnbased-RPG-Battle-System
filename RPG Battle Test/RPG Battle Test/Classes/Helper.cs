@@ -45,10 +45,10 @@ namespace RPG_Battle_Test
             return CreateText(text, new Font(Constants.ContentPath + fontName), position, color);
         }
 
-        public static Vector2f GetTextOrigin(Text textobj)
+        public static Vector2f GetTextOrigin(Text textobj, float xPercent = .5f, float yPercent = .5f)
         {
             FloatRect rect = textobj.GetLocalBounds();
-            return new Vector2f(rect.Left + (rect.Width / 2f), rect.Top + (rect.Height / 2f));
+            return new Vector2f(rect.Left + (rect.Width * xPercent), rect.Top + (rect.Height * yPercent));
         }
 
         /// <summary>

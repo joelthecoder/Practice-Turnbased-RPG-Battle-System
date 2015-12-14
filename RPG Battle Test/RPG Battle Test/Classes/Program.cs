@@ -40,6 +40,7 @@ namespace RPG_Battle_Test
 
                 //Draw game logic here
                 gameCore.Draw();
+                gameCore.PostDraw();
 
                 //Update the window
                 GameWindow.Display();
