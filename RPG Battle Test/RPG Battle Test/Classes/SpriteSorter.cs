@@ -21,9 +21,9 @@ namespace RPG_Battle_Test
         private struct DepthObject
         {
             public Drawable DrawableObj;
-            public int Depth;
+            public float Depth;
 
-            public DepthObject(Drawable drawableobj, int depth)
+            public DepthObject(Drawable drawableobj, float depth)
             {
                 DrawableObj = drawableobj;
                 Depth = depth;
@@ -50,8 +50,14 @@ namespace RPG_Battle_Test
             return 0;
         }
 
-        public void Add(Drawable drawable, int depth)
+        public void Add(Drawable drawable, float depth)
         {
+            if (drawable == null)
+            {
+                Debug.LogError("\"" + nameof(drawable) + "\" parameter is null! Not adding to DepthBatch");
+                return;
+            }
+
             DepthBatch.Add(new DepthObject(drawable, depth));
         }
 

@@ -191,7 +191,8 @@ namespace RPG_Battle_Test
             base.Draw();
             if (CurSelection.HasValue)
             {
-                Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
+                GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .03f);
+                //Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
             }
         }
     }

@@ -156,14 +156,16 @@ namespace RPG_Battle_Test
                     //Put the origin for the text on the top-left
                     textstring.Origin = new Vector2f(0, 0);
 
-                    textstring.Draw(GameCore.GameWindow, RenderStates.Default);
+                    GameCore.spriteSorter.Add(textstring, Constants.BASE_UI_LAYER + .3f);
+                    //textstring.Draw(GameCore.GameWindow, RenderStates.Default);
                 }
             }
 
             if (HideArrow == false)
             {
                 Arrow.Position = new Vector2f(Options[CurOption].TextString.Position.X - 35, Options[CurOption].TextString.Position.Y + 18);
-                Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
+                GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .4f);
+                //Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
             }
         }
     }
