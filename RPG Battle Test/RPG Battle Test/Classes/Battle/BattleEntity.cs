@@ -84,6 +84,14 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
+        /// Performs a battle command
+        /// </summary>
+        public void UseCommand(BattleCommand command)
+        {
+            command.Perform();
+        }
+
+        /// <summary>
         /// Calculates damage based on this entity's Attack and the damaged entity's Defense. Cannot go below 0
         /// </summary>
         /// <param name="entity">The entity being dealt damage</param>

@@ -44,6 +44,8 @@ namespace RPG_Battle_Test
         protected Sprite Arrow = null;
         protected int? CurSelection = null;
 
+        private List<BattleEntity> TargetList = null;
+
         public BattlePlayer(Characters character)
         {
             EntityType = EntityTypes.Player;
@@ -133,26 +135,27 @@ namespace RPG_Battle_Test
                     //Move up a selection
                     if (Input.PressedKey(Keyboard.Key.Up))
                     {
-                        do CurSelection = Helper.Wrap(CurSelection.Value - 1, 0, BattleManager.Instance.Enemies.Count - 1);
-                        while (BattleManager.Instance.GetEnemy(CurSelection.Value).IsDead == true);
-                        Arrow.Position = new Vector2f(BattleManager.Instance.GetEnemy(CurSelection.Value).Position.X, BattleManager.Instance.GetEnemy(CurSelection.Value).Position.Y - ArrowVerticalDist);
-                        BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[CurSelection.Value].Name + "?");
+                        do CurSelection = Helper.Wrap(CurSelection.Value - 1, 0, TargetList.Count - 1);
+                        while (TargetList[CurSelection.Value].IsDead == true);
+                        Arrow.Position = new Vector2f(TargetList[CurSelection.Value].Position.X, TargetList[CurSelection.Value].Position.Y - ArrowVerticalDist);
+                        BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[CurSelection.Value].Name + "?");
                     }
                     //Move down a selection
                     if (Input.PressedKey(Keyboard.Key.Down))
                     {
-                        do CurSelection = Helper.Wrap(CurSelection.Value + 1, 0, BattleManager.Instance.Enemies.Count - 1);
-                        while (BattleManager.Instance.GetEnemy(CurSelection.Value).IsDead == true);
-                        Arrow.Position = new Vector2f(BattleManager.Instance.GetEnemy(CurSelection.Value).Position.X, BattleManager.Instance.GetEnemy(CurSelection.Value).Position.Y - ArrowVerticalDist);
-                        BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[CurSelection.Value].Name + "?");
+                        do CurSelection = Helper.Wrap(CurSelection.Value + 1, 0, TargetList.Count - 1);
+                        while (TargetList[CurSelection.Value].IsDead == true);
+                        Arrow.Position = new Vector2f(TargetList[CurSelection.Value].Position.X, TargetList[CurSelection.Value].Position.Y - ArrowVerticalDist);
+                        BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[CurSelection.Value].Name + "?");
                     }
                 }
             }
 
             if (Input.PressedKey(Keyboard.Key.Z) && CurSelection.HasValue == true)
             {
-                AttackEntity(BattleManager.Instance.GetEnemy(CurSelection.Value));
+                AttackEntity(TargetList[CurSelection.Value]);
                 CurSelection = null;
+                TargetList = null;
                 EndTurn();
                 return;
             }
@@ -163,14 +166,16 @@ namespace RPG_Battle_Test
 
         protected void AttackSelect()
         {
-            for (int i = 0; i < BattleManager.Instance.Enemies.Count; i++)
+            TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+
+            for (int i = 0; i < TargetList.Count; i++)
             {
-                BattleEnemy enemy = BattleManager.Instance.Enemies[i];
-                if (enemy.IsDead == false)
+                BattleEntity target = TargetList[i];
+                if (target.IsDead == false)
                 {
                     CurSelection = i;
-                    Arrow.Position = new Vector2f(enemy.Position.X, enemy.Position.Y - ArrowVerticalDist);
-                    BattleManager.Instance.HeaderBox.SetText("Attack " + BattleManager.Instance.Enemies[i].Name + "?");
+                    Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
+                    BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[i].Name + "?");
                     break;
                 }
             }

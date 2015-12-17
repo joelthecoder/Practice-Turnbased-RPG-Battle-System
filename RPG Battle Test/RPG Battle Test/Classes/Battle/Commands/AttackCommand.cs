@@ -11,8 +11,20 @@ using SFML.Audio;
 
 namespace RPG_Battle_Test
 {
-    public interface AttackCommand : BattleCommand
+    public class AttackCommand : BattleCommand
     {
-        
+        private BattleEntity Target = null;
+        private BattleEntity Attacker = null;
+
+        public AttackCommand(BattleEntity target, BattleEntity attacker)
+        {
+            Target = target;
+            Attacker = attacker;
+        }
+
+        public void Perform()
+        {
+            Attacker.AttackEntity(Target);
+        }
     }
 }

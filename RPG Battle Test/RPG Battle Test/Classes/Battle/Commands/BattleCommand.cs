@@ -15,6 +15,7 @@ namespace RPG_Battle_Test
     //These include, but are not limited to, Attack, Defend, Magic, Item, Run
     public interface BattleCommand
     {
-        bool CommandAvailable { get; set; }
+        //Perform a command
+        void Perform();
     }
 }
