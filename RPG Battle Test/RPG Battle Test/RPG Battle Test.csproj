@@ -123,6 +123,10 @@
     <Compile Include="Classes\Battle\BattlePlayer.cs" />
     <Compile Include="Classes\Battle\Commands\AttackCommand.cs" />
     <Compile Include="Classes\Battle\Commands\BattleCommand.cs" />
+    <Compile Include="Classes\Battle\Item\DamageItem.cs" />
+    <Compile Include="Classes\Battle\Item\HealingItem.cs" />
+    <Compile Include="Classes\Battle\Item\Item.cs" />
+    <Compile Include="Classes\Battle\Status Effects\StatusEffect.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\Extensions.cs" />
@@ -212,9 +216,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\Battle\Status Effects\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
