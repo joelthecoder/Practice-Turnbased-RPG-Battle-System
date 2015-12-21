@@ -7,3 +7,4 @@ The goal is to create a flexible battle system with the following features:
 -Items (damage, healing, status) and inventory
 -Magic (# of turns to cast, target multiple enemies, % chance for inflicting status effects)
 -Character and enemy exclusive actions and spells, which can be easily added or moved to different characters and enemies
+
