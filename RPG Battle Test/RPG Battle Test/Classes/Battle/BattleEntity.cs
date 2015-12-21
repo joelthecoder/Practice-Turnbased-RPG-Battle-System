@@ -92,13 +92,22 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Calculates damage based on this entity's Attack and the damaged entity's Defense. Cannot go below 0
+        /// Calculates the total damage this entity will deal to another entity
         /// </summary>
-        /// <param name="entity">The entity being dealt damage</param>
-        /// <returns>The amount of total damage dealt to entity</returns>
-        private int CalculateDamageDealt(BattleEntity entity)
+        /// <returns>The amount of total damage this entity will deal</returns>
+        private int CalculateDamageDealt()
         {
-            return Helper.Clamp(Attack - entity.Defense, 0, int.MaxValue);
+            return Helper.Clamp(Attack, 0, int.MaxValue);
+        }
+
+        /// <summary>
+        /// Calculates damage reduction based on this entity's Defense. Cannot go below 0
+        /// </summary>
+        /// <param name="damage">The damage value from the damage source</param>
+        /// <returns>The amount of total damage dealt to this entity</returns>
+        private int CalculateDamageReduction(int damage)
+        {
+            return Helper.Clamp(damage - Defense, 0, int.MaxValue);
         }
 
         /// <summary>
@@ -107,10 +116,17 @@ namespace RPG_Battle_Test
         /// <param name="entity">The entity to deal damage to. Minimum damage is 0</param>
         public void AttackEntity(BattleEntity entity)
         {
-            int damage = CalculateDamageDealt(entity);
-            entity.CurHP -= damage;
+            entity.TakeDamage(CalculateDamageDealt());
 
-            Debug.Log(Name + " attacked " + entity.Name + " for " + damage + " damage!");
+            Debug.Log(Name + " attacked " + entity.Name + "!");
+        }
+
+        public void TakeDamage(int damage)
+        {
+            int totaldamage = CalculateDamageReduction(damage);
+            CurHP -= totaldamage;
+
+            Debug.Log($"{Name} received {totaldamage} damage!");
         }
 
         //Battle-combat related methods

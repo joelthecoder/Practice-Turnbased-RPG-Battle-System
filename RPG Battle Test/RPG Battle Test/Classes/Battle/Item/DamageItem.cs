@@ -19,7 +19,7 @@ namespace RPG_Battle_Test
 
         protected override void OnUse(BattleEntity entity)
         {
-            //NOTE: There's currently no way to deal raw damage to an entity, so work on that
+            entity.TakeDamage(Damage);
         }
     }
 }
