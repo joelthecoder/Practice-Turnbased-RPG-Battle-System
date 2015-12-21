@@ -33,6 +33,9 @@ namespace RPG_Battle_Test
         {
             UnloadAssets();
 
+            //Clean up the BattleManager
+            BattleManager.Instance?.CleanUp();
+
             //Close the window when OnClose event is received and clean up events
             GameWindow.Close();
             GameWindow = null;

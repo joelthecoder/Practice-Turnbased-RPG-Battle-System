@@ -146,7 +146,6 @@ namespace RPG_Battle_Test
             if (IsDead == false)
             {
                 GameCore.spriteSorter.Add(EntitySprite, Constants.BASE_ENTITY_LAYER + (Position.Y / 1000f));
-                //EntitySprite?.Draw(GameCore.GameWindow, RenderStates.Default);
             }
         }
     }

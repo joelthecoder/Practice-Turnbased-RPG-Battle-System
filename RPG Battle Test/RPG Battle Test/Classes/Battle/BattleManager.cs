@@ -50,6 +50,8 @@ namespace RPG_Battle_Test
         public readonly MessageBox ActionBox = new MessageBox(796, 150,
                                              new Vector2f(GameCore.GameWindow.Size.X / 2f, GameCore.GameWindow.Size.Y - 77));
 
+        public Inventory PartyInventory = new Inventory();
+
         //The current state of the battle
         public BattleStates BattleState { get; private set; } = BattleStates.Init;
 
@@ -116,6 +118,11 @@ namespace RPG_Battle_Test
 
             //Initialize static battle components
             BattlePlayer.OnBattleStart();
+        }
+
+        public void CleanUp()
+        {
+            PartyInventory.CleanUp();
         }
 
         private void TurnStart()

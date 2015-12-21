@@ -28,6 +28,10 @@ namespace RPG_Battle_Test
             Attack, Item, Magic, Steal, Run
         }
 
+        public delegate void SelectEntity(BattleEntity entity);
+
+        public SelectEntity OnSelectEntity = null;
+
         /// <summary>
         /// The main battle menu
         /// </summary>
@@ -104,7 +108,7 @@ namespace RPG_Battle_Test
 
             //Set the basic options
             MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Item", ItemSelect));
-            ItemMenu.SetOptions(new BattleMenu.MenuOption("Poison", null));
+            ItemMenu.OnOpen = PopulateItemList;
         }
 
         public override void OnTurnEnd()
@@ -153,7 +157,7 @@ namespace RPG_Battle_Test
 
             if (Input.PressedKey(Keyboard.Key.Z) && CurSelection.HasValue == true)
             {
-                AttackEntity(TargetList[CurSelection.Value]);
+                OnSelectEntity?.Invoke(TargetList[CurSelection.Value]);
                 CurSelection = null;
                 TargetList = null;
                 EndTurn();
@@ -179,11 +183,54 @@ namespace RPG_Battle_Test
                     break;
                 }
             }
+
+            OnSelectEntity = AttackEntity;
+        }
+        
+        protected void ItemSelection(Item item)
+        {
+            if (item.IsOfType(Item.ItemTypes.Damage))
+            {
+                TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+            }
+            else if (item.IsOfType(Item.ItemTypes.Heal))
+            {
+                TargetList = BattleManager.Instance.Players.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+            }
+
+            for (int i = 0; i < TargetList.Count; i++)
+            {
+                BattleEntity target = TargetList[i];
+                if (target.IsDead == false)
+                {
+                    CurSelection = i;
+                    Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
+                    BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[i].Name + "?");
+                    break;
+                }
+            }
+
+            OnSelectEntity = item.Use;
         }
 
         protected void ItemSelect()
         {
             Menus.Push(ItemMenu);
+            if (Menus.Peek().OnOpen != null)
+                Menus.Peek().OnOpen();
+        }
+
+        protected void PopulateItemList()
+        {
+            Dictionary<Item, int> items = BattleManager.Instance.PartyInventory.GetInventory();
+            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
+            
+            foreach (KeyValuePair<Item, int> pair in items)
+            {
+                options.Add(new BattleMenu.MenuOption($"{pair.Key.Name} x{pair.Value}", () => ItemSelection(pair.Key)));
+            }
+
+            ItemMenu.SetOptions(options);
         }
 
         public override void Update()

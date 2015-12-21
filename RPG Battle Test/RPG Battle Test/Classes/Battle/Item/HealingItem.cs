@@ -11,7 +11,7 @@ namespace RPG_Battle_Test
         public uint HPRestored = 0;
         public uint MPRestored = 0;
 
-        public HealingItem(uint hpRestored, uint mpRestored)
+        public HealingItem(string name, uint hpRestored, uint mpRestored) : base(name)
         {
             HPRestored = hpRestored;
             MPRestored = mpRestored;
@@ -19,7 +19,7 @@ namespace RPG_Battle_Test
             TypeList.Add(ItemTypes.Heal, true);
         }
 
-        public override void OnUse(BattleEntity entity)
+        protected override void OnUse(BattleEntity entity)
         {
             entity.Restore(HPRestored, MPRestored);
 

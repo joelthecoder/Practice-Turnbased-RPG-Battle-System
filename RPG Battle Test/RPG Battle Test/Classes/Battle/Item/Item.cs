@@ -19,6 +19,15 @@ namespace RPG_Battle_Test
             None, Heal, Damage, Status
         }
 
+        public delegate void ItemUse(Item item);
+
+        public static event ItemUse ItemUseEvent = null;
+
+        /// <summary>
+        /// The table of all existing items in the game
+        /// </summary>
+        public static Item[] ItemTable = null;
+
         /// <summary>
         /// The name of the item
         /// </summary>
@@ -29,11 +38,38 @@ namespace RPG_Battle_Test
         /// </summary>
         public readonly Dictionary<ItemTypes, bool> TypeList = new Dictionary<ItemTypes, bool>();
 
+        static Item()
+        {
+            ItemTable = new Item[]
+            {
+                new HealingItem("Potion", 20, 0),
+                new HealingItem("Ether", 0, 20),
+                new DamageItem("Bomb", 10)
+            };
+        }
+
+        protected Item(string name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
+        /// Uses the item. This is here so we can call events
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Use(BattleEntity entity)
+        {
+            //Call use event
+            ItemUseEvent?.Invoke(this);
+
+            OnUse(entity);
+        }
+
         /// <summary>
         /// What happens to the entity when the Item is used on it
         /// </summary>
         /// <param name="entity"></param>
-        public abstract void OnUse(BattleEntity entity);
+        protected abstract void OnUse(BattleEntity entity);
 
         /// <summary>
         /// Tells if an item is a particular type

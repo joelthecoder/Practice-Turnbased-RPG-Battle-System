@@ -134,6 +134,7 @@
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\Input.cs" />
     <Compile Include="Classes\Battle UI\MessageBox.cs" />
+    <Compile Include="Classes\Inventory.cs" />
     <Compile Include="Classes\Program.cs" />
     <Compile Include="Classes\SpriteBatch.cs" />
     <Compile Include="Classes\SpriteSorter.cs" />

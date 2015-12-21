@@ -10,14 +10,14 @@ namespace RPG_Battle_Test
     {
         public int Damage = 0;
 
-        public DamageItem(int damage)
+        public DamageItem(string name, int damage) : base(name)
         {
             Damage = damage;
 
             TypeList.Add(ItemTypes.Damage, true);
         }
 
-        public override void OnUse(BattleEntity entity)
+        protected override void OnUse(BattleEntity entity)
         {
             //NOTE: There's currently no way to deal raw damage to an entity, so work on that
         }

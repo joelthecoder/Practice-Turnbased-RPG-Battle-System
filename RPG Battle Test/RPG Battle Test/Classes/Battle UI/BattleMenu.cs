@@ -22,8 +22,11 @@ namespace RPG_Battle_Test
             Vertical, Horizontal
         }
 
+        public delegate void Open();
         public delegate void OptionSelect();
         public delegate void BackOut();
+
+        public Open OnOpen = null;
 
         public BackOut OnBackOut = null;
 
@@ -91,13 +94,30 @@ namespace RPG_Battle_Test
             OnBackOut = onbackout;
         }
 
+        public BattleMenu(Open onopen, Vector2f position, Vector2f spacing, MenuTypes menutype, BackOut onbackout = null)
+        : this(position, spacing, menutype, onbackout)
+        {
+            OnOpen = onopen;
+        }
+
         public void SetOptions(params MenuOption[] options)
         {
             Options = options.ToList();
             CurOption = 0;
         }
 
+        public void SetOptions(List<MenuOption> options)
+        {
+            Options = options;
+            CurOption = 0;
+        }
+
         public void AddOptions(params MenuOption[] options)
+        {
+            Options.AddRange(options);
+        }
+
+        public void AddOptions(List<MenuOption> options)
         {
             Options.AddRange(options);
         }
