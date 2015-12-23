@@ -18,18 +18,14 @@ namespace RPG_Battle_Test
             None, Player, Enemy
         }
 
-        public Vector2f Position
-        {
-            get
-            {
-                return EntitySprite.Position;
-            }
-            set
-            {
-                EntitySprite.Position = value;
-            }
-        }
-        
+        public delegate void EntityHeal(BattleEntity entity);
+        public delegate void EntityDamage(BattleEntity entity);
+        public delegate void EntityStatus(BattleEntity entity);
+
+        public static event EntityHeal OnEntityHeal = null;
+        public static event EntityDamage OnEntityDamage = null;
+        public static event EntityStatus OnEntityStatus = null;
+
         public Sprite EntitySprite = null;
         public int NumActions = 1;
 
@@ -45,13 +41,10 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
+        public Dictionary<StatusEffect, StatusEffect> AfflictedStatuses = new Dictionary<StatusEffect, StatusEffect>();
+
         public readonly Color TurnColor = Color.Cyan;
         public EntityTypes EntityType { get; protected set; } = EntityTypes.None;
-
-        public BattleEntity()
-        {
-            
-        }
 
         public static bool IsEntityEnemy(BattleEntity entity) => entity.EntityType == EntityTypes.Enemy;
         public static bool IsEntityPlayer(BattleEntity entity) => entity.EntityType == EntityTypes.Player;
@@ -62,23 +55,44 @@ namespace RPG_Battle_Test
         public bool IsTurn => this == BattleManager.Instance.CurrentEntityTurn;
         public bool IsDead => CurHP <= 0;
 
-        //The entity being targeted in battle
-        public BattleEntity Target { get; protected set; } = null;
+        public BattleEntity()
+        {
+            
+        }
+
+        public Vector2f Position
+        {
+            get
+            {
+                return EntitySprite.Position;
+            }
+            set
+            {
+                EntitySprite.Position = value;
+            }
+        }
 
         //Battle-turn related methods
         public virtual void StartTurn()
         {
-            
+            StatusEffect[] statuses = AfflictedStatuses.Keys.ToArray();
+            for (int i = 0; i < statuses.Length; i++)
+            {
+                statuses[i].OnTurnStart();
+            }
         }
 
         public virtual void OnTurnEnd()
         {
-            
+            StatusEffect[] statuses = AfflictedStatuses.Keys.ToArray();
+            for (int i = 0; i < statuses.Length; i++)
+            {
+                statuses[i].OnTurnEnd();
+            }
         }
 
         public void EndTurn()
         {
-            Target = null;
             BattleManager.Instance.TurnEnd();
             OnTurnEnd();
         }
@@ -127,6 +141,8 @@ namespace RPG_Battle_Test
             CurHP -= totaldamage;
 
             Debug.Log($"{Name} received {totaldamage} damage!");
+
+            OnEntityDamage?.Invoke(this);
         }
 
         //Battle-combat related methods
@@ -139,6 +155,54 @@ namespace RPG_Battle_Test
         {
             CurHP = Helper.Clamp(CurHP + (int)hp, 0, MaxHP);
             CurMP = Helper.Clamp(CurMP + (int)mp, 0, MaxMP);
+
+            OnEntityHeal?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Inflicts one or more StatusEffects on the entity
+        /// </summary>
+        /// <param name="statuses">The statuses to inflict on the entity</param>
+        public void InflictStatus(params StatusEffect[] statuses)
+        {
+            for (int i = 0; i < statuses.Length; i++)
+            {
+                StatusEffect status = statuses[i];
+
+                if (AfflictedStatuses.ContainsKey(status))
+                {
+                    AfflictedStatuses[status].Refresh();
+                    Debug.Log($"Refreshed status {AfflictedStatuses[status].Name} on {Name}!");
+                }
+                else
+                {
+                    status.OnStatusFinished += OnStatusFinished;
+                    AfflictedStatuses.Add(status, status);
+                    AfflictedStatuses[status].OnInflict();
+                    Debug.Log($"Inflicted status {AfflictedStatuses[status].Name} on {Name}!");
+                }
+            }
+            OnEntityStatus?.Invoke(this);
+        }
+
+        private void OnStatusFinished(StatusEffect status)
+        {
+            status.OnStatusFinished -= OnStatusFinished;
+
+            if (AfflictedStatuses.ContainsKey(status))
+            {
+                AfflictedStatuses.Remove(status);
+                Debug.LogError($"{status.Name} ended on {Name}!");
+            }
+            else
+            {
+                Debug.LogError($"{Name} is not afflicted with the {status.Name} status!");
+            }
+        }
+
+        public void CleanUp()
+        {
+            
         }
 
         /// <summary>

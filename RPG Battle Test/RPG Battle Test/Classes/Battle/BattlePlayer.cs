@@ -87,6 +87,10 @@ namespace RPG_Battle_Test
             EntitySprite.Scale *= 3f;
 
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
+
+            Poison poison = new Poison(this, 2);
+
+            InflictStatus(poison);
         }
 
         /// <summary>
@@ -246,6 +250,11 @@ namespace RPG_Battle_Test
                 GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .03f);
                 //Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{Name}    {CurHP}/{MaxHP}    {CurMP}/{MaxMP}   ";
         }
     }
 }

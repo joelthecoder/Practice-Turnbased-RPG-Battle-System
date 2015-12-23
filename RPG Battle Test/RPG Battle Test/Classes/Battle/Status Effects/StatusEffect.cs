@@ -11,18 +11,59 @@ namespace RPG_Battle_Test
     /// </summary>
     public abstract class StatusEffect
     {
+        public delegate void StatusFinished(StatusEffect status);
+
+        public event StatusFinished OnStatusFinished = null;
+
         //The afflicted entity
-        public BattleEntity Entity = null;
+        public BattleEntity Entity { get; protected set; } = null;
 
         /// <summary>
         /// The number of turns the status effect is in effect for
         /// </summary>
-        public int Turns = 1;
+        public int Turns { get; protected set; } = 1;
+
+        /// <summary>
+        /// The name of the status effect
+        /// </summary>
+        public string Name { get; protected set; } = "StatusEffect";
 
         /// <summary>
         /// The number of turns the status effect has been in effect for
         /// </summary>
-        public int TurnsPassed = 0;
+        protected int TurnsPassed = 0;
+
+        /// <summary>
+        /// States if the status effect is finished
+        /// </summary>
+        public bool IsFinished => (TurnsPassed >= Turns);
+
+        protected StatusEffect(BattleEntity entity, int turns)
+        {
+            Entity = entity;
+            Turns = turns;
+        }
+
+        /// <summary>
+        /// Refreshes the status effect by resetting the number of turns passed to 0
+        /// </summary>
+        public virtual void Refresh()
+        {
+            TurnsPassed = 0;
+        }
+
+        /// <summary>
+        /// Increments the length the status effect has been in effect and ending it if the effect is finished
+        /// </summary>
+        protected void IncrementTurns()
+        {
+            TurnsPassed++;
+            if (IsFinished)
+            {
+                OnEnd();
+                OnStatusFinished?.Invoke(this);
+            }
+        }
 
         /// <summary>
         /// What the status effect does when it's first inflicted on the entity

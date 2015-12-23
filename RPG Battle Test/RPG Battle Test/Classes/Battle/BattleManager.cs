@@ -50,6 +50,8 @@ namespace RPG_Battle_Test
         public readonly MessageBox ActionBox = new MessageBox(796, 150,
                                              new Vector2f(GameCore.GameWindow.Size.X / 2f, GameCore.GameWindow.Size.Y - 77));
 
+        public BattleMenu PartyInfo = null;
+
         public Inventory PartyInventory = new Inventory();
 
         //The current state of the battle
@@ -73,6 +75,9 @@ namespace RPG_Battle_Test
                 new Vector2f(525, 225),
                 new Vector2f(525, 325)
             };
+
+            PartyInfo = new BattleMenu(new Vector2f(440f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical);
+            PartyInfo.HideArrow = true;
         }
 
         ~BattleManager()
@@ -116,6 +121,15 @@ namespace RPG_Battle_Test
 
             BattleState = BattleStates.TurnDone;
 
+            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
+
+            for (int i = 0; i < Players.Count; i++)
+            {
+                options.Add(new BattleMenu.MenuOption(Players[i].ToString(), null));
+            }
+
+            PartyInfo.SetOptions(options);
+
             //Initialize static battle components
             BattlePlayer.OnBattleStart();
         }
@@ -123,6 +137,11 @@ namespace RPG_Battle_Test
         public void CleanUp()
         {
             PartyInventory.CleanUp();
+
+            for (int i = 0; i < EntityOrder.Count; i++)
+            {
+                EntityOrder[i].CleanUp();
+            }
         }
 
         private void TurnStart()
@@ -137,6 +156,15 @@ namespace RPG_Battle_Test
 
         public void TurnEnd()
         {
+            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
+
+            for (int i = 0; i < Players.Count; i++)
+            {
+                options.Add(new BattleMenu.MenuOption(Players[i].ToString(), null));
+            }
+
+            PartyInfo.SetOptions(options);
+
             BattleState = BattleStates.TurnDone;
 
             UpdateBattleState();
@@ -281,6 +309,7 @@ namespace RPG_Battle_Test
             Background?.Draw(GameCore.GameWindow, RenderStates.Default);
             HeaderBox?.Draw();
             ActionBox?.Draw();
+            PartyInfo?.Draw();
 
             for (int i = 0; i < EntityOrder.Count; i++)
             {

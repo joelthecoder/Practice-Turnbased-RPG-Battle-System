@@ -53,7 +53,7 @@ namespace RPG_Battle_Test
         public Vector2f Offset = new Vector2f(0, 0);
 
         public static bool Active = false;
-        public static bool HideArrow = false;
+        public bool HideArrow = false;
 
         public int CurOption = 0;
 

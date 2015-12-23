@@ -126,6 +126,7 @@
     <Compile Include="Classes\Battle\Item\DamageItem.cs" />
     <Compile Include="Classes\Battle\Item\HealingItem.cs" />
     <Compile Include="Classes\Battle\Item\Item.cs" />
+    <Compile Include="Classes\Battle\Status Effects\Poison.cs" />
     <Compile Include="Classes\Battle\Status Effects\StatusEffect.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Debug.cs" />
