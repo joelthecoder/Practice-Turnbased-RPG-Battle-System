@@ -11,6 +11,11 @@ namespace RPG_Battle_Test
     /// </summary>
     public abstract class StatusEffect
     {
+        public enum StatusTypes
+        {
+            Neutral, Positive, Negative
+        }
+
         public delegate void StatusFinished(StatusEffect status);
 
         public event StatusFinished OnStatusFinished = null;
@@ -27,6 +32,11 @@ namespace RPG_Battle_Test
         /// The name of the status effect
         /// </summary>
         public string Name { get; protected set; } = "StatusEffect";
+
+        /// <summary>
+        /// The type of status this is - Neutral, Positive, or Negative
+        /// </summary>
+        public StatusTypes StatusType { get; protected set; } = StatusTypes.Neutral;
 
         /// <summary>
         /// The number of turns the status effect has been in effect for

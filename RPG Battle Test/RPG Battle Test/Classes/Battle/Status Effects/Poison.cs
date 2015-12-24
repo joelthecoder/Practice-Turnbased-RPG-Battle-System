@@ -19,6 +19,7 @@ namespace RPG_Battle_Test
         public Poison(BattleEntity entity, int turns) : base(entity, turns)
         {
             Name = "Poison";
+            StatusType = StatusTypes.Negative;
         }
 
         public override void OnInflict()

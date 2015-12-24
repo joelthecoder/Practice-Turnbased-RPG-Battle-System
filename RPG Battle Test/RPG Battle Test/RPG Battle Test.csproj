@@ -126,12 +126,14 @@
     <Compile Include="Classes\Battle\Item\DamageItem.cs" />
     <Compile Include="Classes\Battle\Item\HealingItem.cs" />
     <Compile Include="Classes\Battle\Item\Item.cs" />
+    <Compile Include="Classes\Battle\Item\StatusItem.cs" />
     <Compile Include="Classes\Battle\Status Effects\Poison.cs" />
     <Compile Include="Classes\Battle\Status Effects\StatusEffect.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\GameCore.cs" />
+    <Compile Include="Classes\Globals.cs" />
     <Compile Include="Classes\Helper.cs" />
     <Compile Include="Classes\Input.cs" />
     <Compile Include="Classes\Battle UI\MessageBox.cs" />

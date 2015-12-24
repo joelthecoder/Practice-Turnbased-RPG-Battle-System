@@ -41,7 +41,7 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
-        public Dictionary<StatusEffect, StatusEffect> AfflictedStatuses = new Dictionary<StatusEffect, StatusEffect>();
+        protected readonly Dictionary<StatusEffect, StatusEffect> AfflictedStatuses = new Dictionary<StatusEffect, StatusEffect>();
 
         public readonly Color TurnColor = Color.Cyan;
         public EntityTypes EntityType { get; protected set; } = EntityTypes.None;

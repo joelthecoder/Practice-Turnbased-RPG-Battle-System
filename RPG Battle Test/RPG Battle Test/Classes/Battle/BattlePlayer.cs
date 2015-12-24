@@ -193,11 +193,11 @@ namespace RPG_Battle_Test
         
         protected void ItemSelection(Item item)
         {
-            if (item.IsOfType(Item.ItemTypes.Damage))
+            if (item.IsOfType(Item.ItemTypes.Damage) || item.IsOfType(Item.ItemTypes.NegativeStatus))
             {
                 TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
             }
-            else if (item.IsOfType(Item.ItemTypes.Heal))
+            else if (item.IsOfType(Item.ItemTypes.Heal) || item.IsOfType(Item.ItemTypes.PositiveStatus))
             {
                 TargetList = BattleManager.Instance.Players.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
             }

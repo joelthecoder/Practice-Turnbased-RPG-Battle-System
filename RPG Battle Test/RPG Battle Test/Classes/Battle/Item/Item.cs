@@ -16,7 +16,7 @@ namespace RPG_Battle_Test
         /// </summary>
         public enum ItemTypes
         {
-            None, Heal, Damage, Status
+            None, Heal, Damage, NegativeStatus, PositiveStatus
         }
 
         public delegate void ItemUse(Item item);
