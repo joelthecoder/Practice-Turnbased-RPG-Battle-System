@@ -115,6 +115,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Animation.cs" />
     <Compile Include="Classes\Battle UI\BattleMenu.cs" />
     <Compile Include="Classes\Battle UI\TextBox.cs" />
     <Compile Include="Classes\Battle\BattleEnemy.cs" />

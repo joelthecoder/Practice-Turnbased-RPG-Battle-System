@@ -8,6 +8,7 @@ using SFML.System;
 using SFML.Window;
 using SFML.Graphics;
 using SFML.Audio;
+using static RPG_Battle_Test.Globals;
 
 namespace RPG_Battle_Test
 {
@@ -42,6 +43,8 @@ namespace RPG_Battle_Test
         public int Speed { get; protected set; } = 1;
 
         protected readonly Dictionary<StatusEffect, StatusEffect> AfflictedStatuses = new Dictionary<StatusEffect, StatusEffect>();
+        protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
+        protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
 
         public readonly Color TurnColor = Color.Cyan;
         public EntityTypes EntityType { get; protected set; } = EntityTypes.None;
@@ -115,30 +118,58 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Calculates damage reduction based on this entity's Defense. Cannot go below 0
+        /// Calculates total damage received based on this entity's defense, magic defense, and/or weaknesses and resistances, with the
+        /// latter being applied after defense reduction
         /// </summary>
         /// <param name="damage">The damage value from the damage source</param>
+        /// <param name ="damageType">The type of damage dealt</param>
+        /// <param name="element">The elemental damage being dealt</param>
         /// <returns>The amount of total damage dealt to this entity</returns>
-        private int CalculateDamageReduction(int damage)
+        private int CalculateDamageReceived(int damage, DamageTypes damageType, Elements element)
         {
-            return Helper.Clamp(damage - Defense, 0, int.MaxValue);
+            int totaldamage = damage;
+            if (damageType == DamageTypes.Physical)
+            {
+                totaldamage -= Defense;
+            }
+            else if (damageType == DamageTypes.Magic)
+            {
+                totaldamage -= MagicDef;
+            }
+
+            if (element != Elements.Neutral)
+            {
+                //Apply weakness modifier if the entity is weak to this element
+                if (Weaknesses.ContainsKey(element))
+                {
+                    totaldamage = (int)((float)totaldamage * Globals.WeaknessModifier);
+                }
+
+                //Apply resistance modifier if the entity resists this element
+                //The damage will cancel out if the entity both resists and is weak to this element (possible with equipment, spells, etc.)
+                if (Resistances.ContainsKey(element))
+                {
+                    totaldamage = (int)((float)totaldamage * Globals.ResistanceModifier);
+                }
+            }
+
+            return Helper.Clamp(totaldamage, Globals.MinDamage, Globals.MaxDamage);
         }
 
         /// <summary>
-        /// Deals damage to an entity
+        /// Deals damage to an entity, with modifiers
         /// </summary>
-        /// <param name="entity">The entity to deal damage to. Minimum damage is 0</param>
+        /// <param name="entity">The entity to deal damage to</param>
         public void AttackEntity(BattleEntity entity)
         {
-            entity.TakeDamage(CalculateDamageDealt());
-
             Debug.Log(Name + " attacked " + entity.Name + "!");
+            entity.TakeDamage(CalculateDamageDealt(), DamageTypes.Physical, Elements.Neutral);
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, DamageTypes damagetype, Elements element)
         {
-            int totaldamage = CalculateDamageReduction(damage);
-            CurHP -= totaldamage;
+            int totaldamage = CalculateDamageReceived(damage, damagetype, element);
+            CurHP = Helper.Clamp(CurHP - totaldamage, 0, MaxHP);
 
             Debug.Log($"{Name} received {totaldamage} damage!");
 
@@ -192,7 +223,7 @@ namespace RPG_Battle_Test
             if (AfflictedStatuses.ContainsKey(status))
             {
                 AfflictedStatuses.Remove(status);
-                Debug.LogError($"{status.Name} ended on {Name}!");
+                Debug.Log($"{status.Name} ended on {Name}!");
             }
             else
             {

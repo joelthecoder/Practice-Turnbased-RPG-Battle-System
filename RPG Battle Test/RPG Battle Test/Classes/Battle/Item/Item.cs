@@ -44,13 +44,18 @@ namespace RPG_Battle_Test
             {
                 new HealingItem("Potion", 20, 0),
                 new HealingItem("Ether", 0, 20),
-                new DamageItem("Bomb", 10)
+                new DamageItem("Bomb", 10, Globals.DamageTypes.Physical, Globals.Elements.Neutral)
             };
         }
 
         protected Item(string name)
         {
             Name = name;
+        }
+
+        protected Item(Item item)
+        {
+            Name = item.Name;
         }
 
         /// <summary>

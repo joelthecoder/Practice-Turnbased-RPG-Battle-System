@@ -6,13 +6,44 @@ using System.Threading.Tasks;
 
 namespace RPG_Battle_Test
 {
-    /*public enum DamageTypes
-    {
-        None, Entity,
-    }*/
-    
     public static class Globals
     {
-        
+        /// <summary>
+        /// Enumeration of different damage types. 
+        /// None represents neutral damage, which is not reduced by Defense or Magic Defense
+        /// </summary>
+        public enum DamageTypes
+        {
+            None, Physical, Magic
+        }
+
+        /// <summary>
+        /// Enumeration of different element types. 
+        /// Status represents the damage done to an entity from a status effect
+        /// </summary>
+        public enum Elements
+        {
+            Neutral, Status, Fire, Earth, Ice, Poison, DefPierce, MDefPierce
+        }
+
+        /// <summary>
+        /// The amount damage is modified by when an entity resists a particular element
+        /// </summary>
+        public const float ResistanceModifier = .5f;
+
+        /// <summary>
+        /// The amount damage is modified by when an entity is weak to a particular element
+        /// </summary>
+        public const float WeaknessModifier = 2f;
+
+        /// <summary>
+        /// The minimum allowed damage
+        /// </summary>
+        public const int MinDamage = 0;
+
+        /// <summary>
+        /// The maximum allowed damage
+        /// </summary>
+        public const int MaxDamage = 99999;
     }
 }
