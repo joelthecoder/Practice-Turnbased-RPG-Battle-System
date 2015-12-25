@@ -14,14 +14,26 @@ namespace RPG_Battle_Test
     /// <summary>
     /// Sprite animation
     /// </summary>
-    public sealed class Animation
+    public class Animation
     {
-        public Texture SpriteSheet = null;
-        private Frame[] Frames = null;
-        private int MaxFrames = 1;
-        private int CurFrame = 0;
+        public enum AnimationTypes
+        {
+            Forward, Looping
+        }
 
-        public Animation(Texture texture, params IntRect[] frameRects)
+        public Texture SpriteSheet = null;
+        protected Frame[] Frames = null;
+
+        protected int MaxFrames = 1;
+        protected int CurFrame = 0;
+        protected bool AnimDone = false;
+
+        protected float FrameRate = 15f;
+        protected float PrevFrameTimer = 0f;
+
+        protected AnimationTypes AnimationType = AnimationTypes.Forward;
+
+        public Animation(Texture texture, float frameRate, AnimationTypes animType, params IntRect[] frameRects)
         {
             SpriteSheet = texture;
             MaxFrames = frameRects.Length;
@@ -30,23 +42,77 @@ namespace RPG_Battle_Test
             {
                 Frames[i] = new Frame(SpriteSheet, frameRects[i]);
             }
+
+            AnimationType = animType;
+
+            FrameRate = frameRate;
+            ResetFrameDur();
         }
 
-        private void Progress()
-        {
-            CurFrame++;
-            if (CurFrame >= MaxFrames)
-            {
-                CurFrame = MaxFrames - 1;
+        public bool AnimationFinished => AnimDone;
+        protected int MaxFrameIndex => MaxFrames - 1;
 
-                //Animation done
+        public Vector2f Position
+        {
+            get
+            {
+                return Frames[0].FrameSprite.Position;
             }
+            set
+            {
+                for (int i = 0; i < Frames.Length; i++)
+                {
+                    Frames[i].FrameSprite.Position = value;
+                }
+            }
+        }
+
+        protected virtual void Progress()
+        {
+            if (AnimationType == AnimationTypes.Looping)
+            {
+                CurFrame = Helper.Wrap(CurFrame + 1, 0, MaxFrameIndex);
+            }
+            else
+            {
+                CurFrame++;
+                if (CurFrame >= MaxFrames)
+                {
+                    CurFrame = MaxFrameIndex;
+
+                    //Animation done
+                    AnimDone = true;
+                }
+            }
+
+            ResetFrameDur();
+        }
+
+        protected void ResetFrameDur()
+        {
+            PrevFrameTimer = GameCore.ActiveSeconds + (1f / FrameRate);
+        }
+
+        public void Update()
+        {
+            if (AnimDone == false)
+            {
+                if (GameCore.ActiveSeconds >= PrevFrameTimer)
+                {
+                    Progress();
+                }
+            }
+        }
+
+        public void Draw(float depth)
+        {
+            GameCore.spriteSorter.Add(Frames[CurFrame], depth);
         }
 
         /// <summary>
         /// Animation frame
         /// </summary>
-        private sealed class Frame
+        protected sealed class Frame : Drawable
         {
             public IntRect TextureRect = new IntRect();
             public Sprite FrameSprite = null;
@@ -55,7 +121,13 @@ namespace RPG_Battle_Test
             {
                 TextureRect = texrect;
 
-                FrameSprite = Helper.CreateSprite(texture, true, TextureRect);
+                FrameSprite = Helper.CreateSprite(texture, false, TextureRect);
+                FrameSprite.Scale = new Vector2f(FrameSprite.Scale.X * 3f, FrameSprite.Scale.Y * 3f);
+            }
+
+            public void Draw(RenderTarget target, RenderStates states)
+            {
+                FrameSprite.Draw(target, states);
             }
         }
     }

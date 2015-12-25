@@ -50,6 +50,8 @@ namespace RPG_Battle_Test
 
         private List<BattleEntity> TargetList = null;
 
+        public Animation AttackAnim = null;
+
         public BattlePlayer(Characters character)
         {
             EntityType = EntityTypes.Player;
@@ -87,6 +89,7 @@ namespace RPG_Battle_Test
             EntitySprite.Scale *= 3f;
 
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
+            AttackAnim = new Animation(new Texture(Constants.ContentPath + "CecilK.png"), 5f, Animation.AnimationTypes.Looping, new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
         }
 
         /// <summary>
@@ -236,6 +239,7 @@ namespace RPG_Battle_Test
         public override void Update()
         {
             base.Update();
+            AttackAnim.Update();
         }
 
         public override void Draw()
@@ -246,6 +250,9 @@ namespace RPG_Battle_Test
                 GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .03f);
                 //Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
             }
+
+            AttackAnim.Position = new Vector2f(500f, 400f);
+            AttackAnim.Draw(40f);
         }
 
         public override string ToString()

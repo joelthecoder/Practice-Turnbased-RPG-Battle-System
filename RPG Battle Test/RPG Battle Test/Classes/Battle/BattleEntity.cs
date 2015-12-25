@@ -112,9 +112,10 @@ namespace RPG_Battle_Test
         /// Calculates the total damage this entity will deal to another entity
         /// </summary>
         /// <returns>The amount of total damage this entity will deal</returns>
-        private int CalculateDamageDealt()
+        private int CalculateDamageDealt(/*DamageTypes damageType, Elements element*/)
         {
-            return Helper.Clamp(Attack, 0, int.MaxValue);
+            //NOTE: Figure out how to handle None damage here. Default to Attack for now
+            return Helper.Clamp(/*damageType == DamageTypes.Magic ? MagicAtk : */Attack, Globals.MinDamage, Globals.MaxDamage);
         }
 
         /// <summary>

@@ -20,6 +20,8 @@ namespace RPG_Battle_Test
         //public static 
         protected Text text = null;
 
+        public const uint FPS = 60;
+
         /// <summary>
         /// Constructor - called before any GameCore methods
         /// </summary>
@@ -51,15 +53,9 @@ namespace RPG_Battle_Test
         /// </summary>
         public void Initialize()
         {
-            /*Font font = new Font(Constants.ContentPath + "arial.ttf");
-            text = new Text(@"Press 'Enter' to play", font);
-            FloatRect rect = text.GetLocalBounds();
-            text.Origin = new Vector2f(rect.Left + (rect.Width / 2f), rect.Top + (rect.Height/2f));
-            text.Position = new Vector2f(GameWindow.Size.X / 2f, GameWindow.Size.Y / 2f);*/
-
             Debug.Log("Initialized GameCore!");
 
-            GameWindow.SetFramerateLimit(60);
+            GameWindow.SetFramerateLimit(FPS);
             GameWindow.SetKeyRepeatEnabled(false);
 
             GameWindow.Closed += OnGameClose;
@@ -106,8 +102,6 @@ namespace RPG_Battle_Test
         /// </summary>
         public void Draw()
         {
-            text?.Draw(GameWindow, new RenderStates(BlendMode.Add));
-
             //We would put this here in the "Battle" game state
             BattleManager.Instance.Draw();
         }

@@ -19,11 +19,10 @@ namespace RPG_Battle_Test
 
         /// <summary>
         /// Enumeration of different element types. 
-        /// Status represents the damage done to an entity from a status effect
         /// </summary>
         public enum Elements
         {
-            Neutral, Status, Fire, Earth, Ice, Poison, DefPierce, MDefPierce
+            Neutral, Fire, Earth, Ice, Poison, DefPierce, MDefPierce
         }
 
         /// <summary>
