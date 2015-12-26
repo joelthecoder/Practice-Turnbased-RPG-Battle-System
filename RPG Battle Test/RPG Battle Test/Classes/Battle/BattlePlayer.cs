@@ -281,7 +281,7 @@ namespace RPG_Battle_Test
         {
             List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
 
-            DamageSpell Poison = new DamageSpell("Demi1", 8, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
+            DamageSpell Poison = new DamageSpell("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
 
             options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
 

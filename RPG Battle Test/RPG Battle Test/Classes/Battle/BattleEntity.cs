@@ -42,7 +42,7 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
-        protected readonly Dictionary<StatusEffect, StatusEffect> AfflictedStatuses = new Dictionary<StatusEffect, StatusEffect>();
+        protected readonly Dictionary<string, StatusEffect> AfflictedStatuses = new Dictionary<string, StatusEffect>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
 
@@ -78,7 +78,7 @@ namespace RPG_Battle_Test
         //Battle-turn related methods
         public virtual void StartTurn()
         {
-            StatusEffect[] statuses = AfflictedStatuses.Keys.ToArray();
+            StatusEffect[] statuses = AfflictedStatuses.Values.ToArray();
             for (int i = 0; i < statuses.Length; i++)
             {
                 statuses[i].OnTurnStart();
@@ -87,7 +87,7 @@ namespace RPG_Battle_Test
 
         public virtual void OnTurnEnd()
         {
-            StatusEffect[] statuses = AfflictedStatuses.Keys.ToArray();
+            StatusEffect[] statuses = AfflictedStatuses.Values.ToArray();
             for (int i = 0; i < statuses.Length; i++)
             {
                 statuses[i].OnTurnEnd();
@@ -96,8 +96,8 @@ namespace RPG_Battle_Test
 
         public void EndTurn()
         {
-            BattleManager.Instance.TurnEnd();
             OnTurnEnd();
+            BattleManager.Instance.TurnEnd();
         }
 
         /// <summary>
@@ -217,18 +217,20 @@ namespace RPG_Battle_Test
                     continue;
                 }
 
-                if (AfflictedStatuses.ContainsKey(status))
+                string statusName = status.Name;
+
+                if (AfflictedStatuses.ContainsKey(statusName))
                 {
-                    AfflictedStatuses[status].Refresh();
-                    Debug.Log($"Refreshed status {AfflictedStatuses[status].Name} on {Name}!");
+                    AfflictedStatuses[statusName].Refresh();
+                    Debug.Log($"Refreshed status {AfflictedStatuses[statusName].Name} on {Name}!");
                 }
                 else
                 {
                     status.OnStatusFinished += OnStatusFinished;
-                    AfflictedStatuses.Add(status, status);
-                    AfflictedStatuses[status].SetReceiver(this);
-                    AfflictedStatuses[status].OnInflict();
-                    Debug.Log($"Inflicted status {AfflictedStatuses[status].Name} on {Name}!");
+                    AfflictedStatuses.Add(statusName, status);
+                    AfflictedStatuses[statusName].SetReceiver(this);
+                    AfflictedStatuses[statusName].OnInflict();
+                    Debug.Log($"Inflicted status {AfflictedStatuses[statusName].Name} on {Name}!");
                 }
             }
             OnEntityStatus?.Invoke(this);
@@ -238,9 +240,9 @@ namespace RPG_Battle_Test
         {
             status.OnStatusFinished -= OnStatusFinished;
 
-            if (AfflictedStatuses.ContainsKey(status))
+            if (AfflictedStatuses.ContainsKey(status.Name))
             {
-                AfflictedStatuses.Remove(status);
+                AfflictedStatuses.Remove(status.Name);
                 Debug.Log($"{status.Name} ended on {Name}!");
             }
             else
