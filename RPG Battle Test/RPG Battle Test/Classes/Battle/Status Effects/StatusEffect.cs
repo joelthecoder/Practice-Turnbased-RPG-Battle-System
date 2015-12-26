@@ -48,9 +48,8 @@ namespace RPG_Battle_Test
         /// </summary>
         public bool IsFinished => (TurnsPassed >= Turns);
 
-        protected StatusEffect(BattleEntity entity, int turns)
+        protected StatusEffect(int turns)
         {
-            Entity = entity;
             Turns = turns;
         }
 
@@ -60,6 +59,15 @@ namespace RPG_Battle_Test
         public virtual void Refresh()
         {
             TurnsPassed = 0;
+        }
+
+        /// <summary>
+        /// Sets the receiver of the status effect
+        /// </summary>
+        /// <param name="entity"></param>
+        public void SetReceiver(BattleEntity entity)
+        {
+            Entity = entity;
         }
 
         /// <summary>

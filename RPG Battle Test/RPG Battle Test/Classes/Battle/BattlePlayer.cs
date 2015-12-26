@@ -37,6 +37,7 @@ namespace RPG_Battle_Test
         /// </summary>
         public static BattleMenu MainBattleMenu = null;
         public static BattleMenu ItemMenu = null;
+        public static BattleMenu SpellMenu = null;
 
         public static Stack<BattleMenu> Menus = null;
 
@@ -89,7 +90,8 @@ namespace RPG_Battle_Test
             EntitySprite.Scale *= 3f;
 
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
-            AttackAnim = new Animation(new Texture(Constants.ContentPath + "CecilK.png"), 5f, Animation.AnimationTypes.Looping, new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
+            AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
+            new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
         }
 
         /// <summary>
@@ -100,6 +102,7 @@ namespace RPG_Battle_Test
             Menus = new Stack<BattleMenu>();
             MainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical);
             ItemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
+            SpellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
 
             Menus.Push(MainBattleMenu);
         }
@@ -110,8 +113,9 @@ namespace RPG_Battle_Test
             BattleMenu.Active = true;
 
             //Set the basic options
-            MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Item", ItemSelect));
+            MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
             ItemMenu.OnOpen = PopulateItemList;
+            SpellMenu.OnOpen = PopulateSpellList;
         }
 
         public override void OnTurnEnd()
@@ -216,9 +220,46 @@ namespace RPG_Battle_Test
             OnSelectEntity = item.Use;
         }
 
+        protected void SpellSelection(Spell spell)
+        {
+            if (spell.SpellType == Spell.SpellTypes.Negative)
+            {
+                TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+            }
+            else if (spell.SpellType == Spell.SpellTypes.Positive)
+            {
+                TargetList = BattleManager.Instance.Players.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+            }
+            else
+            {
+                TargetList = BattleManager.Instance.EntityOrder;
+            }
+
+            for (int i = 0; i < TargetList.Count; i++)
+            {
+                BattleEntity target = TargetList[i];
+                if (target.IsDead == false)
+                {
+                    CurSelection = i;
+                    Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
+                    BattleManager.Instance.HeaderBox.SetText($"Use {spell.Name} on " + TargetList[i].Name + "?");
+                    break;
+                }
+            }
+
+            OnSelectEntity = spell.OnUse;
+        }
+
         protected void ItemSelect()
         {
             Menus.Push(ItemMenu);
+            if (Menus.Peek().OnOpen != null)
+                Menus.Peek().OnOpen();
+        }
+
+        protected void SpellSelect()
+        {
+            Menus.Push(SpellMenu);
             if (Menus.Peek().OnOpen != null)
                 Menus.Peek().OnOpen();
         }
@@ -236,6 +277,17 @@ namespace RPG_Battle_Test
             ItemMenu.SetOptions(options);
         }
 
+        protected void PopulateSpellList()
+        {
+            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
+
+            DamageSpell Poison = new DamageSpell("Demi1", 8, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
+
+            options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
+
+            SpellMenu.SetOptions(options);
+        }
+
         public override void Update()
         {
             base.Update();
@@ -248,7 +300,6 @@ namespace RPG_Battle_Test
             if (CurSelection.HasValue)
             {
                 GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .03f);
-                //Arrow.Draw(GameCore.GameWindow, RenderStates.Default);
             }
 
             AttackAnim.Position = new Vector2f(500f, 400f);

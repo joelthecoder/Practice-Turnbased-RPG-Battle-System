@@ -16,7 +16,7 @@ namespace RPG_Battle_Test
     /// </summary>
     public sealed class Poison : StatusEffect
     {
-        public Poison(BattleEntity entity, int turns) : base(entity, turns)
+        public Poison(int turns) : base(turns)
         {
             Name = "Poison";
             StatusType = StatusTypes.Negative;
@@ -39,8 +39,8 @@ namespace RPG_Battle_Test
 
         public override void OnTurnEnd()
         {
-            IncrementTurns();
             Entity.TakeDamage((int)(Entity.MaxHP / 10f), Globals.DamageTypes.None, Globals.Elements.Poison);
+            IncrementTurns();
         }
     }
 }

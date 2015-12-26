@@ -28,21 +28,23 @@ namespace RPG_Battle_Test
         /// <summary>
         /// The amount damage is modified by when an entity resists a particular element
         /// </summary>
-        public const float ResistanceModifier = .5f;
+        public const float RESISTANCE_MOD = .5f;
 
         /// <summary>
         /// The amount damage is modified by when an entity is weak to a particular element
         /// </summary>
-        public const float WeaknessModifier = 2f;
+        public const float WEAKNESS_MOD = 2f;
 
         /// <summary>
         /// The minimum allowed damage
         /// </summary>
-        public const int MinDamage = 0;
+        public const int MIN_DMG = 0;
 
         /// <summary>
         /// The maximum allowed damage
         /// </summary>
-        public const int MaxDamage = 99999;
+        public const int MAX_DMG = 99999;
+
+        public static readonly Random Randomizer = new Random();
     }
 }

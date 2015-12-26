@@ -31,9 +31,9 @@ namespace RPG_Battle_Test
         protected float FrameRate = 15f;
         protected float PrevFrameTimer = 0f;
 
-        protected AnimationTypes AnimationType = AnimationTypes.Forward;
+        public AnimationTypes AnimationType { get; protected set; } = AnimationTypes.Forward;
 
-        public Animation(Texture texture, float frameRate, AnimationTypes animType, params IntRect[] frameRects)
+        public Animation(Texture texture, float frameRate, params IntRect[] frameRects)
         {
             SpriteSheet = texture;
             MaxFrames = frameRects.Length;
@@ -43,7 +43,7 @@ namespace RPG_Battle_Test
                 Frames[i] = new Frame(SpriteSheet, frameRects[i]);
             }
 
-            AnimationType = animType;
+            AnimationType = AnimationTypes.Forward;
 
             FrameRate = frameRate;
             ResetFrameDur();
@@ -69,20 +69,13 @@ namespace RPG_Battle_Test
 
         protected virtual void Progress()
         {
-            if (AnimationType == AnimationTypes.Looping)
+            CurFrame++;
+            if (CurFrame >= MaxFrames)
             {
-                CurFrame = Helper.Wrap(CurFrame + 1, 0, MaxFrameIndex);
-            }
-            else
-            {
-                CurFrame++;
-                if (CurFrame >= MaxFrames)
-                {
-                    CurFrame = MaxFrameIndex;
+                CurFrame = MaxFrameIndex;
 
-                    //Animation done
-                    AnimDone = true;
-                }
+                //Animation done
+                AnimDone = true;
             }
 
             ResetFrameDur();
@@ -91,6 +84,16 @@ namespace RPG_Battle_Test
         protected void ResetFrameDur()
         {
             PrevFrameTimer = GameCore.ActiveSeconds + (1f / FrameRate);
+        }
+
+        /// <summary>
+        /// Resets the animation
+        /// </summary>
+        public virtual void Reset()
+        {
+            AnimDone = false;
+            CurFrame = 0;
+            ResetFrameDur();
         }
 
         public void Update()

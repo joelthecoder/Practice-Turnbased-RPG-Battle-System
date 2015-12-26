@@ -101,11 +101,21 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Performs a battle command
+        /// Gets the DamageType of the Entity's attack action
         /// </summary>
-        public void UseCommand(BattleCommand command)
+        /// <returns></returns>
+        protected virtual DamageTypes GetAttackDamageType()
         {
-            command.Perform();
+            return DamageTypes.Physical;
+        }
+
+        /// <summary>
+        /// Gets the Element of the Entity's attack action
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Elements GetAttackElement()
+        {
+            return Elements.Neutral;
         }
 
         /// <summary>
@@ -115,7 +125,7 @@ namespace RPG_Battle_Test
         private int CalculateDamageDealt(/*DamageTypes damageType, Elements element*/)
         {
             //NOTE: Figure out how to handle None damage here. Default to Attack for now
-            return Helper.Clamp(/*damageType == DamageTypes.Magic ? MagicAtk : */Attack, Globals.MinDamage, Globals.MaxDamage);
+            return Helper.Clamp(/*damageType == DamageTypes.Magic ? MagicAtk : */Attack, Globals.MIN_DMG, Globals.MAX_DMG);
         }
 
         /// <summary>
@@ -143,18 +153,18 @@ namespace RPG_Battle_Test
                 //Apply weakness modifier if the entity is weak to this element
                 if (Weaknesses.ContainsKey(element))
                 {
-                    totaldamage = (int)((float)totaldamage * Globals.WeaknessModifier);
+                    totaldamage = (int)((float)totaldamage * Globals.WEAKNESS_MOD);
                 }
 
                 //Apply resistance modifier if the entity resists this element
                 //The damage will cancel out if the entity both resists and is weak to this element (possible with equipment, spells, etc.)
                 if (Resistances.ContainsKey(element))
                 {
-                    totaldamage = (int)((float)totaldamage * Globals.ResistanceModifier);
+                    totaldamage = (int)((float)totaldamage * Globals.RESISTANCE_MOD);
                 }
             }
 
-            return Helper.Clamp(totaldamage, Globals.MinDamage, Globals.MaxDamage);
+            return Helper.Clamp(totaldamage, Globals.MIN_DMG, Globals.MAX_DMG);
         }
 
         /// <summary>
@@ -164,7 +174,7 @@ namespace RPG_Battle_Test
         public void AttackEntity(BattleEntity entity)
         {
             Debug.Log(Name + " attacked " + entity.Name + "!");
-            entity.TakeDamage(CalculateDamageDealt(), DamageTypes.Physical, Elements.Neutral);
+            entity.TakeDamage(CalculateDamageDealt(), GetAttackDamageType(), GetAttackElement());
         }
 
         public void TakeDamage(int damage, DamageTypes damagetype, Elements element)
@@ -201,6 +211,12 @@ namespace RPG_Battle_Test
             {
                 StatusEffect status = statuses[i];
 
+                if (status == null)
+                {
+                    Debug.LogError($"Status being inflicted on {Name} at index {i} is null!");
+                    continue;
+                }
+
                 if (AfflictedStatuses.ContainsKey(status))
                 {
                     AfflictedStatuses[status].Refresh();
@@ -210,6 +226,7 @@ namespace RPG_Battle_Test
                 {
                     status.OnStatusFinished += OnStatusFinished;
                     AfflictedStatuses.Add(status, status);
+                    AfflictedStatuses[status].SetReceiver(this);
                     AfflictedStatuses[status].OnInflict();
                     Debug.Log($"Inflicted status {AfflictedStatuses[status].Name} on {Name}!");
                 }
