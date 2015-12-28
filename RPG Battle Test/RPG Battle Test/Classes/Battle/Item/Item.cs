@@ -31,7 +31,13 @@ namespace RPG_Battle_Test
         /// <summary>
         /// The name of the item
         /// </summary>
-        public string Name = "Item";
+        public string Name { get; protected set; } = "Item";
+
+        /// <summary>
+        /// Whether the item is multi-target or not.
+        /// If false only one target can be selected, otherwise all targets will be selected
+        /// </summary>
+        public bool MultiTarget { get; protected set; } = false;
 
         /// <summary>
         /// The dictionary of types the item is classified as. A particular key existing means the item is classified as that type
@@ -42,8 +48,8 @@ namespace RPG_Battle_Test
         {
             ItemTable = new Item[]
             {
-                new HealingItem("Potion", 20, 0),
-                new HealingItem("Ether", 0, 20),
+                new HealingItem("Potion", false, 20, 0),
+                new HealingItem("Ether", false, 0, 20),
                 new DamageItem("Bomb", 10, Globals.DamageTypes.Physical, Globals.Elements.Neutral)
             };
         }
@@ -53,28 +59,35 @@ namespace RPG_Battle_Test
             Name = name;
         }
 
+        protected Item(string name, bool multitarget) : this(name)
+        {
+            MultiTarget = multitarget;
+        }
+
         protected Item(Item item)
         {
             Name = item.Name;
+            MultiTarget = MultiTarget;
+            TypeList = new Dictionary<ItemTypes, bool>(item.TypeList);
         }
 
         /// <summary>
         /// Uses the item. This is here so we can call events
         /// </summary>
-        /// <param name="entity"></param>
-        public void Use(BattleEntity entity)
+        /// <param name="entities"></param>
+        public void Use(params BattleEntity[] entities)
         {
             //Call use event
             ItemUseEvent?.Invoke(this);
 
-            OnUse(entity);
+            OnUse(entities);
         }
 
         /// <summary>
-        /// What happens to the entity when the Item is used on it
+        /// What happens to the entities when the Item is used on it
         /// </summary>
-        /// <param name="entity"></param>
-        protected abstract void OnUse(BattleEntity entity);
+        /// <param name="entities"></param>
+        protected abstract void OnUse(params BattleEntity[] entities);
 
         /// <summary>
         /// Tells if an item is a particular type

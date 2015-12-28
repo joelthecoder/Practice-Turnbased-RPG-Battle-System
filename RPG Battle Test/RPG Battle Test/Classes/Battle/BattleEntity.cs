@@ -168,13 +168,16 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Deals damage to an entity, with modifiers
+        /// Deals damage to one or more entities, with modifiers
         /// </summary>
-        /// <param name="entity">The entity to deal damage to</param>
-        public void AttackEntity(BattleEntity entity)
+        /// <param name="entities">The entities to deal damage to</param>
+        public void AttackEntity(params BattleEntity[] entities)
         {
-            Debug.Log(Name + " attacked " + entity.Name + "!");
-            entity.TakeDamage(CalculateDamageDealt(), GetAttackDamageType(), GetAttackElement());
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Debug.Log(Name + " attacked " + entities[i].Name + "!");
+                entities[i].TakeDamage(CalculateDamageDealt(), GetAttackDamageType(), GetAttackElement());
+            }
         }
 
         public void TakeDamage(int damage, DamageTypes damagetype, Elements element)
@@ -204,7 +207,7 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Inflicts one or more StatusEffects on the entity
         /// </summary>
-        /// <param name="statuses">The statuses to inflict on the entity</param>
+        /// <param name="statuses">The StatusEffets to inflict on the entity</param>
         public void InflictStatus(params StatusEffect[] statuses)
         {
             for (int i = 0; i < statuses.Length; i++)
@@ -234,6 +237,35 @@ namespace RPG_Battle_Test
                 }
             }
             OnEntityStatus?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Removes all StatusEffects affecting an entity.
+        /// Functions the same as RemoveStatus
+        /// </summary>
+        public void ClearAllStatuses()
+        {
+            RemoveStatus(AfflictedStatuses.Keys.ToArray());
+        }
+
+        /// <summary>
+        /// Removes a set of StatusEffects affecting an entity.
+        /// Each StatusEffect's OnEnd() method is called and the entity unsubscribes from the status finish events
+        /// </summary>
+        /// <param name="statuses">The names of the StatusEffets to remove</param>
+        public void RemoveStatus(params string[] statuses)
+        {
+            for (int i = 0; i < statuses.Length; i++)
+            {
+                string statusName = statuses[i];
+                if (AfflictedStatuses.ContainsKey(statusName))
+                {
+                    StatusEffect status = AfflictedStatuses[statusName];
+                    status.OnEnd();
+
+                    OnStatusFinished(status);
+                }
+            }
         }
 
         private void OnStatusFinished(StatusEffect status)

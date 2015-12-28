@@ -11,19 +11,23 @@ namespace RPG_Battle_Test
         public uint HPRestored = 0;
         public uint MPRestored = 0;
 
-        public HealingItem(string name, uint hpRestored, uint mpRestored) : base(name)
+        public HealingItem(string name, bool multitarget, uint hpRestored, uint mpRestored) : base(name, multitarget)
         {
             HPRestored = hpRestored;
             MPRestored = mpRestored;
 
+            MultiTarget = multitarget;
             TypeList.Add(ItemTypes.Heal, true);
         }
 
-        protected override void OnUse(BattleEntity entity)
+        protected override void OnUse(params BattleEntity[] entities)
         {
-            entity.Restore(HPRestored, MPRestored);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                entities[i].Restore(HPRestored, MPRestored);
 
-            Debug.Log($"Healed {entity.Name} for {HPRestored} HP and {MPRestored} MP!");
+                Debug.Log($"Healed {entities[i].Name} for {HPRestored} HP and {MPRestored} MP!");
+            }
         }
     }
 }

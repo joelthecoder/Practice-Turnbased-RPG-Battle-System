@@ -22,9 +22,12 @@ namespace RPG_Battle_Test
             TypeList.Add(ItemTypes.Damage, true);
         }
 
-        protected override void OnUse(BattleEntity entity)
+        protected override void OnUse(params BattleEntity[] entities)
         {
-            entity.TakeDamage(Damage, DamageType, Element);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                entities[i].TakeDamage(Damage, DamageType, Element);
+            }
         }
     }
 }

@@ -115,7 +115,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Animation.cs" />
+    <Compile Include="Classes\Battle\Spells\HealingSpell.cs" />
+    <Compile Include="Classes\Visual\Animation.cs" />
     <Compile Include="Classes\Battle UI\BattleMenu.cs" />
     <Compile Include="Classes\Battle UI\TextBox.cs" />
     <Compile Include="Classes\Battle\BattleEnemy.cs" />
@@ -141,7 +142,7 @@
     <Compile Include="Classes\Input.cs" />
     <Compile Include="Classes\Battle UI\MessageBox.cs" />
     <Compile Include="Classes\Inventory.cs" />
-    <Compile Include="Classes\LoopAnimation.cs" />
+    <Compile Include="Classes\Visual\LoopAnimation.cs" />
     <Compile Include="Classes\Program.cs" />
     <Compile Include="Classes\SpriteBatch.cs" />
     <Compile Include="Classes\SpriteSorter.cs" />

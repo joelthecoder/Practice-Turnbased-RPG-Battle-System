@@ -28,7 +28,7 @@ namespace RPG_Battle_Test
             Attack, Item, Magic, Steal, Run
         }
 
-        public delegate void SelectEntity(BattleEntity entity);
+        public delegate void SelectEntity(params BattleEntity[] entities);
 
         public SelectEntity OnSelectEntity = null;
 
@@ -222,6 +222,12 @@ namespace RPG_Battle_Test
 
         protected void SpellSelection(Spell spell)
         {
+            if (CurMP < spell.MPCost)
+            {
+                Debug.Log($"{Name} has {CurMP}MP but requires {spell.MPCost}MP to cast {spell.Name}!");
+                return;
+            }
+            
             if (spell.SpellType == Spell.SpellTypes.Negative)
             {
                 TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
@@ -247,6 +253,8 @@ namespace RPG_Battle_Test
                 }
             }
 
+            //NOTE: We need to know which BattleEntity casted this Spell so we can subtract the MP cost
+            //Make a single, consistent way of doing this (for Items, etc too)
             OnSelectEntity = spell.OnUse;
         }
 
@@ -281,9 +289,11 @@ namespace RPG_Battle_Test
         {
             List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
 
-            DamageSpell Poison = new DamageSpell("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
+            DamageSpell Poison = new DamageSpell("Demi1", 3, 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
+            HealingSpell Cure = new HealingSpell("Cure1", 2, false, 10, 0);
 
             options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
+            options.Add(new BattleMenu.MenuOption($"{Cure.Name}", () => SpellSelection(Cure)));
 
             SpellMenu.SetOptions(options);
         }

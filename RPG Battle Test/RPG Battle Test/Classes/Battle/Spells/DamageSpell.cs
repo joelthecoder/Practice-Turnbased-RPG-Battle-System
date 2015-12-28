@@ -20,7 +20,7 @@ namespace RPG_Battle_Test
         public StatusEffect Status = null;
         public float StatusPercent = 0f;
 
-        public DamageSpell(string name, int damage, DamageTypes damageType, Elements element) : base(name)
+        public DamageSpell(string name, uint mpCost, int damage, DamageTypes damageType, Elements element) : base(name, mpCost)
         {
             SpellType = SpellTypes.Negative;
 
@@ -29,28 +29,31 @@ namespace RPG_Battle_Test
             Element = element;
         }
 
-        public DamageSpell(string name, int damage, DamageTypes damageType, Elements element, StatusEffect status, float statuspercentage)
-            : this(name, damage, damageType, element)
+        public DamageSpell(string name, uint mpCost, int damage, DamageTypes damageType, Elements element, StatusEffect status, float statuspercentage)
+            : this(name, mpCost, damage, damageType, element)
         {
             Status = status;
             StatusPercent = Helper.Clamp(statuspercentage, 0f, 100f);
         }
 
-        public override void OnUse(BattleEntity entity)
+        public override void OnUse(params BattleEntity[] entities)
         {
-            //If no Damage (only Status), don't make the entity take damage
-            if (Damage > 0)
+            for (int i = 0; i < entities.Length; i++)
             {
-                entity.TakeDamage(Damage, DamageType, Element);
-            }
-
-            //If no Status (only damage), don't bother inflicting
-            if (Status != null)
-            {
-                float percent = (float)Math.Round(Randomizer.NextDouble() * 100f);
-                if (StatusPercent > percent)
+                //If no Damage (only Status), don't make the entity take damage
+                if (Damage > 0)
                 {
-                    entity.InflictStatus(Status);
+                    entities[i].TakeDamage(Damage, DamageType, Element);
+                }
+
+                //If no Status (only damage), don't bother inflicting
+                if (Status != null)
+                {
+                    float percent = (float)Math.Round(Randomizer.NextDouble() * 100f);
+                    if (StatusPercent > percent)
+                    {
+                        entities[i].InflictStatus(Status);
+                    }
                 }
             }
         }

@@ -19,9 +19,12 @@ namespace RPG_Battle_Test
             else TypeList.Add(ItemTypes.PositiveStatus, true);
         }
 
-        protected override void OnUse(BattleEntity entity)
+        protected override void OnUse(params BattleEntity[] entities)
         {
-            entity.InflictStatus(Status);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                entities[i].InflictStatus(Status);
+            }
         }
     }
 }
