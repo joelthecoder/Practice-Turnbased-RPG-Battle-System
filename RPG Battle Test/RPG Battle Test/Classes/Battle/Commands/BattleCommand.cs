@@ -11,11 +11,20 @@ using SFML.Audio;
 
 namespace RPG_Battle_Test
 {
-    //The base interface for commands available for use in battle
+    //The base class for commands available for use in battle
     //These include, but are not limited to, Attack, Defend, Magic, Item, Run
-    public interface BattleCommand
+    public abstract class BattleCommand
     {
-        //Perform a command
-        void Perform();
+        /// <summary>
+        /// Perform a command
+        /// </summary>
+        /// <param name="Attacker">The BattleEntity performing the action</param>
+        /// <param name="Victims">The BattleEntities on the receiving end of the action</param>
+        public void PerformAction(BattleEntity Attacker, params BattleEntity[] Victims)
+        {
+            Perform(Attacker, Victims);
+        }
+
+        protected abstract void Perform(BattleEntity Attacker, params BattleEntity[] Victims);
     }
 }

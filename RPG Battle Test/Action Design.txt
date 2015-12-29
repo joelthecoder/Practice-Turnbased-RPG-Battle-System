@@ -1,0 +1,15 @@
+PROBLEMS:
+---------
+1. We don't know which BattleEntity did which action
+2. We may need additional information about what to do in each action
+   For example, we need to know which Spell or Item was used in the Spell and Item actions, respectively
+3. We need a base action method that's called regardless of the action used
+   This allows us to do unique things like target a random BattleEntity if the BattleEntity using the action is Confused
+
+IDEAS:
+------
+
+-Base abstract BattleCommand class with PerformAction(BattleEntity Attacker, params BattleEntity[] Victims) prototype
+  -BattleCommand reference in BattleEntity
+  -Ex. AttackCommand : BattleCommand. CurCommand = new AttackCommand(); CurCommand.PerformAction(this, TargetList);
+  -Ex 2. SpellCommand : BattleCommand. CurCommand = new SpellCommand(spellChosen); CurCommand.PerformAction(this, TargetList);

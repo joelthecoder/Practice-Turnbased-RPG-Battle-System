@@ -51,6 +51,12 @@ namespace RPG_Battle_Test
 
         private List<BattleEntity> TargetList = null;
 
+        /// <summary>
+        /// The current BattleCommand the player is about to perform.
+        /// Once the command is set, the player selects the target(s)
+        /// </summary>
+        protected BattleCommand CurrentCommand = null;
+
         public Animation AttackAnim = null;
 
         public BattlePlayer(Characters character)
@@ -90,8 +96,8 @@ namespace RPG_Battle_Test
             EntitySprite.Scale *= 3f;
 
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
-            AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
-            new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
+            //AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
+            //new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
         }
 
         /// <summary>
@@ -177,7 +183,7 @@ namespace RPG_Battle_Test
 
         protected void AttackSelect()
         {
-            TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+            TargetList = BattleManager.Instance.Enemies;
 
             for (int i = 0; i < TargetList.Count; i++)
             {
@@ -198,11 +204,11 @@ namespace RPG_Battle_Test
         {
             if (item.IsOfType(Item.ItemTypes.Damage) || item.IsOfType(Item.ItemTypes.NegativeStatus))
             {
-                TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+                TargetList = BattleManager.Instance.Enemies;
             }
             else if (item.IsOfType(Item.ItemTypes.Heal) || item.IsOfType(Item.ItemTypes.PositiveStatus))
             {
-                TargetList = BattleManager.Instance.Players.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+                TargetList = BattleManager.Instance.Players;
             }
 
             for (int i = 0; i < TargetList.Count; i++)
@@ -230,11 +236,11 @@ namespace RPG_Battle_Test
             
             if (spell.SpellType == Spell.SpellTypes.Negative)
             {
-                TargetList = BattleManager.Instance.Enemies.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+                TargetList = BattleManager.Instance.Enemies;
             }
             else if (spell.SpellType == Spell.SpellTypes.Positive)
             {
-                TargetList = BattleManager.Instance.Players.ConvertAll<BattleEntity>(entity => (BattleEntity)entity);
+                TargetList = BattleManager.Instance.Players;
             }
             else
             {
@@ -301,7 +307,7 @@ namespace RPG_Battle_Test
         public override void Update()
         {
             base.Update();
-            AttackAnim.Update();
+            AttackAnim?.Update();
         }
 
         public override void Draw()
@@ -312,8 +318,8 @@ namespace RPG_Battle_Test
                 GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .03f);
             }
 
-            AttackAnim.Position = new Vector2f(500f, 400f);
-            AttackAnim.Draw(40f);
+            //AttackAnim.Position = new Vector2f(500f, 400f);
+            AttackAnim?.Draw(40f);
         }
 
         public override string ToString()

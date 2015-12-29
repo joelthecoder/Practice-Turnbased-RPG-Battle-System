@@ -40,8 +40,8 @@ namespace RPG_Battle_Test
         //Begin instance members
         //Determines turn order
         public List<BattleEntity> EntityOrder = null;
-        public List<BattleEnemy> Enemies = new List<BattleEnemy>();
-        public List<BattlePlayer> Players = new List<BattlePlayer>();
+        public List<BattleEntity> Enemies = new List<BattleEntity>();
+        public List<BattleEntity> Players = new List<BattleEntity>();
         private int CurEntityTurn = 0;
 
         public readonly TextBox HeaderBox = new TextBox(Helper.CreateText("Smell", "arial.ttf", new Vector2f(), Color.White), 40, 20,
@@ -279,11 +279,6 @@ namespace RPG_Battle_Test
             }
 
             return entitylist?[new Random().Next(0, entitylist.Count)];
-        }
-
-        public BattleEnemy GetEnemy(int index)
-        {
-            return Enemies?[index];
         }
 
         public void Update()

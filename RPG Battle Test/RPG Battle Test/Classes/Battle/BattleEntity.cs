@@ -104,7 +104,7 @@ namespace RPG_Battle_Test
         /// Gets the DamageType of the Entity's attack action
         /// </summary>
         /// <returns></returns>
-        protected virtual DamageTypes GetAttackDamageType()
+        public virtual DamageTypes GetAttackDamageType()
         {
             return DamageTypes.Physical;
         }
@@ -113,7 +113,7 @@ namespace RPG_Battle_Test
         /// Gets the Element of the Entity's attack action
         /// </summary>
         /// <returns></returns>
-        protected virtual Elements GetAttackElement()
+        public virtual Elements GetAttackElement()
         {
             return Elements.Neutral;
         }
@@ -122,7 +122,7 @@ namespace RPG_Battle_Test
         /// Calculates the total damage this entity will deal to another entity
         /// </summary>
         /// <returns>The amount of total damage this entity will deal</returns>
-        private int CalculateDamageDealt(/*DamageTypes damageType, Elements element*/)
+        public int CalculateDamageDealt(/*DamageTypes damageType, Elements element*/)
         {
             //NOTE: Figure out how to handle None damage here. Default to Attack for now
             return Helper.Clamp(/*damageType == DamageTypes.Magic ? MagicAtk : */Attack, Globals.MIN_DMG, Globals.MAX_DMG);
@@ -136,7 +136,7 @@ namespace RPG_Battle_Test
         /// <param name ="damageType">The type of damage dealt</param>
         /// <param name="element">The elemental damage being dealt</param>
         /// <returns>The amount of total damage dealt to this entity</returns>
-        private int CalculateDamageReceived(int damage, DamageTypes damageType, Elements element)
+        public int CalculateDamageReceived(int damage, DamageTypes damageType, Elements element)
         {
             int totaldamage = damage;
             if (damageType == DamageTypes.Physical)
@@ -180,10 +180,20 @@ namespace RPG_Battle_Test
             }
         }
 
+        public void ModifyHP(int value)
+        {
+            CurHP = Helper.Clamp(value, 0, MaxHP);
+        }
+
+        public void ModifyMP(int value)
+        {
+            CurMP = Helper.Clamp(value, 0, MaxMP);
+        }
+
         public void TakeDamage(int damage, DamageTypes damagetype, Elements element)
         {
             int totaldamage = CalculateDamageReceived(damage, damagetype, element);
-            CurHP = Helper.Clamp(CurHP - totaldamage, 0, MaxHP);
+            ModifyHP(CurHP - totaldamage);
 
             Debug.Log($"{Name} received {totaldamage} damage!");
 
@@ -198,8 +208,8 @@ namespace RPG_Battle_Test
         /// <param name="mp">The amount of MP to restore</param>
         public void Restore(uint hp, uint mp)
         {
-            CurHP = Helper.Clamp(CurHP + (int)hp, 0, MaxHP);
-            CurMP = Helper.Clamp(CurMP + (int)mp, 0, MaxMP);
+            ModifyHP(CurHP + (int)hp);
+            ModifyMP(CurMP + (int)mp);
 
             OnEntityHeal?.Invoke(this);
         }

@@ -20,7 +20,7 @@ namespace RPG_Battle_Test
         public StatusEffect Status = null;
         public float StatusPercent = 0f;
 
-        public DamageSpell(string name, uint mpCost, int damage, DamageTypes damageType, Elements element) : base(name, mpCost)
+        public DamageSpell(string name, int mpCost, int damage, DamageTypes damageType, Elements element) : base(name, mpCost)
         {
             SpellType = SpellTypes.Negative;
 
@@ -29,7 +29,7 @@ namespace RPG_Battle_Test
             Element = element;
         }
 
-        public DamageSpell(string name, uint mpCost, int damage, DamageTypes damageType, Elements element, StatusEffect status, float statuspercentage)
+        public DamageSpell(string name, int mpCost, int damage, DamageTypes damageType, Elements element, StatusEffect status, float statuspercentage)
             : this(name, mpCost, damage, damageType, element)
         {
             Status = status;

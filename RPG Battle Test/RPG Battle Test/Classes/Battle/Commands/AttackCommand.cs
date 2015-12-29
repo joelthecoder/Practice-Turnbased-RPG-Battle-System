@@ -13,18 +13,15 @@ namespace RPG_Battle_Test
 {
     public class AttackCommand : BattleCommand
     {
-        private BattleEntity Target = null;
-        private BattleEntity Attacker = null;
-
-        public AttackCommand(BattleEntity target, BattleEntity attacker)
+        protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
-            Target = target;
-            Attacker = attacker;
-        }
+            base.PerformAction(Attacker, Victims);
 
-        public void Perform()
-        {
-            Attacker.AttackEntity(Target);
+            for (int i = 0; i < Victims.Length; i++)
+            {
+                Debug.Log(Attacker.Name + " attacked " + Victims[i].Name + "!");
+                Victims[i].TakeDamage(Attacker.CalculateDamageDealt(), Attacker.GetAttackDamageType(), Attacker.GetAttackElement());
+            }
         }
     }
 }

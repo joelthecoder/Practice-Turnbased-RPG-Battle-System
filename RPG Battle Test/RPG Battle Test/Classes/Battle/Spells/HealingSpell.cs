@@ -16,7 +16,7 @@ namespace RPG_Battle_Test
         public uint HPRestored = 0;
         public uint MPRestored = 0;
 
-        public HealingSpell(string name, uint mpCost, bool multitarget, uint hprestored, uint mprestored) : base(name, mpCost, multitarget)
+        public HealingSpell(string name, int mpCost, bool multitarget, uint hprestored, uint mprestored) : base(name, mpCost, multitarget)
         {
             HPRestored = hprestored;
             MPRestored = mprestored;

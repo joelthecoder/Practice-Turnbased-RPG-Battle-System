@@ -44,15 +44,15 @@ namespace RPG_Battle_Test
         /// <summary>
         /// The amount of MP it costs to cast the spell
         /// </summary>
-        public uint MPCost { get; protected set; } = 2;
+        public int MPCost { get; protected set; } = 2;
 
-        protected Spell(string name, uint mpCost)
+        protected Spell(string name, int mpCost)
         {
             Name = name;
             MPCost = mpCost;
         }
 
-        protected Spell(string name, uint mpCost, bool multitarget) : this(name, mpCost)
+        protected Spell(string name, int mpCost, bool multitarget) : this(name, mpCost)
         {
             MultiTarget = multitarget;
         }
