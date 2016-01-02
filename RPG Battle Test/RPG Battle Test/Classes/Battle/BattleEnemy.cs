@@ -49,7 +49,8 @@ namespace RPG_Battle_Test
             base.TurnUpdate();
             if (GameCore.ActiveSeconds >= PrevWait)
             {
-                AttackEntity(BattleManager.Instance.SelectRandomEntity(EntityTypes.Player));
+                CurrentCommand = new AttackCommand();
+                CurrentCommand.PerformAction(this, BattleManager.Instance.SelectRandomEntity(EntityTypes.Player));
                 EndTurn();
             }
         }

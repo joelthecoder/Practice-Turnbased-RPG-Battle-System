@@ -15,12 +15,11 @@ namespace RPG_Battle_Test
     {
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
-            base.PerformAction(Attacker, Victims);
-
             for (int i = 0; i < Victims.Length; i++)
             {
                 Debug.Log(Attacker.Name + " attacked " + Victims[i].Name + "!");
-                Victims[i].TakeDamage(Attacker.CalculateDamageDealt(), Attacker.GetAttackDamageType(), Attacker.GetAttackElement());
+                Victims[i].TakeDamage(Attacker.CalculateDamageDealt(Attacker.GetAttackDamageType(), Attacker.GetAttackElement())
+                , Attacker.GetAttackDamageType(), Attacker.GetAttackElement());
             }
         }
     }

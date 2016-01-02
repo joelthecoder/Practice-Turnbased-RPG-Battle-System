@@ -42,9 +42,18 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
+        /// <summary>
+        /// The current BattleCommand the entity is about to perform.
+        /// For players, once the command is set, the player selects the target(s)
+        /// NOTE: We might be able to put the target list INTO the commands, which will work nicely to consolidate everything
+        /// </summary>
+        protected BattleCommand CurrentCommand = null;
+
         protected readonly Dictionary<string, StatusEffect> AfflictedStatuses = new Dictionary<string, StatusEffect>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
+
+        protected readonly StatModifiers StatModifications = new StatModifiers();
 
         public readonly Color TurnColor = Color.Cyan;
         public EntityTypes EntityType { get; protected set; } = EntityTypes.None;
@@ -87,6 +96,7 @@ namespace RPG_Battle_Test
 
         public virtual void OnTurnEnd()
         {
+            CurrentCommand = null;
             StatusEffect[] statuses = AfflictedStatuses.Values.ToArray();
             for (int i = 0; i < statuses.Length; i++)
             {
@@ -122,10 +132,41 @@ namespace RPG_Battle_Test
         /// Calculates the total damage this entity will deal to another entity
         /// </summary>
         /// <returns>The amount of total damage this entity will deal</returns>
-        public int CalculateDamageDealt(/*DamageTypes damageType, Elements element*/)
+        public int CalculateDamageDealt(DamageTypes damageType, Elements element)
         {
-            //NOTE: Figure out how to handle None damage here. Default to Attack for now
-            return Helper.Clamp(/*damageType == DamageTypes.Magic ? MagicAtk : */Attack, Globals.MIN_DMG, Globals.MAX_DMG);
+            int totalDamage = 0;
+
+            //Calculate physical attack
+            if (damageType == DamageTypes.Physical)
+            {
+                totalDamage = CalculateTotalStat(Attack, StatModifiers.StatModTypes.Attack);
+            }
+            //Calculate magic attack
+            else if (damageType == DamageTypes.Magic)
+            {
+                totalDamage = CalculateTotalStat(MagicAtk, StatModifiers.StatModTypes.MagicAtk);
+            }
+            //Use the higher of the total physical or magical attack if damageType is None
+            else
+            {
+                int physical = CalculateTotalStat(Attack, StatModifiers.StatModTypes.Attack);
+                int magic = CalculateTotalStat(MagicAtk, StatModifiers.StatModTypes.MagicAtk);
+
+                totalDamage = physical >= magic ? physical : magic;
+            }
+
+            return Helper.Clamp(totalDamage, Globals.MIN_DMG, Globals.MAX_DMG);
+        }
+
+        /// <summary>
+        /// Calculates the total value of a stat, factoring in StatModifiers
+        /// </summary>
+        /// <param name="stat">The value of the stat to calculate. For example, Defense</param>
+        /// <param name="statModType">The type of the stat to apply StatModifiers to</param>
+        /// <returns></returns>
+        protected int CalculateTotalStat(int stat, StatModifiers.StatModTypes statModType)
+        {
+            return (int)((stat + StatModifications.GetModifierAmount(statModType)) * StatModifications.GetModifierPercent(statModType));
         }
 
         /// <summary>
@@ -141,11 +182,11 @@ namespace RPG_Battle_Test
             int totaldamage = damage;
             if (damageType == DamageTypes.Physical)
             {
-                totaldamage -= Defense;
+                totaldamage -= CalculateTotalStat(Defense, StatModifiers.StatModTypes.Defense);
             }
             else if (damageType == DamageTypes.Magic)
             {
-                totaldamage -= MagicDef;
+                totaldamage -= CalculateTotalStat(MagicDef, StatModifiers.StatModTypes.MagicDef);
             }
 
             if (element != Elements.Neutral)
@@ -165,19 +206,6 @@ namespace RPG_Battle_Test
             }
 
             return Helper.Clamp(totaldamage, Globals.MIN_DMG, Globals.MAX_DMG);
-        }
-
-        /// <summary>
-        /// Deals damage to one or more entities, with modifiers
-        /// </summary>
-        /// <param name="entities">The entities to deal damage to</param>
-        public void AttackEntity(params BattleEntity[] entities)
-        {
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Debug.Log(Name + " attacked " + entities[i].Name + "!");
-                entities[i].TakeDamage(CalculateDamageDealt(), GetAttackDamageType(), GetAttackElement());
-            }
         }
 
         public void ModifyHP(int value)
@@ -276,6 +304,16 @@ namespace RPG_Battle_Test
                     OnStatusFinished(status);
                 }
             }
+        }
+
+        public void AddStatModifier(StatModifiers.StatModTypes statModType, int amount, float percentage)
+        {
+            StatModifications.AddModifier(statModType, amount, percentage);
+        }
+
+        public void ClearStatModifiers()
+        {
+            StatModifications.ClearModifiers();
         }
 
         private void OnStatusFinished(StatusEffect status)

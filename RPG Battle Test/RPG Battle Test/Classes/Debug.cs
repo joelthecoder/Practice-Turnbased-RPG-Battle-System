@@ -38,7 +38,7 @@ namespace RPG_Battle_Test
             line = trace.GetFileLineNumber();
             method = trace.GetMethod()?.Name;
 
-            WriteLine(fileName + " -> " + method + ": (" + line + ") - " + value);
+            WriteLine("Information: " + fileName + " -> " + method + ": (" + line + ") - " + value);
         }
 
         public static void LogWarning(object value)
@@ -55,7 +55,7 @@ namespace RPG_Battle_Test
             line = trace.GetFileLineNumber();
             method = trace.GetMethod()?.Name;
 
-            WriteLine("WARNING! " + fileName + " -> " + method + ": (" + line + ") - " + value);
+            WriteLine("Warning: " + fileName + " -> " + method + ": (" + line + ") - " + value);
         }
 
         public static void LogError(object value)
@@ -72,7 +72,7 @@ namespace RPG_Battle_Test
             line = trace.GetFileLineNumber();
             method = trace.GetMethod()?.Name;
 
-            WriteLine("ERROR!!!!! " + fileName + " -> " + method + ": (" + line + ") - " + value);
+            WriteLine("Error: " + fileName + " -> " + method + ": (" + line + ") - " + value);
         }
     }
 }

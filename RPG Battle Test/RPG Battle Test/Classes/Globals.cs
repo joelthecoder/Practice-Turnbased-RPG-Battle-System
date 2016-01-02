@@ -10,7 +10,8 @@ namespace RPG_Battle_Test
     {
         /// <summary>
         /// Enumeration of different damage types. 
-        /// None represents neutral damage, which is not reduced by Defense or Magic Defense
+        /// None represents neutral damage, which is not reduced by Defense or Magic Defense.
+        /// None uses the higher value of the attacker's total Attack or MagicAtk
         /// </summary>
         public enum DamageTypes
         {

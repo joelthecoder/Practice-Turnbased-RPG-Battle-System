@@ -28,10 +28,6 @@ namespace RPG_Battle_Test
             Attack, Item, Magic, Steal, Run
         }
 
-        public delegate void SelectEntity(params BattleEntity[] entities);
-
-        public SelectEntity OnSelectEntity = null;
-
         /// <summary>
         /// The main battle menu
         /// </summary>
@@ -50,12 +46,6 @@ namespace RPG_Battle_Test
         protected int? CurSelection = null;
 
         private List<BattleEntity> TargetList = null;
-
-        /// <summary>
-        /// The current BattleCommand the player is about to perform.
-        /// Once the command is set, the player selects the target(s)
-        /// </summary>
-        protected BattleCommand CurrentCommand = null;
 
         public Animation AttackAnim = null;
 
@@ -127,6 +117,8 @@ namespace RPG_Battle_Test
         public override void OnTurnEnd()
         {
             base.OnTurnEnd();
+            CurSelection = null;
+            TargetList = null;
             BattleMenu.Active = false;
             while (Menus.Count > 1)
             {
@@ -170,9 +162,7 @@ namespace RPG_Battle_Test
 
             if (Input.PressedKey(Keyboard.Key.Z) && CurSelection.HasValue == true)
             {
-                OnSelectEntity?.Invoke(TargetList[CurSelection.Value]);
-                CurSelection = null;
-                TargetList = null;
+                CurrentCommand.PerformAction(this, TargetList[CurSelection.Value]);
                 EndTurn();
                 return;
             }
@@ -197,7 +187,7 @@ namespace RPG_Battle_Test
                 }
             }
 
-            OnSelectEntity = AttackEntity;
+            CurrentCommand = new AttackCommand();
         }
         
         protected void ItemSelection(Item item)
@@ -223,7 +213,7 @@ namespace RPG_Battle_Test
                 }
             }
 
-            OnSelectEntity = item.Use;
+            CurrentCommand = new ItemCommand(item);
         }
 
         protected void SpellSelection(Spell spell)
@@ -259,9 +249,7 @@ namespace RPG_Battle_Test
                 }
             }
 
-            //NOTE: We need to know which BattleEntity casted this Spell so we can subtract the MP cost
-            //Make a single, consistent way of doing this (for Items, etc too)
-            OnSelectEntity = spell.OnUse;
+            CurrentCommand = new SpellCommand(spell);
         }
 
         protected void ItemSelect()

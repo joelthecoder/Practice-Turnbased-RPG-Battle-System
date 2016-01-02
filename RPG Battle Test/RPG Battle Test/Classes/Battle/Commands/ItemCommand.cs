@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RPG_Battle_Test
 {
-    public class SpellCommand : BattleCommand
+    public class ItemCommand : BattleCommand
     {
-        protected Spell SpellCast = null;    
+        protected Item ItemUsed = null;
 
-        public SpellCommand(Spell spellCast)
+        public ItemCommand(Item itemUsed)
         {
-            SpellCast = spellCast;
+            ItemUsed = itemUsed;
         }
 
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
@@ -20,10 +20,8 @@ namespace RPG_Battle_Test
             string usedOn = string.Empty;
             if (Victims.Length == 1)
                 usedOn = $" on {Victims[0].Name}";
-            Debug.Log($"{Attacker.Name} cast {SpellCast.Name}{usedOn}!");
-
-            Attacker.ModifyMP(Attacker.CurMP - SpellCast.MPCost);
-            SpellCast.OnUse(Victims);
+            Debug.Log($"{Attacker.Name} used {ItemUsed.Name}{usedOn}!");
+            ItemUsed.Use(Victims);
         }
     }
 }
