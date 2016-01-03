@@ -103,20 +103,28 @@ namespace RPG_Battle_Test
             Menus.Push(MainBattleMenu);
         }
 
-        public override void StartTurn()
+        protected override void OnTurnStarted()
         {
-            base.StartTurn();
+            base.OnTurnStarted();
+
+            if (PreviousCommand is DefendCommand)
+            {
+                StatModifications.RemoveModifierWithAmount(StatModifiers.StatModTypes.Defense, 1);//RemoveModifierWithPercentage(StatModifiers.StatModTypes.Defense, .5f);
+                StatModifications.RemoveModifierWithAmount(StatModifiers.StatModTypes.MagicDef, 1);//RemoveModifierWithPercentage(StatModifiers.StatModTypes.MagicDef, .5f);
+            }
+
             BattleMenu.Active = true;
 
             //Set the basic options
-            MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
+            MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
+            new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
             ItemMenu.OnOpen = PopulateItemList;
             SpellMenu.OnOpen = PopulateSpellList;
         }
 
-        public override void OnTurnEnd()
+        protected override void OnTurnEnded()
         {
-            base.OnTurnEnd();
+            base.OnTurnEnded();
             CurSelection = null;
             TargetList = null;
             BattleMenu.Active = false;
@@ -250,6 +258,13 @@ namespace RPG_Battle_Test
             }
 
             CurrentCommand = new SpellCommand(spell);
+        }
+
+        protected void DefendSelect()
+        {
+            CurrentCommand = new DefendCommand();
+            CurrentCommand.PerformAction(this, null);
+            EndTurn();
         }
 
         protected void ItemSelect()

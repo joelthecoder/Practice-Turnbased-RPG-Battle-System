@@ -23,7 +23,7 @@ namespace RPG_Battle_Test
             Debug.Log($"{Attacker.Name} cast {SpellCast.Name}{usedOn}!");
 
             Attacker.ModifyMP(Attacker.CurMP - SpellCast.MPCost);
-            SpellCast.OnUse(Victims);
+            SpellCast.OnUse(Attacker, Victims);
         }
     }
 }

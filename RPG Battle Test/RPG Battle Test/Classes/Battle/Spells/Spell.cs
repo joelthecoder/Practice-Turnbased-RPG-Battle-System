@@ -60,7 +60,8 @@ namespace RPG_Battle_Test
         /// <summary>
         /// What happens to the entity when the Spell is used on it
         /// </summary>
+        /// <param name="Attacker"></param>
         /// <param name="entities"></param>
-        public abstract void OnUse(params BattleEntity[] entities);
+        public abstract void OnUse(BattleEntity Attacker, params BattleEntity[] entities);
     }
 }

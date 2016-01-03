@@ -18,7 +18,7 @@ namespace RPG_Battle_Test
 
         public delegate void StatusFinished(StatusEffect status);
 
-        public event StatusFinished OnStatusFinished = null;
+        public event StatusFinished StatusFinishedEvent = null;
 
         //The afflicted entity
         public BattleEntity Entity { get; protected set; } = null;
@@ -64,10 +64,13 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Sets the receiver of the status effect
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">The entity receiving the status effect</param>
         public void SetReceiver(BattleEntity entity)
         {
             Entity = entity;
+
+            Entity.TurnStartEvent += OnTurnStart;
+            Entity.TurnEndEvent += OnTurnEnd;
         }
 
         /// <summary>
@@ -78,8 +81,8 @@ namespace RPG_Battle_Test
             TurnsPassed++;
             if (IsFinished)
             {
-                OnEnd();
-                OnStatusFinished?.Invoke(this);
+                End();
+                StatusFinishedEvent?.Invoke(this);
             }
         }
 
@@ -89,18 +92,29 @@ namespace RPG_Battle_Test
         public abstract void OnInflict();
 
         /// <summary>
+        /// Ends the StatusEffect
+        /// </summary>
+        public void End()
+        {
+            Entity.TurnStartEvent -= OnTurnStart;
+            Entity.TurnEndEvent -= OnTurnEnd;
+
+            OnEnd();
+        }
+
+        /// <summary>
         /// What the status effect does when it ends. Here's where you'd reset values on the entity
         /// </summary>
-        public abstract void OnEnd();
+        protected abstract void OnEnd();
 
         /// <summary>
         /// What the status effect does at the start of the entity's turn
         /// </summary>
-        public abstract void OnTurnStart();
+        protected abstract void OnTurnStart();
 
         /// <summary>
         /// What the status effect does at the end of the entity's turn
         /// </summary>
-        public abstract void OnTurnEnd();
+        protected abstract void OnTurnEnd();
     }
 }

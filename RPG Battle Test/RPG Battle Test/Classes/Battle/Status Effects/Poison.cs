@@ -27,17 +27,17 @@ namespace RPG_Battle_Test
             
         }
 
-        public override void OnEnd()
+        protected override void OnEnd()
         {
             
         }
 
-        public override void OnTurnStart()
+        protected override void OnTurnStart()
         {
             
         }
 
-        public override void OnTurnEnd()
+        protected override void OnTurnEnd()
         {
             Entity.TakeDamage((int)(Entity.MaxHP / 10f), Globals.DamageTypes.None, Globals.Elements.Poison);
             IncrementTurns();

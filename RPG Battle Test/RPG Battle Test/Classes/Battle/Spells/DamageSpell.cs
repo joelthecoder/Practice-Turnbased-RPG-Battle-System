@@ -36,15 +36,12 @@ namespace RPG_Battle_Test
             StatusPercent = Helper.Clamp(statuspercentage, 0f, 100f);
         }
 
-        public override void OnUse(params BattleEntity[] entities)
+        public override void OnUse(BattleEntity Attacker, params BattleEntity[] entities)
         {
             for (int i = 0; i < entities.Length; i++)
             {
-                //If no Damage (only Status), don't make the entity take damage
-                if (Damage > 0)
-                {
-                    entities[i].TakeDamage(Damage, DamageType, Element);
-                }
+                //Calculate damage and add the Spell's damage
+                entities[i].TakeDamage(Attacker.CalculateDamageDealt(DamageType, Element) + Damage, DamageType, Element);
 
                 //If no Status (only damage), don't bother inflicting
                 if (Status != null)

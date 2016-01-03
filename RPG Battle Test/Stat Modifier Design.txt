@@ -11,9 +11,10 @@ Stats that can be modified:
 
 All of these can be modified by a percentage and/or an amount and are also stackable.
 Stat Modifiers last indefinitely until the end of a battle or until the BattleEntity affected by them is killed.
+There is still support for removing them manually, and something like a Defend command can do so at the start of the next turn.
 
 1. Amounts are flat values. They can be positive or negative and are simply added to the stat in question. The base value does NOT change.
    Ex. Player1 has Defense boosted by +20. In Defense calculations, +20 will be added after the base Defense.
 2. Percentages start at a value of 1 and are stacked additively. This value is multiplied by (Base Stat + Amount).
-   They should be passed in relative to 100%. For example, if you want to increase Defense by 10%, you'd pass in a value of 1.1.
-   Subsequently, if you wanted to decrease Attack by 35%, you'd pass in a value of .65.
+   They should be passed in relative to 0%. For example, if you want to increase Defense by 10%, you'd pass in a value of .1.
+   Subsequently, if you wanted to decrease Attack by 35%, you'd pass in a value of -.35.

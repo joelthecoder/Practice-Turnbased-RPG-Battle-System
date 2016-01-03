@@ -115,6 +115,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Battle\Commands\DefendCommand.cs" />
     <Compile Include="Classes\Battle\Commands\ItemCommand.cs" />
     <Compile Include="Classes\Battle\Commands\SpellCommand.cs" />
     <Compile Include="Classes\Battle\Spells\HealingSpell.cs" />

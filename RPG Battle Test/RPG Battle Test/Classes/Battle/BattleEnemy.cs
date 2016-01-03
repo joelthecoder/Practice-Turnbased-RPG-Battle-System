@@ -39,7 +39,7 @@ namespace RPG_Battle_Test
             EntitySprite.Scale *= 3f;
         }
 
-        public override void StartTurn()
+        protected override void OnTurnStarted()
         {
             PrevWait = GameCore.ActiveSeconds + WaitTime;
         }

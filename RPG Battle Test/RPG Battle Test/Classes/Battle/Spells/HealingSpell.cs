@@ -24,7 +24,7 @@ namespace RPG_Battle_Test
             SpellType = SpellTypes.Positive;
         }
 
-        public override void OnUse(params BattleEntity[] entities)
+        public override void OnUse(BattleEntity Attacker, params BattleEntity[] entities)
         {
             for (int i = 0; i < entities.Length; i++)
             {

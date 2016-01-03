@@ -19,13 +19,11 @@ namespace RPG_Battle_Test
             None, Player, Enemy
         }
 
-        public delegate void EntityHeal(BattleEntity entity);
-        public delegate void EntityDamage(BattleEntity entity);
-        public delegate void EntityStatus(BattleEntity entity);
+        public delegate void TurnStart();
+        public delegate void TurnEnd();
 
-        public static event EntityHeal OnEntityHeal = null;
-        public static event EntityDamage OnEntityDamage = null;
-        public static event EntityStatus OnEntityStatus = null;
+        public event TurnStart TurnStartEvent = null;
+        public event TurnEnd TurnEndEvent = null;
 
         public Sprite EntitySprite = null;
         public int NumActions = 1;
@@ -48,6 +46,11 @@ namespace RPG_Battle_Test
         /// NOTE: We might be able to put the target list INTO the commands, which will work nicely to consolidate everything
         /// </summary>
         protected BattleCommand CurrentCommand = null;
+
+        /// <summary>
+        /// The command used on the previous turn
+        /// </summary>
+        protected BattleCommand PreviousCommand = null;
 
         protected readonly Dictionary<string, StatusEffect> AfflictedStatuses = new Dictionary<string, StatusEffect>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
@@ -85,29 +88,29 @@ namespace RPG_Battle_Test
         }
 
         //Battle-turn related methods
-        public virtual void StartTurn()
+        public void StartTurn()
         {
-            StatusEffect[] statuses = AfflictedStatuses.Values.ToArray();
-            for (int i = 0; i < statuses.Length; i++)
-            {
-                statuses[i].OnTurnStart();
-            }
+            OnTurnStarted();
+            TurnStartEvent?.Invoke();
         }
 
-        public virtual void OnTurnEnd()
+        protected virtual void OnTurnStarted()
         {
-            CurrentCommand = null;
-            StatusEffect[] statuses = AfflictedStatuses.Values.ToArray();
-            for (int i = 0; i < statuses.Length; i++)
-            {
-                statuses[i].OnTurnEnd();
-            }
+            
         }
 
         public void EndTurn()
         {
-            OnTurnEnd();
+            OnTurnEnded();
+            TurnEndEvent?.Invoke();
+
             BattleManager.Instance.TurnEnd();
+        }
+
+        protected virtual void OnTurnEnded()
+        {
+            PreviousCommand = CurrentCommand;
+            CurrentCommand = null;
         }
 
         /// <summary>
@@ -166,7 +169,12 @@ namespace RPG_Battle_Test
         /// <returns></returns>
         protected int CalculateTotalStat(int stat, StatModifiers.StatModTypes statModType)
         {
-            return (int)((stat + StatModifications.GetModifierAmount(statModType)) * StatModifications.GetModifierPercent(statModType));
+            int total = (int)((stat + StatModifications.GetModifierAmount(statModType)) * StatModifications.GetModifierPercent(statModType));
+            Debug.Log($"BASE STAT OF TYPE {statModType}: {stat}");
+            Debug.Log($"AMOUNT MODIFIER: {StatModifications.GetModifierAmount(statModType)}");
+            Debug.Log($"PERCENTAGE MODIFIER: {StatModifications.GetModifierPercent(statModType)}");
+            Debug.Log($"TOTAL: {total}");
+            return total;
         }
 
         /// <summary>
@@ -224,8 +232,6 @@ namespace RPG_Battle_Test
             ModifyHP(CurHP - totaldamage);
 
             Debug.Log($"{Name} received {totaldamage} damage!");
-
-            OnEntityDamage?.Invoke(this);
         }
 
         //Battle-combat related methods
@@ -238,8 +244,6 @@ namespace RPG_Battle_Test
         {
             ModifyHP(CurHP + (int)hp);
             ModifyMP(CurMP + (int)mp);
-
-            OnEntityHeal?.Invoke(this);
         }
 
         /// <summary>
@@ -267,14 +271,13 @@ namespace RPG_Battle_Test
                 }
                 else
                 {
-                    status.OnStatusFinished += OnStatusFinished;
+                    status.StatusFinishedEvent += OnStatusFinished;
                     AfflictedStatuses.Add(statusName, status);
                     AfflictedStatuses[statusName].SetReceiver(this);
                     AfflictedStatuses[statusName].OnInflict();
                     Debug.Log($"Inflicted status {AfflictedStatuses[statusName].Name} on {Name}!");
                 }
             }
-            OnEntityStatus?.Invoke(this);
         }
 
         /// <summary>
@@ -299,7 +302,7 @@ namespace RPG_Battle_Test
                 if (AfflictedStatuses.ContainsKey(statusName))
                 {
                     StatusEffect status = AfflictedStatuses[statusName];
-                    status.OnEnd();
+                    status.End();
 
                     OnStatusFinished(status);
                 }
@@ -318,7 +321,7 @@ namespace RPG_Battle_Test
 
         private void OnStatusFinished(StatusEffect status)
         {
-            status.OnStatusFinished -= OnStatusFinished;
+            status.StatusFinishedEvent -= OnStatusFinished;
 
             if (AfflictedStatuses.ContainsKey(status.Name))
             {
@@ -333,7 +336,8 @@ namespace RPG_Battle_Test
 
         public void CleanUp()
         {
-            
+            TurnStartEvent = null;
+            TurnEndEvent = null;
         }
 
         /// <summary>

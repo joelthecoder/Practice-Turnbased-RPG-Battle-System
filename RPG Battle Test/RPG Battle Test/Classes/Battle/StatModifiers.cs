@@ -25,11 +25,26 @@ namespace RPG_Battle_Test
 
         private Dictionary<StatModTypes, List<StatMod>> StatsModified = new Dictionary<StatModTypes, List<StatMod>>();
 
+        /// <summary>
+        /// Total stats applied; easy access
+        /// </summary>
+        private Dictionary<StatModTypes, StatMod> TotalStats = new Dictionary<StatModTypes, StatMod>();
+
         public StatModifiers()
         {
-            
+            StatModTypes[] types = (StatModTypes[])Enum.GetValues(typeof(StatModTypes));
+            for (int i = 0; i < types.Length; i++)
+            {
+                TotalStats.Add(types[i], new StatMod(0, 1f));
+            }
         }
 
+        /// <summary>
+        /// Adds a stat modifier
+        /// </summary>
+        /// <param name="statModType">The type of stat modifier to add</param>
+        /// <param name="amount">The flat Amount the stat is modified by</param>
+        /// <param name="percentage">The amount in percentage the stat should be modified by</param>
         public void AddModifier(StatModTypes statModType, int amount, float percentage)
         {
             if (StatsModified.ContainsKey(statModType))
@@ -40,14 +55,91 @@ namespace RPG_Battle_Test
             {
                 StatsModified.Add(statModType, new List<StatMod>() { new StatMod(amount, percentage) });
             }
+
+            TotalStats[statModType].Amount += amount;
+            TotalStats[statModType].Percentage += percentage;
+        }
+
+        /// <summary>
+        /// Removes a modifier with a designated Amount
+        /// </summary>
+        /// <param name="statModType">The type of the StatModifier</param>
+        /// <param name="amount">The Amount corresponding to a particular StatMod</param>
+        /// <returns>Whether the modifier was successfully found and removed or not</returns>
+        public bool RemoveModifierWithAmount(StatModTypes statModType, int amount)
+        {
+            if (StatsModified.ContainsKey(statModType))
+            {
+                List<StatMod> statMods = StatsModified[statModType];
+                for (int i = 0; i < statMods.Count; i++)
+                {
+                    if (statMods[i].Amount == amount)
+                    {
+                        TotalStats[statModType].Amount -= amount;
+                        statMods.RemoveAt(i);
+                        Debug.Log($"Removed StatMod of type {statModType} with Amount {amount}!");
+                        return true;
+                    }
+                }
+            }
+            
+            Debug.Log($"Cannot find StatMod of type {statModType} with Amount {amount}");
+            return false;
+        }
+
+        /// <summary>
+        /// Removes a modifier with a designated percentage
+        /// </summary>
+        /// <param name="statModType">The type of the StatModifier</param>
+        /// <param name="amount">The percentage corresponding to a particular StatMod</param>
+        /// <returns>Whether the modifier was successfully found and removed or not</returns>
+        public bool RemoveModifierWithPercentage(StatModTypes statModType, float percentage)
+        {
+            if (StatsModified.ContainsKey(statModType))
+            {
+                List<StatMod> statMods = StatsModified[statModType];
+                for (int i = 0; i < statMods.Count; i++)
+                {
+                    if (statMods[i].Percentage == percentage)
+                    {
+                        TotalStats[statModType].Percentage -= percentage;
+                        statMods.RemoveAt(i);
+                        Debug.Log($"Removed StatMod of type {statModType} with Percentage {percentage}!");
+                        return true;
+                    }
+                }
+            }
+            
+            Debug.Log($"Cannot find StatMod of type {statModType} with Percentage {percentage}");
+            return false;
         }
 
         public void ClearModifiers()
         {
+            foreach (KeyValuePair<StatModTypes, StatMod> pair in TotalStats)
+            {
+                pair.Value.Amount = 0;
+                pair.Value.Percentage = 1f;
+            }
             StatsModified.Clear();
         }
 
+        /// <summary>
+        /// Gets the value of all flat Amount modifiers affecting a particular stat. This method is in O(1) time
+        /// </summary>
+        /// <param name="statModType">The type of stat modifier to retrieve the Amount for</param>
+        /// <returns>The total value of the amount modifiers affecting the stat. The base value is 0</returns>
         public int GetModifierAmount(StatModTypes statModType)
+        {
+            return TotalStats[statModType].Amount;
+        }
+
+        /// <summary>
+        /// Returns the sum of all flat Amount modifiers affecting a particular stat
+        /// </summary>
+        /// <param name="statModType">The type of stat modifier to retrieve the Amount for</param>
+        /// <returns>The total value of the Amount modifiers affecting the stat. The base value is 0</returns>
+        public int SumAmountModifier(StatModTypes statModType)
         {
             int amount = 0;
 
@@ -66,7 +158,22 @@ namespace RPG_Battle_Test
             return amount;
         }
 
+        /// <summary>
+        /// Gets the value of all percent modifiers affecting a particular stat. This method is in O(1) time
+        /// </summary>
+        /// <param name="statModType">The type of stat modifier to retrieve the percentage for</param>
+        /// <returns>The total value of the percent modifiers affecting the stat. The base value is 1</returns>
         public float GetModifierPercent(StatModTypes statModType)
+        {
+            return TotalStats[statModType].Percentage;
+        }
+
+        /// <summary>
+        /// Returns the sum of all percent modifiers affecting a particular stat
+        /// </summary>
+        /// <param name="statModType">The type of stat modifier to retrieve the percentage for</param>
+        /// <returns>The total value of the percent modifiers affecting the stat. The base value is 1</returns>
+        public float SumPercentModifier(StatModTypes statModType)
         {
             float percentage = 1f;
 
