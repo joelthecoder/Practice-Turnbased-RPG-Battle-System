@@ -170,10 +170,10 @@ namespace RPG_Battle_Test
         protected int CalculateTotalStat(int stat, StatModifiers.StatModTypes statModType)
         {
             int total = (int)((stat + StatModifications.GetModifierAmount(statModType)) * StatModifications.GetModifierPercent(statModType));
-            Debug.Log($"BASE STAT OF TYPE {statModType}: {stat}");
+            /*Debug.Log($"BASE STAT OF TYPE {statModType}: {stat}");
             Debug.Log($"AMOUNT MODIFIER: {StatModifications.GetModifierAmount(statModType)}");
             Debug.Log($"PERCENTAGE MODIFIER: {StatModifications.GetModifierPercent(statModType)}");
-            Debug.Log($"TOTAL: {total}");
+            Debug.Log($"TOTAL: {total}");*/
             return total;
         }
 

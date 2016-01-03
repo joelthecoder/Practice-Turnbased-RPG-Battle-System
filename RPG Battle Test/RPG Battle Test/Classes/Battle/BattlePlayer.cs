@@ -8,11 +8,10 @@ using SFML.System;
 using SFML.Window;
 using SFML.Graphics;
 using SFML.Audio;
-using static RPG_Battle_Test.BattlePlayer.Characters;
 
 namespace RPG_Battle_Test
 {
-    public class BattlePlayer : BattleEntity
+    public abstract class BattlePlayer : BattleEntity
     {
         public enum Characters
         {
@@ -49,41 +48,9 @@ namespace RPG_Battle_Test
 
         public Animation AttackAnim = null;
 
-        public BattlePlayer(Characters character)
+        public BattlePlayer()
         {
             EntityType = EntityTypes.Player;
-            
-            IntRect rect = new IntRect(5, 55, 16, 24);
-
-            switch (character)
-            {
-                case CecilK:
-                    Name = "CecilK";
-                    Speed = 3;
-                    MaxHP = 30;
-                    MaxMP = 0;
-                    Attack = 7;
-                    Defense = 3;
-                    break;
-                case CecilP:
-                    Name = "CecilP";
-                    Speed = 1;
-                    MaxHP = 25;
-                    MaxMP = 10;
-                    Attack = 5;
-                    Defense = 1;
-                    MagicAtk = 3;
-                    MagicDef = 2;
-                    rect = new IntRect(7, 44, 16, 24);
-                    break;
-            }
-
-            CurHP = MaxHP;
-            CurMP = MaxMP;
-
-            EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + Name + ".png"), false, rect);
-            EntitySprite.Position = new Vector2f(GameCore.GameWindow.Size.X - GameCore.GameWindow.Size.X / 4f, GameCore.GameWindow.Size.Y / 2f);
-            EntitySprite.Scale *= 3f;
 
             Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
             //AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
@@ -96,7 +63,7 @@ namespace RPG_Battle_Test
         public static void OnBattleStart()
         {
             Menus = new Stack<BattleMenu>();
-            MainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical);
+            MainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(150, 35), BattleMenu.MenuTypes.Vertical);
             ItemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
             SpellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
 
@@ -118,6 +85,7 @@ namespace RPG_Battle_Test
             //Set the basic options
             MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
             new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
+            
             ItemMenu.OnOpen = PopulateItemList;
             SpellMenu.OnOpen = PopulateSpellList;
         }

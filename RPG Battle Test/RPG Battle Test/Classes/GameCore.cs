@@ -62,8 +62,7 @@ namespace RPG_Battle_Test
             GameWindow.KeyPressed += Input.OnKeyPressed;
             GameWindow.KeyReleased += Input.OnKeyReleased;
 
-            BattleManager.Instance.Start(new BattlePlayer(BattlePlayer.Characters.CecilK), new BattlePlayer(BattlePlayer.Characters.CecilP),
-                              new BattleEnemy(), new BattleEnemy(), new BattleEnemy());
+            BattleManager.Instance.Start(new CecilK(), new CecilP(), new BattleEnemy(), new BattleEnemy(), new BattleEnemy());
         }
 
         /// <summary>
