@@ -231,6 +231,9 @@ namespace RPG_Battle_Test
             int totaldamage = CalculateDamageReceived(damage, damagetype, element);
             ModifyHP(CurHP - totaldamage);
 
+            BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(damagetype, element, .75f, totaldamage.ToString(),
+            new Vector2f(Position.X, Position.Y - 50f), Constants.BASE_UI_LAYER + .6f));
+
             Debug.Log($"{Name} received {totaldamage} damage!");
         }
 

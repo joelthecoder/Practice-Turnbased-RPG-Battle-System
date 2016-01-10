@@ -11,8 +11,10 @@ using SFML.Audio;
 
 namespace RPG_Battle_Test
 {
-    //Handles turns and the state of a turn-based battles
-    //This is a Singleton
+    /// <summary>
+    /// Handles turns and the state of turn-based battles
+    /// This is a Singleton
+    /// </summary>
     public sealed class BattleManager
     {
         public enum BattleStates
@@ -130,12 +132,15 @@ namespace RPG_Battle_Test
 
             PartyInfo.SetOptions(options);
 
+            BattleUIManager.Instance.Start();
+
             //Initialize static battle components
             BattlePlayer.OnBattleStart();
         }
 
         public void CleanUp()
         {
+            BattleUIManager.Instance.CleanUp();
             PartyInventory.CleanUp();
 
             for (int i = 0; i < EntityOrder.Count; i++)
@@ -297,6 +302,8 @@ namespace RPG_Battle_Test
             {
                 EntityOrder[i].Update();
             }
+
+            BattleUIManager.Instance.Update();
         }
 
         public void Draw()
@@ -312,6 +319,8 @@ namespace RPG_Battle_Test
             }
 
             BattlePlayer.CurrentMenu?.Draw();
+
+            BattleUIManager.Instance.Draw();
         }
     }
 }
