@@ -27,17 +27,6 @@ namespace RPG_Battle_Test
             Attack, Item, Magic, Steal, Run
         }
 
-        /// <summary>
-        /// The main battle menu
-        /// </summary>
-        public static BattleMenu MainBattleMenu = null;
-        public static BattleMenu ItemMenu = null;
-        public static BattleMenu SpellMenu = null;
-
-        public static Stack<BattleMenu> Menus = null;
-
-        public static BattleMenu CurrentMenu => Menus.Peek();
-
         protected const float ArrowVerticalDist = 100f;
 
         public Characters Character { get; private set; } = Characters.None;
@@ -52,7 +41,7 @@ namespace RPG_Battle_Test
         {
             EntityType = EntityTypes.Player;
 
-            Arrow = Helper.CreateSprite(new Texture(Constants.ContentPath + "Arrow.png"), false);
+            Arrow = Helper.CreateSprite(AssetManager.SelectionArrow, false);
             //AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
             //new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
         }
@@ -62,12 +51,12 @@ namespace RPG_Battle_Test
         /// </summary>
         public static void OnBattleStart()
         {
-            Menus = new Stack<BattleMenu>();
-            MainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(150, 35), BattleMenu.MenuTypes.Vertical);
-            ItemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
-            SpellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical, () => Menus.Pop());
+            BattleMenu mainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(150, 35), 
+                                                       BattleMenu.MenuTypes.Vertical);
+            mainBattleMenu.CanBackOut = false;
+            mainBattleMenu.Active = false;
 
-            Menus.Push(MainBattleMenu);
+            BattleUIManager.Instance.PushInputMenu(mainBattleMenu);
         }
 
         protected override void OnTurnStarted()
@@ -80,14 +69,11 @@ namespace RPG_Battle_Test
                 StatModifications.RemoveModifierWithAmount(StatModifiers.StatModTypes.MagicDef, 1);//RemoveModifierWithPercentage(StatModifiers.StatModTypes.MagicDef, .5f);
             }
 
-            BattleMenu.Active = true;
+            BattleUIManager.Instance.GetInputMenu().Active = true;
 
             //Set the basic options
-            MainBattleMenu.SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
+            BattleUIManager.Instance.GetInputMenu().SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
             new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
-            
-            ItemMenu.OnOpen = PopulateItemList;
-            SpellMenu.OnOpen = PopulateSpellList;
         }
 
         protected override void OnTurnEnded()
@@ -95,11 +81,12 @@ namespace RPG_Battle_Test
             base.OnTurnEnded();
             CurSelection = null;
             TargetList = null;
-            BattleMenu.Active = false;
-            while (Menus.Count > 1)
+            while (BattleUIManager.Instance.InputMenuCount() > 1)
             {
-                Menus.Pop();
+                BattleUIManager.Instance.PopInputMenu();
             }
+
+            BattleUIManager.Instance.GetInputMenu().Active = false;
         }
 
         public override void TurnUpdate()
@@ -112,7 +99,7 @@ namespace RPG_Battle_Test
                 if (Input.PressedKey(Keyboard.Key.X))
                 {
                     CurSelection = null;
-                    BattleManager.Instance.HeaderBox.SetText(Name + "'s turn!");
+                    BattleUIManager.Instance.SetHeaderText(Name + "'s turn!");
                     return;
                 }
                 else
@@ -123,7 +110,7 @@ namespace RPG_Battle_Test
                         do CurSelection = Helper.Wrap(CurSelection.Value - 1, 0, TargetList.Count - 1);
                         while (TargetList[CurSelection.Value].IsDead == true);
                         Arrow.Position = new Vector2f(TargetList[CurSelection.Value].Position.X, TargetList[CurSelection.Value].Position.Y - ArrowVerticalDist);
-                        BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[CurSelection.Value].Name + "?");
+                        BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[CurSelection.Value].Name + "?");
                     }
                     //Move down a selection
                     if (Input.PressedKey(Keyboard.Key.Down))
@@ -131,7 +118,7 @@ namespace RPG_Battle_Test
                         do CurSelection = Helper.Wrap(CurSelection.Value + 1, 0, TargetList.Count - 1);
                         while (TargetList[CurSelection.Value].IsDead == true);
                         Arrow.Position = new Vector2f(TargetList[CurSelection.Value].Position.X, TargetList[CurSelection.Value].Position.Y - ArrowVerticalDist);
-                        BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[CurSelection.Value].Name + "?");
+                        BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[CurSelection.Value].Name + "?");
                     }
                 }
             }
@@ -144,7 +131,7 @@ namespace RPG_Battle_Test
             }
 
             if (CurSelection.HasValue == false)
-                CurrentMenu.Update();
+                BattleUIManager.Instance.GetInputMenu().Update();
         }
 
         protected void AttackSelect()
@@ -158,7 +145,7 @@ namespace RPG_Battle_Test
                 {
                     CurSelection = i;
                     Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
-                    BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[i].Name + "?");
+                    BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[i].Name + "?");
                     break;
                 }
             }
@@ -184,7 +171,7 @@ namespace RPG_Battle_Test
                 {
                     CurSelection = i;
                     Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
-                    BattleManager.Instance.HeaderBox.SetText("Attack " + TargetList[i].Name + "?");
+                    BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[i].Name + "?");
                     break;
                 }
             }
@@ -220,7 +207,7 @@ namespace RPG_Battle_Test
                 {
                     CurSelection = i;
                     Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
-                    BattleManager.Instance.HeaderBox.SetText($"Use {spell.Name} on " + TargetList[i].Name + "?");
+                    BattleUIManager.Instance.SetHeaderText($"Use {spell.Name} on " + TargetList[i].Name + "?");
                     break;
                 }
             }
@@ -237,16 +224,18 @@ namespace RPG_Battle_Test
 
         protected void ItemSelect()
         {
-            Menus.Push(ItemMenu);
-            if (Menus.Peek().OnOpen != null)
-                Menus.Peek().OnOpen();
+            BattleMenu itemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40),
+                                                 BattleMenu.MenuTypes.Vertical);
+            itemMenu.OnOpen = PopulateItemList;
+            BattleUIManager.Instance.PushInputMenu(itemMenu);
         }
 
         protected void SpellSelect()
         {
-            Menus.Push(SpellMenu);
-            if (Menus.Peek().OnOpen != null)
-                Menus.Peek().OnOpen();
+            BattleMenu spellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), 
+                                                  BattleMenu.MenuTypes.Vertical);
+            spellMenu.OnOpen = PopulateSpellList;
+            BattleUIManager.Instance.PushInputMenu(spellMenu);
         }
 
         protected void PopulateItemList()
@@ -259,7 +248,7 @@ namespace RPG_Battle_Test
                 options.Add(new BattleMenu.MenuOption($"{pair.Key.Name} x{pair.Value}", () => ItemSelection(pair.Key)));
             }
 
-            ItemMenu.SetOptions(options);
+            BattleUIManager.Instance.GetInputMenu().SetOptions(options);
         }
 
         protected void PopulateSpellList()
@@ -272,7 +261,7 @@ namespace RPG_Battle_Test
             options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
             options.Add(new BattleMenu.MenuOption($"{Cure.Name}", () => SpellSelection(Cure)));
 
-            SpellMenu.SetOptions(options);
+            BattleUIManager.Instance.GetInputMenu().SetOptions(options);
         }
 
         public override void Update()
@@ -291,11 +280,6 @@ namespace RPG_Battle_Test
 
             //AttackAnim.Position = new Vector2f(500f, 400f);
             AttackAnim?.Draw(40f);
-        }
-
-        public override string ToString()
-        {
-            return $"{Name}    {CurHP}/{MaxHP}    {CurMP}/{MaxMP}   ";
         }
     }
 }

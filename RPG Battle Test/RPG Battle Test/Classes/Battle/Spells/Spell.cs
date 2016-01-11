@@ -63,5 +63,11 @@ namespace RPG_Battle_Test
         /// <param name="Attacker"></param>
         /// <param name="entities"></param>
         public abstract void OnUse(BattleEntity Attacker, params BattleEntity[] entities);
+
+        /// <summary>
+        /// Copies the Spell's properties and returns a new instance
+        /// </summary>
+        /// <returns>A new instance of the Spell with the same properties</returns>
+        public abstract Spell Copy();
     }
 }

@@ -29,5 +29,10 @@ namespace RPG_Battle_Test
                 Debug.Log($"Healed {entities[i].Name} for {HPRestored} HP and {MPRestored} MP!");
             }
         }
+
+        public override Item Copy()
+        {
+            return new HealingItem(Name, MultiTarget, HPRestored, MPRestored);
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace RPG_Battle_Test
     /// Handles turns and the state of turn-based battles
     /// This is a Singleton
     /// </summary>
-    public sealed class BattleManager
+    public sealed class BattleManager : IDisposable
     {
         public enum BattleStates
         {
@@ -46,14 +46,6 @@ namespace RPG_Battle_Test
         public List<BattleEntity> Players = new List<BattleEntity>();
         private int CurEntityTurn = 0;
 
-        public readonly TextBox HeaderBox = new TextBox(Helper.CreateText("Smell", "arial.ttf", new Vector2f(), Color.White), 40, 20,
-                                          new Vector2f(GameCore.GameWindow.Size.X / 2, GameCore.GameWindow.Size.Y / 16));
-
-        public readonly MessageBox ActionBox = new MessageBox(796, 150,
-                                             new Vector2f(GameCore.GameWindow.Size.X / 2f, GameCore.GameWindow.Size.Y - 77));
-
-        public BattleMenu PartyInfo = null;
-
         public Inventory PartyInventory = new Inventory();
 
         //The current state of the battle
@@ -61,7 +53,6 @@ namespace RPG_Battle_Test
 
         private readonly List<Vector2f> EnemyPositions = null;
         private readonly List<Vector2f> PlayerPositions = null;
-        private Sprite Background = null;
 
         private BattleManager()
         {
@@ -77,9 +68,6 @@ namespace RPG_Battle_Test
                 new Vector2f(525, 225),
                 new Vector2f(525, 325)
             };
-
-            PartyInfo = new BattleMenu(new Vector2f(440f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), BattleMenu.MenuTypes.Vertical);
-            PartyInfo.HideArrow = true;
         }
 
         ~BattleManager()
@@ -123,29 +111,20 @@ namespace RPG_Battle_Test
 
             BattleState = BattleStates.TurnDone;
 
-            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
-
-            for (int i = 0; i < Players.Count; i++)
-            {
-                options.Add(new BattleMenu.MenuOption(Players[i].ToString(), null));
-            }
-
-            PartyInfo.SetOptions(options);
-
             BattleUIManager.Instance.Start();
 
             //Initialize static battle components
             BattlePlayer.OnBattleStart();
         }
 
-        public void CleanUp()
+        public void Dispose()
         {
-            BattleUIManager.Instance.CleanUp();
-            PartyInventory.CleanUp();
+            BattleUIManager.Instance.Dispose();
+            PartyInventory.Dispose();
 
             for (int i = 0; i < EntityOrder.Count; i++)
             {
-                EntityOrder[i].CleanUp();
+                EntityOrder[i].Dispose();
             }
         }
 
@@ -153,7 +132,7 @@ namespace RPG_Battle_Test
         {
             BattleEntity entity = CurrentEntityTurn;
 
-            HeaderBox.SetText(entity.Name + "'s turn!");
+            BattleUIManager.Instance.SetHeaderText(entity.Name + "'s turn!");
 
             entity.StartTurn();
             BattleState = BattleStates.Combat;
@@ -161,15 +140,6 @@ namespace RPG_Battle_Test
 
         public void TurnEnd()
         {
-            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
-
-            for (int i = 0; i < Players.Count; i++)
-            {
-                options.Add(new BattleMenu.MenuOption(Players[i].ToString(), null));
-            }
-
-            PartyInfo.SetOptions(options);
-
             BattleState = BattleStates.TurnDone;
 
             UpdateBattleState();
@@ -177,13 +147,13 @@ namespace RPG_Battle_Test
             if (BattleState == BattleStates.Victory)
             {
                 //Start victory here
-                HeaderBox.SetText("Victory!");
+                BattleUIManager.Instance.SetHeaderText("Victory!");
                 return;
             }
             else if (BattleState == BattleStates.GameOver)
             {
                 //Start game over here
-                HeaderBox.SetText("Game over...");
+                BattleUIManager.Instance.SetHeaderText("Game over...");
                 return;
             }
 
@@ -308,17 +278,10 @@ namespace RPG_Battle_Test
 
         public void Draw()
         {
-            Background?.Draw(GameCore.GameWindow, RenderStates.Default);
-            HeaderBox?.Draw();
-            ActionBox?.Draw();
-            PartyInfo?.Draw();
-
             for (int i = 0; i < EntityOrder.Count; i++)
             {
                 EntityOrder[i].Draw();
             }
-
-            BattlePlayer.CurrentMenu?.Draw();
 
             BattleUIManager.Instance.Draw();
         }

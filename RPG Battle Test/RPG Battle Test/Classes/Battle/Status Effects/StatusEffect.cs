@@ -116,5 +116,11 @@ namespace RPG_Battle_Test
         /// What the status effect does at the end of the entity's turn
         /// </summary>
         protected abstract void OnTurnEnd();
+
+        /// <summary>
+        /// Copies the StatusEffect's properties and returns a new instance
+        /// </summary>
+        /// <returns>A new instance of the StatusEffect with the same properties</returns>
+        public abstract StatusEffect Copy();
     }
 }

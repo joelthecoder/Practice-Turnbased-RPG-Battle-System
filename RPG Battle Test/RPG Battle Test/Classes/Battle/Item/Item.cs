@@ -113,5 +113,11 @@ namespace RPG_Battle_Test
             }
             return true;
         }
+
+        /// <summary>
+        /// Returns a new copy of the Item instance
+        /// </summary>
+        /// <returns></returns>
+        public abstract Item Copy();
     }
 }

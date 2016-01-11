@@ -115,7 +115,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AssetManager.cs" />
     <Compile Include="Classes\Battle UI\BattleUIManager.cs" />
+    <Compile Include="Classes\Battle UI\PartyInfoMenu.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UIDamageTextDisplay.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UIElement.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UITextElement.cs" />
@@ -155,7 +157,6 @@
     <Compile Include="Classes\Inventory.cs" />
     <Compile Include="Classes\Visual\LoopAnimation.cs" />
     <Compile Include="Classes\Program.cs" />
-    <Compile Include="Classes\SpriteBatch.cs" />
     <Compile Include="Classes\SpriteSorter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

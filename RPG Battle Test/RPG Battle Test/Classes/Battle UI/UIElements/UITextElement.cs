@@ -51,9 +51,21 @@ namespace RPG_Battle_Test
             }
         }
 
+        public string TextString
+        {
+            get
+            {
+                return TextObject.DisplayedString;
+            }
+            set
+            {
+                TextObject.DisplayedString = value;
+            }
+        }
+
         public UITextElement(string text, Vector2f position, Color color, float drawDepth) : base(drawDepth)
         {
-            TextObject = Helper.CreateText(text, "arial.ttf", position, color);
+            TextObject = Helper.CreateText(text, AssetManager.TextFont, position, color);
         }
 
         protected override sealed void DrawElement(RenderTarget target, RenderStates states)

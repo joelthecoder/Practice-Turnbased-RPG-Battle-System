@@ -12,7 +12,7 @@ using static RPG_Battle_Test.Globals;
 
 namespace RPG_Battle_Test
 {
-    public abstract class BattleEntity
+    public abstract class BattleEntity : IDisposable
     {
         public enum EntityTypes
         {
@@ -53,6 +53,7 @@ namespace RPG_Battle_Test
         protected BattleCommand PreviousCommand = null;
 
         protected readonly Dictionary<string, StatusEffect> AfflictedStatuses = new Dictionary<string, StatusEffect>();
+        protected readonly Dictionary<String, Spell> LearnedSpells = new Dictionary<string, Spell>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
 
@@ -337,7 +338,7 @@ namespace RPG_Battle_Test
             }
         }
 
-        public void CleanUp()
+        public virtual void Dispose()
         {
             TurnStartEvent = null;
             TurnEndEvent = null;

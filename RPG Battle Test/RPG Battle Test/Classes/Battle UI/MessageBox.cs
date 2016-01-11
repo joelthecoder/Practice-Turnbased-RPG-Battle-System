@@ -54,7 +54,7 @@ namespace RPG_Battle_Test
         public MessageBox(uint sizeX, uint sizeY, Vector2f position)
         {
             //Top left
-            Sprite TL = Helper.CreateSprite(new Texture(Constants.ContentPath + "MessageBox\\MsgBoxTL.png"), false);
+            Sprite TL = Helper.CreateSprite(AssetManager.MsgBoxTL, false);
             Sprite TR = new Sprite(TL);
             TR.Scale = new Vector2f(-1, 1);
 
@@ -65,19 +65,19 @@ namespace RPG_Battle_Test
             BR.Scale = new Vector2f(-1, -1);
 
             //Left
-            Sprite L = Helper.CreateSprite(new Texture(Constants.ContentPath + "MessageBox\\MsgBoxL.png"), false);
+            Sprite L = Helper.CreateSprite(AssetManager.MsgBoxL, false);
             Sprite R = new Sprite(L);
             L.Scale = new Vector2f(1, sizeY);
             R.Scale = new Vector2f(-1, sizeY);
 
             //Top
-            Sprite T = Helper.CreateSprite(new Texture(Constants.ContentPath + "MessageBox\\MsgBoxT.png"), false);
+            Sprite T = Helper.CreateSprite(AssetManager.MsgBoxT, false);
             Sprite B = new Sprite(T);
             T.Scale = new Vector2f(sizeX, 1);
             B.Scale = new Vector2f(sizeX, -1);
 
             //Middle
-            Sprite M = Helper.CreateSprite(new Texture(Constants.ContentPath + "MessageBox\\MsgBoxM.png"), false);
+            Sprite M = Helper.CreateSprite(AssetManager.MsgBoxM, false);
             M.Scale = new Vector2f(sizeX, sizeY);
 
             Parts.Add(TL);

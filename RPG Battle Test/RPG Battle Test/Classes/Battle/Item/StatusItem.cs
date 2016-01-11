@@ -26,5 +26,10 @@ namespace RPG_Battle_Test
                 entities[i].InflictStatus(Status);
             }
         }
+
+        public override Item Copy()
+        {
+            return new StatusItem(Name, Status.Copy());
+        }
     }
 }

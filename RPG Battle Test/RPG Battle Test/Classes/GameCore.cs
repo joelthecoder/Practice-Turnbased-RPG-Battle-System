@@ -36,7 +36,7 @@ namespace RPG_Battle_Test
             UnloadAssets();
 
             //Clean up the BattleManager
-            BattleManager.Instance?.CleanUp();
+            BattleManager.Instance.Dispose();
 
             //Close the window when OnClose event is received and clean up events
             GameWindow.Close();
@@ -62,17 +62,21 @@ namespace RPG_Battle_Test
             GameWindow.KeyPressed += Input.OnKeyPressed;
             GameWindow.KeyReleased += Input.OnKeyReleased;
 
+            AssetManager.LoadAssets();
+
             BattleManager.Instance.Start(new CecilK(), new CecilP(), new BattleEnemy(), new BattleEnemy(), new BattleEnemy());
         }
 
         /// <summary>
-        /// Called on cleanup
+        /// Called on Dispose
         /// </summary>
         protected void UnloadAssets()
         {
             GameWindow.Closed -= OnGameClose;
             GameWindow.KeyPressed -= Input.OnKeyPressed;
             GameWindow.KeyReleased -= Input.OnKeyReleased;
+
+            AssetManager.Dispose();
         }
 
         /// <summary>

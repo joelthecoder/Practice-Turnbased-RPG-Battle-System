@@ -42,5 +42,10 @@ namespace RPG_Battle_Test
             Entity.TakeDamage((int)(Entity.MaxHP / 10f), Globals.DamageTypes.None, Globals.Elements.Poison);
             IncrementTurns();
         }
+
+        public override StatusEffect Copy()
+        {
+            return new Poison(Turns);
+        }
     }
 }

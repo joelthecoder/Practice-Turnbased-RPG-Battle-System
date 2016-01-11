@@ -31,5 +31,10 @@ namespace RPG_Battle_Test
                 entities[i].Restore(HPRestored, MPRestored);
             }
         }
+
+        public override Spell Copy()
+        {
+            return new HealingSpell(Name, MPCost, MultiTarget, HPRestored, MPRestored);
+        }
     }
 }

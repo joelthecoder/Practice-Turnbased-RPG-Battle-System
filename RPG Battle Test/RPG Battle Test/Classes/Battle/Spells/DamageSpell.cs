@@ -54,5 +54,10 @@ namespace RPG_Battle_Test
                 }
             }
         }
+
+        public override Spell Copy()
+        {
+            return new DamageSpell(Name, MPCost, Damage, DamageType, Element, Status?.Copy(), StatusPercent);
+        }
     }
 }

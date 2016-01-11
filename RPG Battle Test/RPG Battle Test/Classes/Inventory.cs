@@ -14,7 +14,7 @@ namespace RPG_Battle_Test
     /// <summary>
     /// Party item inventory. Parties are not planned to be implemented, but if they are this will be revised
     /// </summary>
-    public sealed class Inventory
+    public sealed class Inventory : IDisposable
     {
         private Dictionary<Item, int> ItemDictionary = null;
 
@@ -22,7 +22,7 @@ namespace RPG_Battle_Test
         {
             ItemDictionary = new Dictionary<Item, int>();
 
-            //NOTE: We don't have an actual party, so populate this for testing
+            //We don't have an actual party, so populate this for testing
             ItemDictionary.Add(Item.ItemTable[0], 5);
             ItemDictionary.Add(Item.ItemTable[1], 3);
             ItemDictionary.Add(Item.ItemTable[2], 1);
@@ -35,7 +35,7 @@ namespace RPG_Battle_Test
             return ItemDictionary;
         }
 
-        public void CleanUp()
+        public void Dispose()
         {
             Item.ItemUseEvent -= OnItemUse;
         }

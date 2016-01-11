@@ -29,5 +29,10 @@ namespace RPG_Battle_Test
                 entities[i].TakeDamage(Damage, DamageType, Element);
             }
         }
+
+        public override Item Copy()
+        {
+            return new DamageItem(Name, Damage, DamageType, Element);
+        }
     }
 }
