@@ -51,6 +51,18 @@ namespace RPG_Battle_Test
             }
         }
 
+        public override Vector2f Origin
+        {
+            get
+            {
+                return TextObject.Origin;
+            }
+            set
+            {
+                TextObject.Origin = value;
+            }
+        }
+
         public string TextString
         {
             get
@@ -61,6 +73,11 @@ namespace RPG_Battle_Test
             {
                 TextObject.DisplayedString = value;
             }
+        }
+
+        public UITextElement(string text) : base(Constants.BASE_UI_LAYER)
+        {
+            TextObject = Helper.CreateText(text, AssetManager.TextFont, new Vector2f(0, 0), Color.White);
         }
 
         public UITextElement(string text, Vector2f position, Color color, float drawDepth) : base(drawDepth)

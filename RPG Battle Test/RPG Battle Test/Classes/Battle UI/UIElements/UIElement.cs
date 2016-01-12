@@ -27,13 +27,19 @@ namespace RPG_Battle_Test
             set;
         }
 
-        public abstract Vector2f Position
+        public virtual Vector2f Position
         {
             get;
             set;
         }
 
         public abstract Vector2f Scale
+        {
+            get;
+            set;
+        }
+
+        public abstract Vector2f Origin
         {
             get;
             set;

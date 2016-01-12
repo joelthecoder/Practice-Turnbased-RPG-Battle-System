@@ -15,26 +15,26 @@ namespace RPG_Battle_Test
     /// A BattleMenu specifically for displaying party information.
     /// It automatically updates player info
     /// </summary>
-    public sealed class PartyInfoMenu : BattleMenu
+    public sealed class PartyInfoMenu : UIGrid<UITextElement>
     {
-        public PartyInfoMenu(Vector2f position, Vector2f spacing) : base(position, spacing, MenuTypes.Horizontal)
+        public PartyInfoMenu(Vector2f position, Vector2f spacing) : base(position, spacing, GridTypes.Horizontal)
         {
-            Active = HideArrow = true;
+            Active = true;
             MaxPerColumn = 3;
         }
 
         public void SetUpPartyInfo()
         {
-            Options = new List<MenuOption>();
+            ObjList = new List<UITextElement>();
 
             for (int i = 0; i < BattleManager.Instance.Players.Count; i++)
             {
                 BattleEntity player = BattleManager.Instance.Players[i];
 
                 //Show name, HP, and MP
-                Options.Add(new MenuOption(player.Name, null));
-                Options.Add(new MenuOption(player.CurHP + "/" + player.MaxHP, null));
-                Options.Add(new MenuOption(player.CurMP + "/" + player.MaxMP, null));
+                ObjList.Add(new UITextElement(player.Name));
+                ObjList.Add(new UITextElement(player.CurHP + "/" + player.MaxHP));
+                ObjList.Add(new UITextElement(player.CurMP + "/" + player.MaxMP));
             }
         }
 
@@ -51,12 +51,12 @@ namespace RPG_Battle_Test
 
                 int reali = i * MaxPerColumn;
 
-                Options[reali].TextString.DisplayedString = player.Name;
-                Options[reali].TextString.Color = optioncolor;
-                Options[reali + 1].TextString.DisplayedString = player.CurHP + "/" + player.MaxHP;
-                Options[reali + 1].TextString.Color = optioncolor;
-                Options[reali + 2].TextString.DisplayedString = player.CurMP + "/" + player.MaxMP;
-                Options[reali + 2].TextString.Color = optioncolor;
+                ObjList[reali].TextString = player.Name;
+                ObjList[reali].Color = optioncolor;
+                ObjList[reali + 1].TextString = player.CurHP + "/" + player.MaxHP;
+                ObjList[reali + 1].Color = optioncolor;
+                ObjList[reali + 2].TextString = player.CurMP + "/" + player.MaxMP;
+                ObjList[reali + 2].Color = optioncolor;
             }
         }
     }

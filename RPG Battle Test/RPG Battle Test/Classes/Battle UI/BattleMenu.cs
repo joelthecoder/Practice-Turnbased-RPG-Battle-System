@@ -12,65 +12,44 @@ using SFML.Audio;
 namespace RPG_Battle_Test
 {
     //Menu for selecting options in battle; for players only
-    public class BattleMenu
+    public class BattleMenu : UIGrid<BattleMenu.MenuOption>
     {
-        /// <summary>
-        /// Menu types; horizontal or vertical
-        /// </summary>
-        public enum MenuTypes
-        {
-            Vertical, Horizontal
-        }
-
         public delegate void Open();
-        public delegate void OptionSelect();
         public delegate void BackOut();
 
+        /// <summary>
+        /// Delegate called when the menu is opened
+        /// </summary>
         public Open OnOpen = null;
 
+        /// <summary>
+        /// Delegate called when the menu is backed out of
+        /// </summary>
         public BackOut OnBackOut = null;
 
-        public List<MenuOption> Options = null;
-        public MenuTypes MenuType = MenuTypes.Vertical;
-
         /// <summary>
-        /// The position of the menu, starting from the top-left, where the first option is shown
+        /// Determines whether you can back out of the menu or not
         /// </summary>
-        public Vector2f Position = new Vector2f(0f, 0f);
-
-        /// <summary>
-        /// Difference in spacing between each option
-        /// </summary>
-        public Vector2f Spacing = new Vector2f(50, 50);
-
-        //How many options are allowed in each column (Horizontal) and each row (Vertical)
-        public int MaxPerColumn = 4;
-        public int MaxPerRow = 4;
-
-        /// <summary>
-        /// How much the menu scrolled vertically or horizontally
-        /// </summary>
-        public Vector2f Offset = new Vector2f(0, 0);
-
-        public bool Active = false;
-        public bool HideArrow = false;
         public bool CanBackOut = true;
 
-        public int CurOption = 0;
+        /// <summary>
+        /// Whether options wrap around to the other end when moving the cursor or not
+        /// </summary>
+        public bool WrapOptions = false;
 
+        protected int CurOption = 0;
         protected Sprite Arrow = null;
 
         /// <summary>
         /// Menu option
         /// </summary>
-        public class MenuOption
+        public class MenuOption : UITextElement
         {
-            public Text TextString = null;
+            public delegate void OptionSelect();
             public OptionSelect OnOptionSelect = null;
 
-            public MenuOption(string text, OptionSelect onoptionselect)
+            public MenuOption(string text, OptionSelect onoptionselect) : base(text)
             {
-                TextString = Helper.CreateText(text, AssetManager.TextFont, new Vector2f(), Color.White);
                 OnOptionSelect = onoptionselect;
             }
 
@@ -80,84 +59,91 @@ namespace RPG_Battle_Test
             }
         }
 
-        protected BattleMenu(Vector2f position, Vector2f spacing, MenuTypes menutype)
+        protected BattleMenu(Vector2f position, Vector2f spacing, GridTypes gridtype) : base(position, spacing, gridtype)
         {
-            MenuType = menutype;
+            GridType = gridtype;
             Position = position;
             Spacing = spacing;
         }
 
-        public BattleMenu(Vector2f position, Vector2f spacing, MenuTypes menutype, BackOut onbackout = null)
-            : this(position, spacing, menutype)
+        public BattleMenu(Vector2f position, Vector2f spacing, GridTypes gridtype, BackOut onbackout = null)
+            : this(position, spacing, gridtype)
         {
             Arrow = Helper.CreateSprite(AssetManager.SelectionArrow, false);
             Arrow.Rotation = 270f;
             Arrow.Origin = Helper.GetSpriteOrigin(Arrow, yPercent: 0f);
 
             Active = true;
-            HideArrow = false;
             OnBackOut = onbackout;
         }
 
-        public BattleMenu(Open onopen, Vector2f position, Vector2f spacing, MenuTypes menutype, BackOut onbackout = null)
-        : this(position, spacing, menutype, onbackout)
+        public BattleMenu(Open onopen, Vector2f position, Vector2f spacing, GridTypes gridtype, BackOut onbackout = null)
+        : this(position, spacing, gridtype, onbackout)
         {
             OnOpen = onopen;
         }
 
-        public void SetOptions(params MenuOption[] options)
+        public override void SetElements(params MenuOption[] options)
         {
-            Options = options.ToList();
+            base.SetElements(options);
             CurOption = 0;
         }
 
-        public void SetOptions(List<MenuOption> options)
+        public override void SetElements(List<MenuOption> options)
         {
-            Options = options;
+            base.SetElements(options);
             CurOption = 0;
         }
 
-        public void AddOptions(params MenuOption[] options)
+        public void MoveCursor(bool forward, int amount = 1)
         {
-            Options.AddRange(options);
+            if (forward)
+            {
+                if (WrapOptions == true)
+                    CurOption = Helper.Wrap(CurOption + amount, 0, ObjList.Count - 1);
+                else CurOption = Helper.Clamp(CurOption + amount, 0, ObjList.Count - 1);
+            }
+            else
+            {
+                if (WrapOptions == true)
+                    CurOption = Helper.Wrap(CurOption - amount, 0, ObjList.Count - 1);
+                else CurOption = Helper.Clamp(CurOption - amount, 0, ObjList.Count - 1);
+            }
         }
 
-        public void AddOptions(List<MenuOption> options)
+        public override void Update()
         {
-            Options.AddRange(options);
-        }
-
-        public void MoveCursor(bool forward)
-        {
-            if (forward) CurOption = Helper.Wrap(CurOption + 1, 0, Options.Count - 1);
-            else CurOption = Helper.Wrap(CurOption - 1, 0, Options.Count - 1);
-        }
-
-        public virtual void Update()
-        {
-            //No input if the menu or arrow aren't active
-            if (Active == false || HideArrow == true)
+            //No input if the menu isn't active
+            if (Active == false)
                 return;
 
-            if (MenuType == MenuTypes.Vertical)
+            if (GridType == GridTypes.Vertical)
             {
                 if (Input.PressedKey(Keyboard.Key.Up))
                     MoveCursor(false);
                 if (Input.PressedKey(Keyboard.Key.Down))
                     MoveCursor(true);
+                if (Input.PressedKey(Keyboard.Key.Left))
+                    MoveCursor(false, MaxPerRow);
+                if (Input.PressedKey(Keyboard.Key.Right))
+                    MoveCursor(true, MaxPerRow);
             }
-            else if (MenuType == MenuTypes.Horizontal)
+            else if (GridType == GridTypes.Horizontal)
             {
                 if (Input.PressedKey(Keyboard.Key.Left))
                     MoveCursor(false);
                 if (Input.PressedKey(Keyboard.Key.Right))
                     MoveCursor(true);
+                if (Input.PressedKey(Keyboard.Key.Up))
+                    MoveCursor(false, MaxPerColumn);
+                if (Input.PressedKey(Keyboard.Key.Down))
+                    MoveCursor(true, MaxPerColumn);
             }
 
             //Select menu
             if (Input.PressedKey(Keyboard.Key.Z))
             {
-                Options?[CurOption].Select();
+                ObjList?[CurOption].Select();
             }
             //Back out of the menu if possible
             else if (CanBackOut == true && Input.PressedKey(Keyboard.Key.X))
@@ -169,34 +155,12 @@ namespace RPG_Battle_Test
             }
         }
 
-        public void Draw()
+        protected override void DrawElements()
         {
-            if (Active == false)
-                return;
-
-            for (int i = 0; i < Options.Count; i++)
-            {
-                Text textstring = Options[i].TextString;
-
-                if (textstring != null)
-                {
-                    int xFactor = MenuType == MenuTypes.Horizontal ? (i % MaxPerColumn) : (i / MaxPerRow);
-                    int yFactor = MenuType == MenuTypes.Vertical ? (i % MaxPerRow) : (i / MaxPerColumn);
-
-                    textstring.Position = new Vector2f(Position.X + (xFactor * Spacing.X), Position.Y + (yFactor * Spacing.Y));
-
-                    //Put the origin for the text on the top-left
-                    textstring.Origin = new Vector2f(0, 0);
-
-                    GameCore.spriteSorter.Add(textstring, Constants.BASE_UI_LAYER + .3f);
-                }
-            }
-
-            if (HideArrow == false)
-            {
-                Arrow.Position = new Vector2f(Options[CurOption].TextString.Position.X - 35, Options[CurOption].TextString.Position.Y + 18);
-                GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .4f);
-            }
+            base.DrawElements();
+            
+            Arrow.Position = new Vector2f(ObjList[CurOption].Position.X - 35, ObjList[CurOption].Position.Y + 18);
+            GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .4f);
         }
     }
 }

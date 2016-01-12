@@ -33,7 +33,7 @@ namespace RPG_Battle_Test
         {
             base.OnTurnStarted();
 
-            BattleUIManager.Instance.GetInputMenu().AddOptions(new BattleMenu.MenuOption("Steal", () =>
+            BattleUIManager.Instance.GetInputMenu().AddElements(new BattleMenu.MenuOption("Steal", () =>
             {
                 Debug.Log($"{Name} tried to steal something, but it failed!");
                 EndTurn();

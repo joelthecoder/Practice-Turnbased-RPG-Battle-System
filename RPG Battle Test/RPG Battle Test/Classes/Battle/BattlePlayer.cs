@@ -52,7 +52,7 @@ namespace RPG_Battle_Test
         public static void OnBattleStart()
         {
             BattleMenu mainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(150, 35), 
-                                                       BattleMenu.MenuTypes.Vertical);
+                                                       BattleMenu.GridTypes.Vertical);
             mainBattleMenu.CanBackOut = false;
             mainBattleMenu.Active = false;
 
@@ -72,7 +72,7 @@ namespace RPG_Battle_Test
             BattleUIManager.Instance.GetInputMenu().Active = true;
 
             //Set the basic options
-            BattleUIManager.Instance.GetInputMenu().SetOptions(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
+            BattleUIManager.Instance.GetInputMenu().SetElements(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
             new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
         }
 
@@ -225,7 +225,7 @@ namespace RPG_Battle_Test
         protected void ItemSelect()
         {
             BattleMenu itemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40),
-                                                 BattleMenu.MenuTypes.Vertical);
+                                                 BattleMenu.GridTypes.Vertical);
             itemMenu.OnOpen = PopulateItemList;
             BattleUIManager.Instance.PushInputMenu(itemMenu);
         }
@@ -233,7 +233,7 @@ namespace RPG_Battle_Test
         protected void SpellSelect()
         {
             BattleMenu spellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), 
-                                                  BattleMenu.MenuTypes.Vertical);
+                                                  BattleMenu.GridTypes.Vertical);
             spellMenu.OnOpen = PopulateSpellList;
             BattleUIManager.Instance.PushInputMenu(spellMenu);
         }
@@ -248,7 +248,7 @@ namespace RPG_Battle_Test
                 options.Add(new BattleMenu.MenuOption($"{pair.Key.Name} x{pair.Value}", () => ItemSelection(pair.Key)));
             }
 
-            BattleUIManager.Instance.GetInputMenu().SetOptions(options);
+            BattleUIManager.Instance.GetInputMenu().SetElements(options);
         }
 
         protected void PopulateSpellList()
@@ -261,7 +261,7 @@ namespace RPG_Battle_Test
             options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
             options.Add(new BattleMenu.MenuOption($"{Cure.Name}", () => SpellSelection(Cure)));
 
-            BattleUIManager.Instance.GetInputMenu().SetOptions(options);
+            BattleUIManager.Instance.GetInputMenu().SetElements(options);
         }
 
         public override void Update()

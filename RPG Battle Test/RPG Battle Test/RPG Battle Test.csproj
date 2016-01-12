@@ -118,6 +118,7 @@
     <Compile Include="Classes\AssetManager.cs" />
     <Compile Include="Classes\Battle UI\BattleUIManager.cs" />
     <Compile Include="Classes\Battle UI\PartyInfoMenu.cs" />
+    <Compile Include="Classes\Battle UI\UIGrid.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UIDamageTextDisplay.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UIElement.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UITextElement.cs" />
