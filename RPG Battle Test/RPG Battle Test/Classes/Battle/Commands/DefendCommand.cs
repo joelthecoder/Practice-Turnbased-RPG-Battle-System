@@ -10,9 +10,8 @@ namespace RPG_Battle_Test
     {
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
-            //Grant the user 50% damage reduction until their next turn
-            Attacker.AddStatModifier(StatModifiers.StatModTypes.Defense, 1, 0);//0, .5f);
-            Attacker.AddStatModifier(StatModifiers.StatModTypes.MagicDef, 1, 0);//0, .5f);
+            //Grant the entity 50% more defense until its next turn
+            Attacker.InflictStatus(new BigDefense());
 
             Debug.Log($"{Attacker.Name} has defended this turn!");
         }

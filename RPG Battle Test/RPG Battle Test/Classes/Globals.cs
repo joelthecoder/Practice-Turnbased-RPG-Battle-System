@@ -23,7 +23,7 @@ namespace RPG_Battle_Test
         /// </summary>
         public enum Elements
         {
-            Neutral, Fire, Earth, Ice, Poison, DefPierce, MDefPierce
+            Neutral, Fire, Earth, Ice, Poison
         }
 
         /// <summary>

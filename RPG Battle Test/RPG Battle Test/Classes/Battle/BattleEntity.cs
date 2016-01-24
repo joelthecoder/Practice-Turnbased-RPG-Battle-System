@@ -325,6 +325,16 @@ namespace RPG_Battle_Test
             StatModifications.AddModifier(statModType, amount, percentage);
         }
 
+        public void RemoveStatModifierAmount(StatModifiers.StatModTypes statModType, int amount)
+        {
+            StatModifications.RemoveModifierWithAmount(statModType, amount);
+        }
+
+        public void RemoveStatModifierPercentage(StatModifiers.StatModTypes statModType, float percentage)
+        {
+            StatModifications.RemoveModifierWithPercentage(statModType, percentage);
+        }
+
         public void ClearStatModifiers()
         {
             StatModifications.ClearModifiers();

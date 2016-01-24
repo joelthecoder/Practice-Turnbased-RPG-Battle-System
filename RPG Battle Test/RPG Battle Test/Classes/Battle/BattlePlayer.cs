@@ -60,12 +60,6 @@ namespace RPG_Battle_Test
         {
             base.OnTurnStarted();
 
-            if (PreviousCommand is DefendCommand)
-            {
-                StatModifications.RemoveModifierWithAmount(StatModifiers.StatModTypes.Defense, 1);//RemoveModifierWithPercentage(StatModifiers.StatModTypes.Defense, .5f);
-                StatModifications.RemoveModifierWithAmount(StatModifiers.StatModTypes.MagicDef, 1);//RemoveModifierWithPercentage(StatModifiers.StatModTypes.MagicDef, .5f);
-            }
-
             BattleUIManager.Instance.TargetMenu.TargetSelectionEvent += UseCommand;
 
             BattleUIManager.Instance.GetInputMenu().Active = true;
@@ -99,43 +93,6 @@ namespace RPG_Battle_Test
         {
             base.TurnUpdate();
 
-            /*if (CurSelection.HasValue)
-            {
-                //Cancel selection
-                if (Input.PressedKey(Keyboard.Key.X))
-                {
-                    CurSelection = null;
-                    BattleUIManager.Instance.SetHeaderText(Name + "'s turn!");
-                    return;
-                }
-                else
-                {
-                    //Move up a selection
-                    if (Input.PressedKey(Keyboard.Key.Up))
-                    {
-                        do CurSelection = Helper.Wrap(CurSelection.Value - 1, 0, TargetList.Count - 1);
-                        while (TargetList[CurSelection.Value].IsDead == true);
-                        Arrow.Position = new Vector2f(TargetList[CurSelection.Value].Position.X, TargetList[CurSelection.Value].Position.Y - ArrowVerticalDist);
-                        BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[CurSelection.Value].Name + "?");
-                    }
-                    //Move down a selection
-                    if (Input.PressedKey(Keyboard.Key.Down))
-                    {
-                        do CurSelection = Helper.Wrap(CurSelection.Value + 1, 0, TargetList.Count - 1);
-                        while (TargetList[CurSelection.Value].IsDead == true);
-                        Arrow.Position = new Vector2f(TargetList[CurSelection.Value].Position.X, TargetList[CurSelection.Value].Position.Y - ArrowVerticalDist);
-                        BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[CurSelection.Value].Name + "?");
-                    }
-                }
-            }
-
-            if (Input.PressedKey(Keyboard.Key.Z) && CurSelection.HasValue == true)
-            {
-                CurrentCommand.PerformAction(this, TargetList[CurSelection.Value]);
-                EndTurn();
-                return;
-            }*/
-
             if (BattleUIManager.Instance.TargetMenu.Active == false)
                 BattleUIManager.Instance.GetInputMenu().Update();
             else BattleUIManager.Instance.TargetMenu.Update();
@@ -143,7 +100,7 @@ namespace RPG_Battle_Test
 
         protected void AttackSelect()
         {
-            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(EntityTypes.Enemy, true), false);
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(EntityTypes.Enemy, BattleManager.EntityFilterStates.Alive), false);
 
             CurrentCommand = new AttackCommand();
         }
@@ -152,7 +109,7 @@ namespace RPG_Battle_Test
         {
             EntityTypes entityType = EntityTypes.None;
             bool multiTarget = false;
-            bool filterDead = true;
+            BattleManager.EntityFilterStates filterState = BattleManager.EntityFilterStates.Alive;
 
             if (item.IsOfType(Item.ItemTypes.Damage) || item.IsOfType(Item.ItemTypes.NegativeStatus))
             {
@@ -163,7 +120,7 @@ namespace RPG_Battle_Test
                 entityType = EntityTypes.Player;
             }
 
-            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterDead), multiTarget);
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterState), multiTarget);
 
             CurrentCommand = new ItemCommand(item);
         }
@@ -178,7 +135,7 @@ namespace RPG_Battle_Test
 
             EntityTypes entityType = EntityTypes.None;
             bool multiTarget = spell.MultiTarget;
-            bool filterDead = true;
+            BattleManager.EntityFilterStates filterState = BattleManager.EntityFilterStates.Alive;
 
             if (spell.SpellType == Spell.SpellTypes.Negative)
             {
@@ -189,7 +146,7 @@ namespace RPG_Battle_Test
                 entityType = EntityTypes.Player;
             }
 
-            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterDead), multiTarget);
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterState), multiTarget);
 
             CurrentCommand = new SpellCommand(spell);
         }

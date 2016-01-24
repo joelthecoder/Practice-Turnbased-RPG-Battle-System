@@ -24,7 +24,7 @@ namespace RPG_Battle_Test
 
         public enum EntityFilterStates
         {
-            Both, Alive, Dead
+            All, Alive, Dead
         }
 
         public static BattleManager Instance
@@ -228,9 +228,9 @@ namespace RPG_Battle_Test
         /// Returns a group of entities
         /// </summary>
         /// <param name="entityType">The type of entity </param>
-        /// <param name="filterDead">If true, exclude all dead entities from the returned list</param>
+        /// <param name="filterState">Include all entities only from this filter in the returned list</param>
         /// <returns>A list of the entities of the specified type</returns>
-        public List<BattleEntity> GetEntityGroup(BattleEntity.EntityTypes entityType, bool filterDead)
+        public List<BattleEntity> GetEntityGroup(BattleEntity.EntityTypes entityType, EntityFilterStates filterState)
         {
             List<BattleEntity> list = new List<BattleEntity>();
 
@@ -250,11 +250,23 @@ namespace RPG_Battle_Test
             }
 
             //Filter out dead entities
-            if (filterDead == true)
+            if (filterState == EntityFilterStates.Alive)
             {
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].IsDead == true)
+                    {
+                        list.RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+            //Filter out alive entities
+            else if (filterState == EntityFilterStates.Dead)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].IsDead == false)
                     {
                         list.RemoveAt(i);
                         i--;
@@ -269,10 +281,10 @@ namespace RPG_Battle_Test
         /// Returns a random entity specified by entitytype
         /// </summary>
         /// <param name="entitytype">The type of entity to select. If None is passed in, choose from any entity in the battle</param>
-        /// <param name="chooseDead">Specifies whether a dead entity should be chosen</param>
-        public BattleEntity SelectRandomEntity(BattleEntity.EntityTypes entitytype, bool chooseDead)
+        /// <param name="filterState">The filter to apply to the random selection</param>
+        public BattleEntity SelectRandomEntity(BattleEntity.EntityTypes entitytype, EntityFilterStates filterState)
         {
-            List<BattleEntity> entitylist = GetEntityGroup(entitytype, chooseDead);
+            List<BattleEntity> entitylist = GetEntityGroup(entitytype, filterState);
 
             return entitylist?[Globals.Randomizer.Next(0, entitylist.Count)];
         }
