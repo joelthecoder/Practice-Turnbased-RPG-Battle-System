@@ -22,6 +22,11 @@ namespace RPG_Battle_Test
             Init, Combat, TurnDone, Victory, GameOver
         }
 
+        public enum EntityFilterStates
+        {
+            Both, Alive, Dead
+        }
+
         public static BattleManager Instance
         {
             get
@@ -219,41 +224,57 @@ namespace RPG_Battle_Test
             }
         }
 
-        //Helper method for SelectRandomEntity
-        private List<BattleEntity> FillList<T>(List<T> originalList) where T: BattleEntity
+        /// <summary>
+        /// Returns a group of entities
+        /// </summary>
+        /// <param name="entityType">The type of entity </param>
+        /// <param name="filterDead">If true, exclude all dead entities from the returned list</param>
+        /// <returns>A list of the entities of the specified type</returns>
+        public List<BattleEntity> GetEntityGroup(BattleEntity.EntityTypes entityType, bool filterDead)
         {
-            List<BattleEntity> aliveList = new List<BattleEntity>();
-            for (int i = 0; i < originalList.Count; i++)
+            List<BattleEntity> list = new List<BattleEntity>();
+
+            if (entityType == BattleEntity.EntityTypes.Player)
             {
-                if (originalList[i].IsDead == false)
-                    aliveList.Add(originalList[i]);
+                list.AddRange(Players);
+            }
+            else if (entityType == BattleEntity.EntityTypes.Enemy)
+            {
+                list.AddRange(Enemies);
+            }
+            else
+            {
+                //Have it separated by enemies first, then players - more organized
+                list.AddRange(Enemies);
+                list.AddRange(Players);
             }
 
-            return aliveList;
+            //Filter out dead entities
+            if (filterDead == true)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].IsDead == true)
+                    {
+                        list.RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+
+            return list;
         }
 
         /// <summary>
-        /// Returns a random entity specified by entitytype. This does not select entities that are Dead
+        /// Returns a random entity specified by entitytype
         /// </summary>
         /// <param name="entitytype">The type of entity to select. If None is passed in, choose from any entity in the battle</param>
-        public BattleEntity SelectRandomEntity(BattleEntity.EntityTypes entitytype)
+        /// <param name="chooseDead">Specifies whether a dead entity should be chosen</param>
+        public BattleEntity SelectRandomEntity(BattleEntity.EntityTypes entitytype, bool chooseDead)
         {
-            List<BattleEntity> entitylist = null;
-            
-            if (entitytype == BattleEntity.EntityTypes.None)
-            {
-                entitylist = FillList(EntityOrder);
-            }
-            else if (entitytype == BattleEntity.EntityTypes.Enemy)
-            {
-                entitylist = FillList(Enemies);
-            }
-            else if (entitytype == BattleEntity.EntityTypes.Player)
-            {
-                entitylist = FillList(Players);
-            }
+            List<BattleEntity> entitylist = GetEntityGroup(entitytype, chooseDead);
 
-            return entitylist?[new Random().Next(0, entitylist.Count)];
+            return entitylist?[Globals.Randomizer.Next(0, entitylist.Count)];
         }
 
         public void Update()

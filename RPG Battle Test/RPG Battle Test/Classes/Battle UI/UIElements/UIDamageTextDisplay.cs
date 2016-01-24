@@ -90,7 +90,7 @@ namespace RPG_Battle_Test
             switch (damageType)
             {
                 case DamageTypes.None: return Color.Green;
-                case DamageTypes.Magic: return Color.Cyan;
+                case DamageTypes.Magic: return Color.Yellow;
                 default: return Color.White;
             }
         }

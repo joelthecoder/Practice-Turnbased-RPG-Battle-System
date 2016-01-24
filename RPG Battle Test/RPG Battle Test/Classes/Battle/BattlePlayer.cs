@@ -30,8 +30,6 @@ namespace RPG_Battle_Test
         protected const float ArrowVerticalDist = 100f;
 
         public Characters Character { get; private set; } = Characters.None;
-        protected Sprite Arrow = null;
-        protected int? CurSelection = null;
 
         private List<BattleEntity> TargetList = null;
 
@@ -41,7 +39,6 @@ namespace RPG_Battle_Test
         {
             EntityType = EntityTypes.Player;
 
-            Arrow = Helper.CreateSprite(AssetManager.SelectionArrow, false);
             //AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
             //new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
         }
@@ -69,6 +66,8 @@ namespace RPG_Battle_Test
                 StatModifications.RemoveModifierWithAmount(StatModifiers.StatModTypes.MagicDef, 1);//RemoveModifierWithPercentage(StatModifiers.StatModTypes.MagicDef, .5f);
             }
 
+            BattleUIManager.Instance.TargetMenu.TargetSelectionEvent += UseCommand;
+
             BattleUIManager.Instance.GetInputMenu().Active = true;
 
             //Set the basic options
@@ -79,8 +78,9 @@ namespace RPG_Battle_Test
         protected override void OnTurnEnded()
         {
             base.OnTurnEnded();
-            CurSelection = null;
-            TargetList = null;
+
+            BattleUIManager.Instance.TargetMenu.TargetSelectionEvent -= UseCommand;
+
             while (BattleUIManager.Instance.InputMenuCount() > 1)
             {
                 BattleUIManager.Instance.PopInputMenu();
@@ -89,11 +89,17 @@ namespace RPG_Battle_Test
             BattleUIManager.Instance.GetInputMenu().Active = false;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            BattleUIManager.Instance.TargetMenu.TargetSelectionEvent -= UseCommand;
+        }
+
         public override void TurnUpdate()
         {
             base.TurnUpdate();
 
-            if (CurSelection.HasValue)
+            /*if (CurSelection.HasValue)
             {
                 //Cancel selection
                 if (Input.PressedKey(Keyboard.Key.X))
@@ -128,53 +134,36 @@ namespace RPG_Battle_Test
                 CurrentCommand.PerformAction(this, TargetList[CurSelection.Value]);
                 EndTurn();
                 return;
-            }
+            }*/
 
-            if (CurSelection.HasValue == false)
+            if (BattleUIManager.Instance.TargetMenu.Active == false)
                 BattleUIManager.Instance.GetInputMenu().Update();
+            else BattleUIManager.Instance.TargetMenu.Update();
         }
 
         protected void AttackSelect()
         {
-            TargetList = BattleManager.Instance.Enemies;
-
-            for (int i = 0; i < TargetList.Count; i++)
-            {
-                BattleEntity target = TargetList[i];
-                if (target.IsDead == false)
-                {
-                    CurSelection = i;
-                    Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
-                    BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[i].Name + "?");
-                    break;
-                }
-            }
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(EntityTypes.Enemy, true), false);
 
             CurrentCommand = new AttackCommand();
         }
-        
+
         protected void ItemSelection(Item item)
         {
+            EntityTypes entityType = EntityTypes.None;
+            bool multiTarget = false;
+            bool filterDead = true;
+
             if (item.IsOfType(Item.ItemTypes.Damage) || item.IsOfType(Item.ItemTypes.NegativeStatus))
             {
-                TargetList = BattleManager.Instance.Enemies;
+                entityType = EntityTypes.Enemy;
             }
             else if (item.IsOfType(Item.ItemTypes.Heal) || item.IsOfType(Item.ItemTypes.PositiveStatus))
             {
-                TargetList = BattleManager.Instance.Players;
+                entityType = EntityTypes.Player;
             }
 
-            for (int i = 0; i < TargetList.Count; i++)
-            {
-                BattleEntity target = TargetList[i];
-                if (target.IsDead == false)
-                {
-                    CurSelection = i;
-                    Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
-                    BattleUIManager.Instance.SetHeaderText("Attack " + TargetList[i].Name + "?");
-                    break;
-                }
-            }
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterDead), multiTarget);
 
             CurrentCommand = new ItemCommand(item);
         }
@@ -186,40 +175,30 @@ namespace RPG_Battle_Test
                 Debug.Log($"{Name} has {CurMP}MP but requires {spell.MPCost}MP to cast {spell.Name}!");
                 return;
             }
-            
+
+            EntityTypes entityType = EntityTypes.None;
+            bool multiTarget = spell.MultiTarget;
+            bool filterDead = true;
+
             if (spell.SpellType == Spell.SpellTypes.Negative)
             {
-                TargetList = BattleManager.Instance.Enemies;
+                entityType = EntityTypes.Enemy;
             }
             else if (spell.SpellType == Spell.SpellTypes.Positive)
             {
-                TargetList = BattleManager.Instance.Players;
-            }
-            else
-            {
-                TargetList = BattleManager.Instance.EntityOrder;
+                entityType = EntityTypes.Player;
             }
 
-            for (int i = 0; i < TargetList.Count; i++)
-            {
-                BattleEntity target = TargetList[i];
-                if (target.IsDead == false)
-                {
-                    CurSelection = i;
-                    Arrow.Position = new Vector2f(target.Position.X, target.Position.Y - ArrowVerticalDist);
-                    BattleUIManager.Instance.SetHeaderText($"Use {spell.Name} on " + TargetList[i].Name + "?");
-                    break;
-                }
-            }
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterDead), multiTarget);
 
             CurrentCommand = new SpellCommand(spell);
         }
 
         protected void DefendSelect()
         {
+            BattleUIManager.Instance.StartTargetSelection(new List<BattleEntity>() { this }, false);
+
             CurrentCommand = new DefendCommand();
-            CurrentCommand.PerformAction(this, null);
-            EndTurn();
         }
 
         protected void ItemSelect()
@@ -255,13 +234,21 @@ namespace RPG_Battle_Test
         {
             List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
 
-            DamageSpell Poison = new DamageSpell("Demi1", 3, 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
+            DamageSpell Poison = new DamageSpell("Demi1", 3, 3, false, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
             HealingSpell Cure = new HealingSpell("Cure1", 2, false, 10, 0);
+            DamageSpell Ultima = new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f);
 
             options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
             options.Add(new BattleMenu.MenuOption($"{Cure.Name}", () => SpellSelection(Cure)));
+            options.Add(new BattleMenu.MenuOption($"{Ultima.Name}", () => SpellSelection(Ultima)));
 
             BattleUIManager.Instance.GetInputMenu().SetElements(options);
+        }
+
+        public void UseCommand(params BattleEntity[] victims)
+        {
+            CurrentCommand.PerformAction(this, victims);
+            EndTurn();
         }
 
         public override void Update()
@@ -273,10 +260,6 @@ namespace RPG_Battle_Test
         public override void Draw()
         {
             base.Draw();
-            if (CurSelection.HasValue)
-            {
-                GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .03f);
-            }
 
             //AttackAnim.Position = new Vector2f(500f, 400f);
             AttackAnim?.Draw(40f);

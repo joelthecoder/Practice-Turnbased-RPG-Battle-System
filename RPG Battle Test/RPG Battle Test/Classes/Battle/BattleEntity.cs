@@ -220,6 +220,13 @@ namespace RPG_Battle_Test
         public void ModifyHP(int value)
         {
             CurHP = Helper.Clamp(value, 0, MaxHP);
+
+            //Death; clear all statuses and status modifiers
+            if (CurHP == 0)
+            {
+                ClearAllStatuses();
+                ClearStatModifiers();
+            }
         }
 
         public void ModifyMP(int value)

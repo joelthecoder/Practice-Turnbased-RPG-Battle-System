@@ -49,6 +49,8 @@ namespace RPG_Battle_Test
         //List of UIElements
         private List<UIElement> Elements = new List<UIElement>();
 
+        public TargetSelectionMenu TargetMenu = new TargetSelectionMenu();
+
         private BattleUIManager()
         {
             //Initialize necessary menus here
@@ -75,6 +77,7 @@ namespace RPG_Battle_Test
             Elements = null;
 
             InputMenus.Clear();
+            TargetMenu.Dispose();
         }
 
         public void PushInputMenu(BattleMenu menu)
@@ -121,6 +124,11 @@ namespace RPG_Battle_Test
             Elements.Add(uiElement);
         }
 
+        public void StartTargetSelection(List<BattleEntity> targetList, bool multiTarget)
+        {
+            TargetMenu.Start(targetList, multiTarget);
+        }
+
         public void Update()
         {
             if (Elements == null)
@@ -164,6 +172,7 @@ namespace RPG_Battle_Test
             PartyInfo.Draw();
             if (InputMenus.Count > 0)
                 InputMenus.Peek().Draw();
+            TargetMenu.Draw();
         }
     }
 }
