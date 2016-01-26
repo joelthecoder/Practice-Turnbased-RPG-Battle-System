@@ -255,6 +255,19 @@ namespace RPG_Battle_Test
         {
             ModifyHP(CurHP + (int)hp);
             ModifyMP(CurMP + (int)mp);
+
+            if (hp != 0)
+            {
+                //Emerald green
+                BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(.75f, hp.ToString(),
+                new Vector2f(Position.X, Position.Y - 50f), new Color(85, 212, 63, 255), Constants.BASE_UI_LAYER + .6f));
+            }
+            if (mp != 0)
+            {
+                //Turquoise-ish
+                BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(.75f, mp.ToString(),
+                new Vector2f(Position.X, Position.Y - 50f), new Color(72, 241, 241, 255), Constants.BASE_UI_LAYER + .6f));
+            }
         }
 
         /// <summary>
