@@ -117,7 +117,7 @@ namespace RPG_Battle_Test
             }
             else
             {
-                Debug.LogError("Somehow used an item that doesn't exist in the inventory!");
+                Debug.LogError($"Somehow used item {item.Name}, which doesn't exist in the inventory!");
             }
         }
     }

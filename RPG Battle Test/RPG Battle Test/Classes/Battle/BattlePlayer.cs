@@ -178,10 +178,17 @@ namespace RPG_Battle_Test
         {
             Dictionary<Item, int> items = BattleManager.Instance.PartyInventory.GetInventory();
             List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
-            
-            foreach (KeyValuePair<Item, int> pair in items)
+
+            if (items.Count == 0)
             {
-                options.Add(new BattleMenu.MenuOption($"{pair.Key.Name} x{pair.Value}", () => ItemSelection(pair.Key)));
+                options.Add(new BattleMenu.MenuOption("Empty Inventory - Exit", BattleUIManager.Instance.PopInputMenu));
+            }
+            else
+            {
+                foreach (KeyValuePair<Item, int> pair in items)
+                {
+                    options.Add(new BattleMenu.MenuOption($"{pair.Key.Name} x{pair.Value}", () => ItemSelection(pair.Key)));
+                }
             }
 
             BattleUIManager.Instance.GetInputMenu().SetElements(options);
@@ -191,13 +198,17 @@ namespace RPG_Battle_Test
         {
             List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
 
-            DamageSpell Poison = new DamageSpell("Demi1", 3, 3, false, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f);
-            HealingSpell Cure = new HealingSpell("Cure1", 2, false, 10, 0);
-            DamageSpell Ultima = new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f);
-
-            options.Add(new BattleMenu.MenuOption($"{Poison.Name}", () => SpellSelection(Poison)));
-            options.Add(new BattleMenu.MenuOption($"{Cure.Name}", () => SpellSelection(Cure)));
-            options.Add(new BattleMenu.MenuOption($"{Ultima.Name}", () => SpellSelection(Ultima)));
+            if (LearnedSpells.Count == 0)
+            {
+                options.Add(new BattleMenu.MenuOption("No spells - Exit", BattleUIManager.Instance.PopInputMenu));
+            }
+            else
+            {
+                foreach (KeyValuePair<string, Spell> spell in LearnedSpells)
+                {
+                    options.Add(new BattleMenu.MenuOption($"{spell.Value.Name}", () => SpellSelection(spell.Value)));
+                }
+            }
 
             BattleUIManager.Instance.GetInputMenu().SetElements(options);
         }

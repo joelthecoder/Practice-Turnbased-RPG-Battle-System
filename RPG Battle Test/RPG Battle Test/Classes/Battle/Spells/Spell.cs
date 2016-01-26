@@ -26,6 +26,11 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
+        /// The global Spell table
+        /// </summary>
+        private static readonly Dictionary<string, Spell> SpellTable = null;
+
+        /// <summary>
         /// The name of the spell
         /// </summary>
         public string Name { get; protected set; } = "Spell";
@@ -45,6 +50,28 @@ namespace RPG_Battle_Test
         /// The amount of MP it costs to cast the spell
         /// </summary>
         public int MPCost { get; protected set; } = 2;
+
+        static Spell()
+        {
+            SpellTable = new Dictionary<string, Spell>()
+            {
+                { "Demi1", new DamageSpell("Demi1", 3, 3, false, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f) },
+                { "Cure1", new HealingSpell("Cure1", 2, false, 10, 0) },
+                { "Ultima", new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f) }
+            };
+        }
+
+        public static bool SpellExists(string spellName) => SpellTable.ContainsKey(spellName);
+
+        public static Spell GetSpell(string spellName)
+        {
+            if (SpellExists(spellName) == true)
+            {
+                return SpellTable[spellName];
+            }
+            
+            return null;
+        }
 
         protected Spell(string name, int mpCost)
         {

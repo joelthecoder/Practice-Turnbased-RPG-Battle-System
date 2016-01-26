@@ -29,6 +29,10 @@ namespace RPG_Battle_Test
 
             EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + "CecilP.png"), false, new IntRect(7, 44, 16, 24));
             EntitySprite.Scale *= 3f;
+
+            LearnSpell("Demi1");
+            LearnSpell("Cure1");
+            LearnSpell("Ultima");
         }
     }
 }

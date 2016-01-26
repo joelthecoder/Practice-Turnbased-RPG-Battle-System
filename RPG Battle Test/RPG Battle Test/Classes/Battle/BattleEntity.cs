@@ -53,7 +53,7 @@ namespace RPG_Battle_Test
         protected BattleCommand PreviousCommand = null;
 
         protected readonly Dictionary<string, StatusEffect> AfflictedStatuses = new Dictionary<string, StatusEffect>();
-        protected readonly Dictionary<String, Spell> LearnedSpells = new Dictionary<string, Spell>();
+        protected readonly Dictionary<string, Spell> LearnedSpells = new Dictionary<string, Spell>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
 
@@ -255,6 +255,56 @@ namespace RPG_Battle_Test
         {
             ModifyHP(CurHP + (int)hp);
             ModifyMP(CurMP + (int)mp);
+        }
+
+        /// <summary>
+        /// Makes the entity learn a Spell
+        /// </summary>
+        /// <param name="spellName">The name of the Spell to learn</param>
+        public void LearnSpell(string spellName)
+        {
+            if (LearnedSpells.ContainsKey(spellName) == true)
+            {
+                Debug.LogError($"{Name} already knows {spellName}!");
+                return;
+            }
+
+            Spell learnedSpell = Spell.GetSpell(spellName);
+
+            //Don't add if the spell doesn't exist
+            if (learnedSpell != null)
+            {
+                LearnedSpells.Add(spellName, learnedSpell);
+                Debug.Log($"{Name} learned {spellName}!");
+            }
+            else
+            {
+                Debug.LogError($"Spell with name \"{spellName}\" does not exist in the global Spell table!");
+            }
+        }
+
+        /// <summary>
+        /// Makes the entity forget a Spell
+        /// </summary>
+        /// <param name="spellName"></param>
+        public void ForgetSpell(string spellName)
+        {
+            if (LearnedSpells.ContainsKey(spellName) == false)
+            {
+                Debug.LogError($"{Name} doesn't know {spellName}!");
+                return;
+            }
+
+            LearnedSpells.Remove(spellName);
+            Debug.Log($"{Name} forgot {spellName}!");
+        }
+
+        /// <summary>
+        /// Makes the entity forget all learned Spells
+        /// </summary>
+        public void ForgetAllSpells()
+        {
+            LearnedSpells.Clear();
         }
 
         /// <summary>
