@@ -12,15 +12,14 @@ using static RPG_Battle_Test.Globals;
 
 namespace RPG_Battle_Test
 {
-    public class DamageSpell : Spell
+    public class DamageSpell : StatusSpell
     {
         public int Damage = 0;
         public DamageTypes DamageType = DamageTypes.Magic;
         public Elements Element = Elements.Neutral;
-        public StatusEffect Status = null;
-        public float StatusPercent = 0f;
 
-        public DamageSpell(string name, int mpCost, int damage, bool multiTarget, DamageTypes damageType, Elements element) : base(name, mpCost, multiTarget)
+        public DamageSpell(string name, int mpCost, int damage, bool multiTarget, DamageTypes damageType, Elements element)
+            : base(name, mpCost, multiTarget, null, 0f)
         {
             SpellType = SpellTypes.Negative;
 

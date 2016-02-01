@@ -46,7 +46,7 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Called when the battle is started
         /// </summary>
-        public static void OnBattleStart()
+        public static void BattleStart()
         {
             BattleMenu mainBattleMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(150, 35), 
                                                        BattleMenu.GridTypes.Vertical);

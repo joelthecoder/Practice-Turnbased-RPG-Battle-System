@@ -88,6 +88,11 @@ namespace RPG_Battle_Test
             }
         }
 
+        public virtual void OnBattleStart()
+        {
+            
+        }
+
         //Battle-turn related methods
         public void StartTurn()
         {
@@ -268,6 +273,14 @@ namespace RPG_Battle_Test
                 BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(.75f, mp.ToString(),
                 new Vector2f(Position.X, Position.Y - 50f), new Color(72, 241, 241, 255), Constants.BASE_UI_LAYER + .6f));
             }
+        }
+
+        /// <summary>
+        /// Gets all the Spells the entity knows. This returns a copy of the LearnedSpells dictionary
+        /// </summary>
+        public Dictionary<string, Spell> GetAllSpells()
+        {
+            return new Dictionary<string, Spell>(LearnedSpells);
         }
 
         /// <summary>

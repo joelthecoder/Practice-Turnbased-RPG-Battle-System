@@ -112,6 +112,8 @@ namespace RPG_Battle_Test
                     entity.Position = PlayerPositions[playerindex];
                     playerindex++;
                 }
+
+                entity.OnBattleStart();
             }
 
             BattleState = BattleStates.TurnDone;
@@ -119,7 +121,7 @@ namespace RPG_Battle_Test
             BattleUIManager.Instance.Start();
 
             //Initialize static battle components
-            BattlePlayer.OnBattleStart();
+            BattlePlayer.BattleStart();
         }
 
         public void Dispose()

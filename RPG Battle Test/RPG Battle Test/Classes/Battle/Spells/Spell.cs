@@ -57,7 +57,8 @@ namespace RPG_Battle_Test
             {
                 { "Demi1", new DamageSpell("Demi1", 3, 3, false, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f) },
                 { "Cure1", new HealingSpell("Cure1", 2, false, 10, 0) },
-                { "Ultima", new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f) }
+                { "Ultima", new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f) },
+                { "Silence1", new StatusSpell("Silence1", 2, false, new Silence(2), 100f) }
             };
         }
 

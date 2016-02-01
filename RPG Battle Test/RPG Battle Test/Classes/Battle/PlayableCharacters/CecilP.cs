@@ -33,6 +33,7 @@ namespace RPG_Battle_Test
             LearnSpell("Demi1");
             LearnSpell("Cure1");
             LearnSpell("Ultima");
+            LearnSpell("Silence1");
         }
     }
 }
