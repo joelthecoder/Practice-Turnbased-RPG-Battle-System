@@ -22,18 +22,18 @@ namespace RPG_Battle_Test
 
             IntRect rect = new IntRect(1456, 33, 31, 32);
 
-            if (new Random().Next(0, 2) == 0)
-            {
+            //if (new Random().Next(0, 2) == 0)
+            //{
                 Name = "Gnome";
                 rect = new IntRect(1456, 33, 31, 32);
                 Speed = 4;
-            }
-            else
-            {
-                Name = "Gargoyle";
-                rect = new IntRect(990, 346, 62, 48);
-                Speed = 2;
-            }
+            //}
+            //else
+            //{
+            //    Name = "Gargoyle";
+            //    rect = new IntRect(990, 346, 62, 48);
+            //    Speed = 2;
+            //}
 
             EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + "Enemies.png"), true, rect);
             EntitySprite.Scale *= 3f;

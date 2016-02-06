@@ -1,5 +1,7 @@
 # Practice-Turnbased-RPG-Battle-System
-Practice for a basic turn-based RPG battle system in SFML.NET
+By Thomas Deeb
+
+Practice for a basic turn-based RPG battle system in SFML.NET.
 
 The goal is to create a flexible battle system with the following features:
 -Turn order based on speed, with order differing depending on speed mods during battle

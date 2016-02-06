@@ -40,6 +40,8 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
+        public int TrueSpeed => CalculateTotalStat(Speed, StatModifiers.StatModTypes.Speed);
+
         /// <summary>
         /// The current BattleCommand the entity is about to perform.
         /// For players, once the command is set, the player selects the target(s)
@@ -336,7 +338,7 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Inflicts one or more StatusEffects on the entity
         /// </summary>
-        /// <param name="statuses">The StatusEffets to inflict on the entity</param>
+        /// <param name="statuses">The StatusEffects to inflict on the entity</param>
         public void InflictStatus(params StatusEffect[] statuses)
         {
             for (int i = 0; i < statuses.Length; i++)
@@ -348,6 +350,9 @@ namespace RPG_Battle_Test
                     Debug.LogError($"Status being inflicted on {Name} at index {i} is null!");
                     continue;
                 }
+
+                //Copy the status for a new reference
+                status = statuses[i].Copy();
 
                 string statusName = status.Name;
 
@@ -401,14 +406,14 @@ namespace RPG_Battle_Test
             StatModifications.AddModifier(statModType, amount, percentage);
         }
 
-        public void RemoveStatModifierAmount(StatModifiers.StatModTypes statModType, int amount)
+        public bool RemoveStatModifierAmount(StatModifiers.StatModTypes statModType, int amount)
         {
-            StatModifications.RemoveModifierWithAmount(statModType, amount);
+            return StatModifications.RemoveModifierWithAmount(statModType, amount);
         }
 
-        public void RemoveStatModifierPercentage(StatModifiers.StatModTypes statModType, float percentage)
+        public bool RemoveStatModifierPercentage(StatModifiers.StatModTypes statModType, float percentage)
         {
-            StatModifications.RemoveModifierWithPercentage(statModType, percentage);
+            return StatModifications.RemoveModifierWithPercentage(statModType, percentage);
         }
 
         public void ClearStatModifiers()

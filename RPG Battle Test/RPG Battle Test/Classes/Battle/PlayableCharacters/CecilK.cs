@@ -18,7 +18,7 @@ namespace RPG_Battle_Test
             Name = "CecilK";
             Speed = 3;
             MaxHP = 30;
-            MaxMP = 0;
+            MaxMP = 9;
             Attack = 7;
             Defense = 3;
 
@@ -27,6 +27,8 @@ namespace RPG_Battle_Test
 
             EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + "CecilK.png"), false, new IntRect(5, 55, 16, 24));
             EntitySprite.Scale *= 3f;
+
+            LearnSpell("Haste1");
         }
 
         protected override void OnTurnStarted()

@@ -76,6 +76,7 @@ namespace RPG_Battle_Test
                     if (statMods[i].Amount == amount)
                     {
                         TotalStats[statModType].Amount -= amount;
+                        TotalStats[statModType].Percentage -= statMods[i].Percentage;
                         statMods.RemoveAt(i);
                         //Debug.Log($"Removed StatMod of type {statModType} with Amount {amount}!");
                         return true;
@@ -103,6 +104,7 @@ namespace RPG_Battle_Test
                     if (statMods[i].Percentage == percentage)
                     {
                         TotalStats[statModType].Percentage -= percentage;
+                        TotalStats[statModType].Amount -= statMods[i].Amount;
                         statMods.RemoveAt(i);
                         //Debug.Log($"Removed StatMod of type {statModType} with Percentage {percentage}!");
                         return true;

@@ -22,11 +22,18 @@ namespace RPG_Battle_Test
         {
             public Drawable DrawableObj;
             public float Depth;
+            public RenderStates RenderState;
 
             public DepthObject(Drawable drawableobj, float depth)
             {
                 DrawableObj = drawableobj;
                 Depth = depth;
+                RenderState = RenderStates.Default;
+            }
+
+            public DepthObject(Drawable drawableobj, float depth, RenderStates renderstate) : this(drawableobj, depth)
+            {
+                RenderState = renderstate;
             }
         }
 
@@ -61,6 +68,17 @@ namespace RPG_Battle_Test
             DepthBatch.Add(new DepthObject(drawable, depth));
         }
 
+        public void Add(Drawable drawable, float depth, RenderStates renderstate)
+        {
+            if (drawable == null)
+            {
+                Debug.LogError("\"" + nameof(drawable) + "\" parameter is null! Not adding to DepthBatch");
+                return;
+            }
+
+            DepthBatch.Add(new DepthObject(drawable, depth, renderstate));
+        }
+
         public void DrawAll()
         {
             if (DepthBatch.Count == 0)
@@ -71,7 +89,7 @@ namespace RPG_Battle_Test
 
             for (int i = 0; i < DepthBatch.Count; i++)
             {
-                DepthBatch[i].DrawableObj.Draw(GameCore.GameWindow, RenderStates.Default);
+                DepthBatch[i].DrawableObj.Draw(GameCore.GameWindow, DepthBatch[i].RenderState);
             }
 
             DepthBatch.Clear();

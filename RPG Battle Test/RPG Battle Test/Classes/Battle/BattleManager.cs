@@ -45,11 +45,10 @@ namespace RPG_Battle_Test
         private static BattleManager instance = null;
 
         //Begin instance members
-        //Determines turn order
-        public List<BattleEntity> EntityOrder = null;
+        public List<BattleEntity> Entities = null;
         public List<BattleEntity> Enemies = new List<BattleEntity>();
         public List<BattleEntity> Players = new List<BattleEntity>();
-        private int CurEntityTurn = 0;
+        private List<BattleEntity> TurnOrder = null;
 
         public Inventory PartyInventory = new Inventory();
 
@@ -81,25 +80,19 @@ namespace RPG_Battle_Test
             instance = null;
         }
 
-        public BattleEntity CurrentEntityTurn => EntityOrder[CurEntityTurn];
+        public BattleEntity CurrentEntityTurn => TurnOrder[0];
 
         public void Start(params BattleEntity[] entities)
         {
-            EntityOrder = entities.ToList();
-            EntityOrder.Sort((e1, e2) =>
-            {
-                if (e1.Speed > e2.Speed)
-                    return -1;
-                if (e1.Speed < e2.Speed)
-                    return 1;
-                return 0;
-             });
+            Entities = entities.ToList();
+            TurnOrder = new List<BattleEntity>(Entities);
+            TurnOrder.Sort(FindNextTurn);
 
             int enemyindex = 0, playerindex = 0;
 
-            for (int i = 0; i < EntityOrder.Count; i++)
+            for (int i = 0; i < Entities.Count; i++)
             {
-                BattleEntity entity = EntityOrder[i];
+                BattleEntity entity = Entities[i];
                 if (entity.IsEnemy)
                 {
                     Enemies.Add((BattleEnemy)entity);
@@ -129,9 +122,9 @@ namespace RPG_Battle_Test
             BattleUIManager.Instance.Dispose();
             PartyInventory.Dispose();
 
-            for (int i = 0; i < EntityOrder.Count; i++)
+            for (int i = 0; i < Entities.Count; i++)
             {
-                EntityOrder[i].Dispose();
+                Entities[i].Dispose();
             }
         }
 
@@ -143,6 +136,15 @@ namespace RPG_Battle_Test
 
             entity.StartTurn();
             BattleState = BattleStates.Combat;
+        }
+
+        private int FindNextTurn(BattleEntity entity1, BattleEntity entity2)
+        {
+            if (entity1.TrueSpeed > entity2.TrueSpeed)
+                return -1;
+            if (entity1.TrueSpeed < entity2.TrueSpeed)
+                return 1;
+            return 0;
         }
 
         public void TurnEnd()
@@ -164,22 +166,16 @@ namespace RPG_Battle_Test
                 return;
             }
 
-            //Failsafe if all entities are dead
-            int deadattempts = 0;
+            //Update the next turn cycle
+            TurnOrder.RemoveAt(0);
 
-            //Check for the next entity that isn't dead
-            do
+            //Start the cycle over
+            if (TurnOrder.Count == 0)
             {
-                CurEntityTurn = Helper.Wrap(CurEntityTurn + 1, 0, EntityOrder.Count - 1);
-                deadattempts++;
+                TurnOrder.AddRange(Entities);
             }
-            while (CurrentEntityTurn.IsDead == true && deadattempts < EntityOrder.Count);
 
-            //Everyone is dead, so update the battle state, which will make the players lose
-            if (deadattempts >= EntityOrder.Count)
-            {
-                UpdateBattleState();
-            }
+            TurnOrder.Sort(FindNextTurn);
         }
 
         //Update the battle state after each turn
@@ -303,9 +299,9 @@ namespace RPG_Battle_Test
             }
 
             //This update is for animations, effects, and etc.
-            for (int i = 0; i < EntityOrder.Count; i++)
+            for (int i = 0; i < Entities.Count; i++)
             {
-                EntityOrder[i].Update();
+                Entities[i].Update();
             }
 
             BattleUIManager.Instance.Update();
@@ -313,9 +309,9 @@ namespace RPG_Battle_Test
 
         public void Draw()
         {
-            for (int i = 0; i < EntityOrder.Count; i++)
+            for (int i = 0; i < Entities.Count; i++)
             {
-                EntityOrder[i].Draw();
+                Entities[i].Draw();
             }
 
             BattleUIManager.Instance.Draw();
