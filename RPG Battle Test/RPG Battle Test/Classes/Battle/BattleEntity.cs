@@ -341,6 +341,13 @@ namespace RPG_Battle_Test
         /// <param name="statuses">The StatusEffects to inflict on the entity</param>
         public void InflictStatus(params StatusEffect[] statuses)
         {
+            //Don't inflict statuses if dead
+            if (IsDead == true)
+            {
+                Debug.LogWarning($"Entity: {Name} is dead and cannot be inflicted with any StatusEffects!");
+                return;
+            }
+
             for (int i = 0; i < statuses.Length; i++)
             {
                 StatusEffect status = statuses[i];

@@ -78,11 +78,19 @@ namespace RPG_Battle_Test
         /// </summary>
         protected void IncrementTurns()
         {
-            TurnsPassed++;
-            if (IsFinished)
+            //Ensure End() won't be called more than once
+            if (IsFinished == false)
             {
-                End();
-                StatusFinishedEvent?.Invoke(this);
+                TurnsPassed++;
+                if (IsFinished)
+                {
+                    End();
+                    StatusFinishedEvent?.Invoke(this);
+                }
+            }
+            else
+            {
+                Debug.LogError($"Attempted to call {nameof(IncrementTurns)} for StatusEffect: {Name} on Entity: {Entity.Name} after it already ended!");
             }
         }
 

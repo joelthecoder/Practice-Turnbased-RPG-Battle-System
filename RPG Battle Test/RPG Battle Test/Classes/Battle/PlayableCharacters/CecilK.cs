@@ -29,6 +29,7 @@ namespace RPG_Battle_Test
             EntitySprite.Scale *= 3f;
 
             LearnSpell("Haste1");
+            LearnSpell("Sleep1");
         }
 
         protected override void OnTurnStarted()

@@ -135,6 +135,7 @@
     <Compile Include="Classes\Battle\Status Effects\BigDefense.cs" />
     <Compile Include="Classes\Battle\Status Effects\Haste.cs" />
     <Compile Include="Classes\Battle\Status Effects\Silence.cs" />
+    <Compile Include="Classes\Battle\Status Effects\Sleep.cs" />
     <Compile Include="Classes\Visual\Animation.cs" />
     <Compile Include="Classes\Battle UI\BattleMenu.cs" />
     <Compile Include="Classes\Battle UI\TextBox.cs" />

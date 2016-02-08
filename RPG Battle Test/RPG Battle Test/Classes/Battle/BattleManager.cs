@@ -86,7 +86,7 @@ namespace RPG_Battle_Test
         {
             Entities = entities.ToList();
             TurnOrder = new List<BattleEntity>(Entities);
-            TurnOrder.Sort(FindNextTurn);
+            TurnOrder.Sort(SortBySpeed);
 
             int enemyindex = 0, playerindex = 0;
 
@@ -134,21 +134,17 @@ namespace RPG_Battle_Test
 
             BattleUIManager.Instance.SetHeaderText(entity.Name + "'s turn!");
 
-            entity.StartTurn();
-            BattleState = BattleStates.Combat;
-        }
+            Debug.LogWarning($"Started {entity.Name}'s Turn!");
 
-        private int FindNextTurn(BattleEntity entity1, BattleEntity entity2)
-        {
-            if (entity1.TrueSpeed > entity2.TrueSpeed)
-                return -1;
-            if (entity1.TrueSpeed < entity2.TrueSpeed)
-                return 1;
-            return 0;
+            BattleState = BattleStates.Combat;
+
+            entity.StartTurn();
         }
 
         public void TurnEnd()
         {
+            Debug.LogWarning($"Ended {CurrentEntityTurn.Name}'s Turn!");
+
             BattleState = BattleStates.TurnDone;
 
             UpdateBattleState();
@@ -172,10 +168,17 @@ namespace RPG_Battle_Test
             //Start the cycle over
             if (TurnOrder.Count == 0)
             {
-                TurnOrder.AddRange(Entities);
+                for (int i = 0; i < Entities.Count; i++)
+                {
+                    //Add only alive entities
+                    if (Entities[i].IsDead == false)
+                    {
+                        TurnOrder.Add(Entities[i]);
+                    }
+                }
             }
 
-            TurnOrder.Sort(FindNextTurn);
+            TurnOrder.Sort(SortBySpeed);
         }
 
         //Update the battle state after each turn
@@ -220,6 +223,15 @@ namespace RPG_Battle_Test
             {
                 BattleState = BattleStates.Victory;
             }
+        }
+
+        private int SortBySpeed(BattleEntity entity1, BattleEntity entity2)
+        {
+            if (entity1.TrueSpeed > entity2.TrueSpeed)
+                return -1;
+            if (entity1.TrueSpeed < entity2.TrueSpeed)
+                return 1;
+            return 0;
         }
 
         /// <summary>
