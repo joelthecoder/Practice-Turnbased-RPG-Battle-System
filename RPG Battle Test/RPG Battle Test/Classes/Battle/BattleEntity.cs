@@ -22,8 +22,11 @@ namespace RPG_Battle_Test
         public delegate void TurnStart();
         public delegate void TurnEnd();
 
+        public delegate void EntityDeath(BattleEntity entity);
+
         public event TurnStart TurnStartEvent = null;
         public event TurnEnd TurnEndEvent = null;
+        public static event EntityDeath EntityDeathEvent = null;
 
         public Sprite EntitySprite = null;
         public int NumActions = 1;
@@ -233,6 +236,10 @@ namespace RPG_Battle_Test
             {
                 ClearAllStatuses();
                 ClearStatModifiers();
+
+                EntityDeathEvent?.Invoke(this);
+
+                Debug.Log($"{Name} has fallen in battle!");
             }
         }
 

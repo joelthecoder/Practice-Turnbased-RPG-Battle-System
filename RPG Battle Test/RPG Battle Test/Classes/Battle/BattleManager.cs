@@ -84,6 +84,10 @@ namespace RPG_Battle_Test
 
         public void Start(params BattleEntity[] entities)
         {
+            //Unsubscribe first then subscribe, in case the battle was started again before being disposed
+            BattleEntity.EntityDeathEvent -= OnEntityDeath;
+            BattleEntity.EntityDeathEvent += OnEntityDeath;
+
             Entities = entities.ToList();
             TurnOrder = new List<BattleEntity>(Entities);
             TurnOrder.Sort(SortBySpeed);
@@ -126,6 +130,8 @@ namespace RPG_Battle_Test
             {
                 Entities[i].Dispose();
             }
+
+            BattleEntity.EntityDeathEvent -= OnEntityDeath;
         }
 
         private void TurnStart()
@@ -232,6 +238,21 @@ namespace RPG_Battle_Test
             if (entity1.TrueSpeed < entity2.TrueSpeed)
                 return 1;
             return 0;
+        }
+
+        /// <summary>
+        /// Removes the Entity that died from the turn order
+        /// </summary>
+        /// <param name="entity">The entity that died</param>
+        private void OnEntityDeath(BattleEntity entity)
+        {
+            //Prevent removing if it is the Entity's turn
+            //It would mess up the turn order because the next Entity would be removed from the list instead of the current one
+            //It's possible for an Entity to die on its own turn through Poison or other Status Effects
+            if (entity.IsTurn == false)
+            {
+                TurnOrder.Remove(entity);
+            }
         }
 
         /// <summary>
