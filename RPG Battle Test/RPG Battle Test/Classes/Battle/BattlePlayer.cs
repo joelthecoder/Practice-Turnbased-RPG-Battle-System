@@ -108,8 +108,8 @@ namespace RPG_Battle_Test
         protected void ItemSelection(Item item)
         {
             EntityTypes entityType = EntityTypes.None;
-            bool multiTarget = false;
-            BattleManager.EntityFilterStates filterState = BattleManager.EntityFilterStates.Alive;
+            bool multiTarget = item.MultiTarget;
+            BattleManager.EntityFilterStates filterState = item.FilterState;
 
             if (item.IsOfType(Item.ItemTypes.Damage) || item.IsOfType(Item.ItemTypes.NegativeStatus))
             {

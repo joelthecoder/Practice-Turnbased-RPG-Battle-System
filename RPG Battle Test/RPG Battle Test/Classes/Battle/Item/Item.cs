@@ -40,6 +40,11 @@ namespace RPG_Battle_Test
         public bool MultiTarget { get; protected set; } = false;
 
         /// <summary>
+        /// The state of the BattleEntities that the Item affects
+        /// </summary>
+        public BattleManager.EntityFilterStates FilterState { get; protected set; } = BattleManager.EntityFilterStates.Alive;
+
+        /// <summary>
         /// The dictionary of types the item is classified as. A particular key existing means the item is classified as that type
         /// </summary>
         public readonly Dictionary<ItemTypes, bool> TypeList = new Dictionary<ItemTypes, bool>();
@@ -50,7 +55,8 @@ namespace RPG_Battle_Test
             {
                 new HealingItem("Potion", false, 20, 0),
                 new HealingItem("Ether", false, 0, 20),
-                new DamageItem("Bomb", 10, Globals.DamageTypes.Physical, Globals.Elements.Neutral)
+                new DamageItem("Bomb", 10, Globals.DamageTypes.Physical, Globals.Elements.Neutral),
+                new PercentageHealingItem("Phoenix Down", false, .2f, 0f, BattleManager.EntityFilterStates.Dead)
             };
         }
 

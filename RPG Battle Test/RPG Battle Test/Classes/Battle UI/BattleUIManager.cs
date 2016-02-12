@@ -126,6 +126,12 @@ namespace RPG_Battle_Test
 
         public void StartTargetSelection(List<BattleEntity> targetList, bool multiTarget)
         {
+            if (targetList == null || targetList.Count == 0)
+            {
+                Debug.LogError($"Cannot set target selection because {nameof(targetList)} is null or empty!");
+                return;
+            }
+
             TargetMenu.Start(targetList, multiTarget);
         }
 

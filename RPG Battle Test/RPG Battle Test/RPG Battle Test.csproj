@@ -127,6 +127,7 @@
     <Compile Include="Classes\Battle\Commands\DefendCommand.cs" />
     <Compile Include="Classes\Battle\Commands\ItemCommand.cs" />
     <Compile Include="Classes\Battle\Commands\SpellCommand.cs" />
+    <Compile Include="Classes\Battle\Item\PercentageHealingItem.cs" />
     <Compile Include="Classes\Battle\PlayableCharacters\CecilK.cs" />
     <Compile Include="Classes\Battle\PlayableCharacters\CecilP.cs" />
     <Compile Include="Classes\Battle\Spells\HealingSpell.cs" />

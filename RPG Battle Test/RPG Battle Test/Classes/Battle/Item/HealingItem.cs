@@ -8,8 +8,8 @@ namespace RPG_Battle_Test
 {
     public class HealingItem: Item
     {
-        public uint HPRestored = 0;
-        public uint MPRestored = 0;
+        private uint HPRestored = 0;
+        private uint MPRestored = 0;
 
         public HealingItem(string name, bool multitarget, uint hpRestored, uint mpRestored) : base(name, multitarget)
         {
@@ -18,6 +18,11 @@ namespace RPG_Battle_Test
 
             MultiTarget = multitarget;
             TypeList.Add(ItemTypes.Heal, true);
+        }
+
+        protected HealingItem(string name, bool multitarget) : this(name, multitarget, 0, 0)
+        {
+
         }
 
         protected override void OnUse(params BattleEntity[] entities)

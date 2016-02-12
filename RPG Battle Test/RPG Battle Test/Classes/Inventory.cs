@@ -26,6 +26,7 @@ namespace RPG_Battle_Test
             ItemDictionary.Add(Item.ItemTable[0], 5);
             ItemDictionary.Add(Item.ItemTable[1], 3);
             ItemDictionary.Add(Item.ItemTable[2], 1);
+            ItemDictionary.Add(Item.ItemTable[3], 5);
 
             Item.ItemUseEvent += OnItemUse;
         }
