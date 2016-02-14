@@ -21,7 +21,7 @@ namespace RPG_Battle_Test
         public DamageSpell(string name, int mpCost, int damage, bool multiTarget, DamageTypes damageType, Elements element)
             : base(name, mpCost, multiTarget, null, 0f)
         {
-            SpellType = SpellTypes.Negative;
+            Alignment = UsableAlignment.Negative;
 
             Damage = damage;
             DamageType = damageType;

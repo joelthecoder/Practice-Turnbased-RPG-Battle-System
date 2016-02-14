@@ -25,7 +25,7 @@ namespace RPG_Battle_Test
 
             if (Status != null)
             {
-                SpellType = (SpellTypes)Status.StatusType;
+                Alignment = (UsableAlignment)Status.StatusType;
             }
         }
 

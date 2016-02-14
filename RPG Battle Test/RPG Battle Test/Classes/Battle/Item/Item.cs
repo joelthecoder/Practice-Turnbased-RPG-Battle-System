@@ -9,7 +9,7 @@ namespace RPG_Battle_Test
     /// <summary>
     /// The base class for items, which have a variety of effects. They can heal, damage, inflict status effects, and more
     /// </summary>
-    public abstract class Item
+    public abstract class Item : UsableBase
     {
         /// <summary>
         /// Types of items. An item can be classified as more than one type
@@ -29,22 +29,6 @@ namespace RPG_Battle_Test
         public static Item[] ItemTable = null;
 
         /// <summary>
-        /// The name of the item
-        /// </summary>
-        public string Name { get; protected set; } = "Item";
-
-        /// <summary>
-        /// Whether the item is multi-target or not.
-        /// If false only one target can be selected, otherwise all targets will be selected
-        /// </summary>
-        public bool MultiTarget { get; protected set; } = false;
-
-        /// <summary>
-        /// The state of the BattleEntities that the Item affects
-        /// </summary>
-        public BattleManager.EntityFilterStates FilterState { get; protected set; } = BattleManager.EntityFilterStates.Alive;
-
-        /// <summary>
         /// The dictionary of types the item is classified as. A particular key existing means the item is classified as that type
         /// </summary>
         public readonly Dictionary<ItemTypes, bool> TypeList = new Dictionary<ItemTypes, bool>();
@@ -60,7 +44,7 @@ namespace RPG_Battle_Test
             };
         }
 
-        protected Item(string name)
+        protected Item(string name) : base(name)
         {
             Name = name;
         }

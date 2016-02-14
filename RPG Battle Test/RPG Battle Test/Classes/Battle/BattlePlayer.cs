@@ -137,11 +137,11 @@ namespace RPG_Battle_Test
             bool multiTarget = spell.MultiTarget;
             BattleManager.EntityFilterStates filterState = BattleManager.EntityFilterStates.Alive;
 
-            if (spell.SpellType == Spell.SpellTypes.Negative)
+            if (spell.Alignment == UsableBase.UsableAlignment.Negative)
             {
                 entityType = EntityTypes.Enemy;
             }
-            else if (spell.SpellType == Spell.SpellTypes.Positive)
+            else if (spell.Alignment == UsableBase.UsableAlignment.Positive)
             {
                 entityType = EntityTypes.Player;
             }

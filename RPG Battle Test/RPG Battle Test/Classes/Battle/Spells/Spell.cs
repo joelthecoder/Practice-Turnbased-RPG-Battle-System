@@ -15,36 +15,12 @@ namespace RPG_Battle_Test
     /// Magic spells used by entities. They are enhanced by an entity's MagicAtk and resisted by an entity's MagicDef.
     /// Spells can have a variety of primary or secondary effects, including healing, status, increased resistance, or more
     /// </summary>
-    public abstract class Spell
+    public abstract class Spell : UsableBase
     {
-        /// <summary>
-        /// Types of spells
-        /// </summary>
-        public enum SpellTypes
-        {
-            Neutral, Positive, Negative
-        }
-
         /// <summary>
         /// The global Spell table
         /// </summary>
         private static readonly Dictionary<string, Spell> SpellTable = null;
-
-        /// <summary>
-        /// The name of the spell
-        /// </summary>
-        public string Name { get; protected set; } = "Spell";
-
-        /// <summary>
-        /// Whether the spell is multi-target or not.
-        /// If false only one target can be selected, otherwise all targets will be selected
-        /// </summary>
-        public bool MultiTarget { get; protected set; } = false;
-
-        /// <summary>
-        /// The type the spell is classified as
-        /// </summary>
-        public SpellTypes SpellType { get; protected set; } = SpellTypes.Neutral;
 
         /// <summary>
         /// The amount of MP it costs to cast the spell
@@ -76,7 +52,7 @@ namespace RPG_Battle_Test
             return null;
         }
 
-        protected Spell(string name, int mpCost)
+        protected Spell(string name, int mpCost) : base(name)
         {
             Name = name;
             MPCost = mpCost;

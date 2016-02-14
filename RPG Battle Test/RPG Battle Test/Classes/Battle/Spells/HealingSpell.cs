@@ -21,7 +21,7 @@ namespace RPG_Battle_Test
             HPRestored = hprestored;
             MPRestored = mprestored;
 
-            SpellType = SpellTypes.Positive;
+            Alignment = UsableAlignment.Positive;
         }
 
         public override void OnUse(BattleEntity Attacker, params BattleEntity[] entities)
