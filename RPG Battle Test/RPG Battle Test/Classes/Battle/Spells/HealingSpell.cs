@@ -24,11 +24,11 @@ namespace RPG_Battle_Test
             Alignment = UsableAlignment.Positive;
         }
 
-        public override void OnUse(BattleEntity Attacker, params BattleEntity[] entities)
+        public override void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < Entities.Length; i++)
             {
-                entities[i].Restore(HPRestored, MPRestored);
+                Entities[i].Restore(HPRestored, MPRestored);
             }
         }
 

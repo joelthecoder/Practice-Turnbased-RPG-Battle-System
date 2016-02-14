@@ -25,13 +25,13 @@ namespace RPG_Battle_Test
 
         }
 
-        protected override void OnUse(params BattleEntity[] entities)
+        protected override void UseItem(BattleEntity User, params BattleEntity[] Entities)
         {
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < Entities.Length; i++)
             {
-                entities[i].Restore(HPRestored, MPRestored);
+                Entities[i].Restore(HPRestored, MPRestored);
 
-                Debug.Log($"Healed {entities[i].Name} for {HPRestored} HP and {MPRestored} MP!");
+                Debug.Log($"Healed {Entities[i].Name} for {HPRestored} HP and {MPRestored} MP!");
             }
         }
 

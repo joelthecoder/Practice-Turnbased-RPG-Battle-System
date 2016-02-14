@@ -15,7 +15,7 @@ namespace RPG_Battle_Test
     /// Magic spells used by entities. They are enhanced by an entity's MagicAtk and resisted by an entity's MagicDef.
     /// Spells can have a variety of primary or secondary effects, including healing, status, increased resistance, or more
     /// </summary>
-    public abstract class Spell : UsableBase
+    public abstract class Spell : UsableBase, IUsable
     {
         /// <summary>
         /// The global Spell table
@@ -64,11 +64,11 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// What happens to the entity when the Spell is used on it
+        /// What happens to the entities when the Spell is used on them
         /// </summary>
-        /// <param name="Attacker"></param>
-        /// <param name="entities"></param>
-        public abstract void OnUse(BattleEntity Attacker, params BattleEntity[] entities);
+        /// <param name="User"></param>
+        /// <param name="Entities"></param>
+        public abstract void OnUse(BattleEntity User, params BattleEntity[] Entities);
 
         /// <summary>
         /// Copies the Spell's properties and returns a new instance

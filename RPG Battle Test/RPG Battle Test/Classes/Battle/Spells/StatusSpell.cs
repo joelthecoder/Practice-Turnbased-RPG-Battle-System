@@ -29,22 +29,22 @@ namespace RPG_Battle_Test
             }
         }
 
-        public override void OnUse(BattleEntity Attacker, params BattleEntity[] entities)
+        public override void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
             if (Status != null)
             {
-                for (int i = 0; i < entities.Length; i++)
+                for (int i = 0; i < Entities.Length; i++)
                 {
                     float percent = (float)Math.Round(Randomizer.NextDouble() * 100f);
                     if (StatusPercent > percent)
                     {
-                        entities[i].InflictStatus(Status);
+                        Entities[i].InflictStatus(Status);
                     }
                 }
             }
             else
             {
-                Debug.LogError($"Status for Spell {Name} by {Attacker.Name} is null!");
+                Debug.LogError($"Status for Spell {Name} by {User.Name} is null!");
             }
         }
 

@@ -21,7 +21,7 @@ namespace RPG_Battle_Test
             if (Victims.Length == 1)
                 usedOn = $" on {Victims[0].Name}";
             Debug.Log($"{Attacker.Name} used {ItemUsed.Name}{usedOn}!");
-            ItemUsed.Use(Victims);
+            ItemUsed.OnUse(Attacker, Victims);
         }
     }
 }

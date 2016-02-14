@@ -23,16 +23,16 @@ namespace RPG_Battle_Test
             FilterState = filterState;
         }
 
-        protected override void OnUse(params BattleEntity[] entities)
+        protected override void UseItem(BattleEntity User, params BattleEntity[] Entities)
         {
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < Entities.Length; i++)
             {
-                uint hpRestored = (uint)(entities[i].MaxHP * PercentageHP);
-                uint mpRestored = (uint)(entities[i].MaxMP * PercentageMP);
+                uint hpRestored = (uint)(Entities[i].MaxHP * PercentageHP);
+                uint mpRestored = (uint)(Entities[i].MaxMP * PercentageMP);
 
-                entities[i].Restore(hpRestored, mpRestored);
+                Entities[i].Restore(hpRestored, mpRestored);
 
-                Debug.Log($"Healed {entities[i].Name} for {hpRestored} HP and {mpRestored} MP!");
+                Debug.Log($"Healed {Entities[i].Name} for {hpRestored} HP and {mpRestored} MP!");
             }
         }
 

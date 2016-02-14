@@ -9,7 +9,7 @@ namespace RPG_Battle_Test
     /// <summary>
     /// The base class for items, which have a variety of effects. They can heal, damage, inflict status effects, and more
     /// </summary>
-    public abstract class Item : UsableBase
+    public abstract class Item : UsableBase, IUsable
     {
         /// <summary>
         /// Types of items. An item can be classified as more than one type
@@ -64,20 +64,20 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Uses the item. This is here so we can call events
         /// </summary>
-        /// <param name="entities"></param>
-        public void Use(params BattleEntity[] entities)
+        /// <param name="Entities"></param>
+        public void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
             //Call use event
             ItemUseEvent?.Invoke(this);
 
-            OnUse(entities);
+            UseItem(User, Entities);
         }
 
         /// <summary>
-        /// What happens to the entities when the Item is used on it
+        /// What happens to the entities when the Item is used on them
         /// </summary>
-        /// <param name="entities"></param>
-        protected abstract void OnUse(params BattleEntity[] entities);
+        /// <param name="Entities"></param>
+        protected abstract void UseItem(BattleEntity User, params BattleEntity[] Entities);
 
         /// <summary>
         /// Tells if an item is a particular type

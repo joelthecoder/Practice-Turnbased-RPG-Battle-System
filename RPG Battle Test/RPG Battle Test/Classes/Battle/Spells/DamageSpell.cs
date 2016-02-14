@@ -35,12 +35,12 @@ namespace RPG_Battle_Test
             StatusPercent = Helper.Clamp(statuspercentage, 0f, 100f);
         }
 
-        public override void OnUse(BattleEntity Attacker, params BattleEntity[] entities)
+        public override void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
-            for (int i = 0; i < entities.Length; i++)
+            for (int i = 0; i < Entities.Length; i++)
             {
                 //Calculate damage and add the Spell's damage
-                entities[i].TakeDamage(Attacker.CalculateDamageDealt(DamageType, Element) + Damage, DamageType, Element);
+                Entities[i].TakeDamage(User.CalculateDamageDealt(DamageType, Element) + Damage, DamageType, Element);
 
                 //If no Status (only damage), don't bother inflicting
                 if (Status != null)
@@ -48,7 +48,7 @@ namespace RPG_Battle_Test
                     float percent = (float)Math.Round(Randomizer.NextDouble() * 100f);
                     if (StatusPercent > percent)
                     {
-                        entities[i].InflictStatus(Status);
+                        Entities[i].InflictStatus(Status);
                     }
                 }
             }
