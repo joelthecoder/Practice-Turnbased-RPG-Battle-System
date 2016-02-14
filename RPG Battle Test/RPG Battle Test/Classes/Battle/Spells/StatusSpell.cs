@@ -38,7 +38,7 @@ namespace RPG_Battle_Test
                     float percent = (float)Math.Round(Randomizer.NextDouble() * 100f);
                     if (StatusPercent > percent)
                     {
-                        Entities[i].InflictStatus(Status);
+                        Entities[i].InflictStatus(User, Status);
                     }
                 }
             }

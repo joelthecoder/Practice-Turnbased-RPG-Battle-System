@@ -23,7 +23,7 @@ namespace RPG_Battle_Test
         {
             for (int i = 0; i < Entities.Length; i++)
             {
-                Entities[i].InflictStatus(Status);
+                Entities[i].InflictStatus(User, Status);
             }
         }
 

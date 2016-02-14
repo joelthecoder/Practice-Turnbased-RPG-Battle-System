@@ -39,7 +39,7 @@ namespace RPG_Battle_Test
 
         protected override void OnTurnEnd()
         {
-            Entity.TakeDamage((int)(Entity.MaxHP / 10f), Globals.DamageTypes.None, Globals.Elements.Poison);
+            Entity.TakeDamage(Afflicter, (int)(Entity.MaxHP / 10f), Globals.DamageTypes.None, Globals.Elements.Poison);
             IncrementTurns();
         }
 

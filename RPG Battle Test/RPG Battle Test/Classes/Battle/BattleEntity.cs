@@ -227,7 +227,7 @@ namespace RPG_Battle_Test
             return Helper.Clamp(totaldamage, Globals.MIN_DMG, Globals.MAX_DMG);
         }
 
-        public void ModifyHP(int value)
+        protected void ModifyHP(int value)
         {
             CurHP = Helper.Clamp(value, 0, MaxHP);
 
@@ -243,12 +243,19 @@ namespace RPG_Battle_Test
             }
         }
 
-        public void ModifyMP(int value)
+        protected void ModifyMP(int value)
         {
             CurMP = Helper.Clamp(value, 0, MaxMP);
         }
 
-        public void TakeDamage(int damage, DamageTypes damagetype, Elements element)
+        /// <summary>
+        /// Deals damage to the Entity, subtracting from its HP
+        /// </summary>
+        /// <param name="attacker">The Entity that attacked this one. A value of null should be handled</param>
+        /// <param name="damage">The amount of total damage dealt</param>
+        /// <param name="damagetype">The type of damage dealt</param>
+        /// <param name="element">The element of the damage</param>
+        public void TakeDamage(BattleEntity attacker, int damage, DamageTypes damagetype, Elements element)
         {
             int totaldamage = CalculateDamageReceived(damage, damagetype, element);
             ModifyHP(CurHP - totaldamage);
@@ -257,6 +264,18 @@ namespace RPG_Battle_Test
             new Vector2f(Position.X, Position.Y - 50f), Constants.BASE_UI_LAYER + .6f));
 
             Debug.Log($"{Name} received {totaldamage} damage!");
+        }
+
+        /// <summary>
+        /// Drains MP from the Entity
+        /// </summary>
+        /// <param name="attacker">The Entity that drained the MP of this one. A value of null should be handled</param>
+        /// <param name="mp">The total amount of MP to drain</param>
+        public void DrainMP(BattleEntity attacker, int mp)
+        {
+            ModifyMP(CurMP - mp);
+
+            Debug.Log($"{Name} was drained of {mp} MP!");
         }
 
         //Battle-combat related methods
@@ -345,8 +364,9 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Inflicts one or more StatusEffects on the entity
         /// </summary>
+        /// <param name="afflicter">The BattleEntity that afflicted the status on this one</param>
         /// <param name="statuses">The StatusEffects to inflict on the entity</param>
-        public void InflictStatus(params StatusEffect[] statuses)
+        public void InflictStatus(BattleEntity afflicter, params StatusEffect[] statuses)
         {
             //Don't inflict statuses if dead
             if (IsDead == true)
@@ -379,6 +399,7 @@ namespace RPG_Battle_Test
                 {
                     status.StatusFinishedEvent += OnStatusFinished;
                     AfflictedStatuses.Add(statusName, status);
+                    AfflictedStatuses[statusName].SetAfflicter(afflicter);
                     AfflictedStatuses[statusName].SetReceiver(this);
                     AfflictedStatuses[statusName].OnInflict();
                     Debug.Log($"Inflicted status {AfflictedStatuses[statusName].Name} on {Name}!");

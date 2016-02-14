@@ -160,7 +160,7 @@ namespace RPG_Battle_Test
 
         protected void ItemSelect()
         {
-            BattleMenu itemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40),
+            BattleMenu itemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 38),
                                                  BattleMenu.GridTypes.Vertical);
             itemMenu.OnOpen = PopulateItemList;
             BattleUIManager.Instance.PushInputMenu(itemMenu);
@@ -168,7 +168,7 @@ namespace RPG_Battle_Test
 
         protected void SpellSelect()
         {
-            BattleMenu spellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40), 
+            BattleMenu spellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 38), 
                                                   BattleMenu.GridTypes.Vertical);
             spellMenu.OnOpen = PopulateSpellList;
             BattleUIManager.Instance.PushInputMenu(spellMenu);

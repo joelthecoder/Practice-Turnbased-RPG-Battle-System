@@ -19,9 +19,16 @@ namespace RPG_Battle_Test
         public delegate void StatusFinished(StatusEffect status);
 
         public event StatusFinished StatusFinishedEvent = null;
-
-        //The afflicted entity
+        
+        /// <summary>
+        /// The afflicted entity
+        /// </summary>
         public BattleEntity Entity { get; protected set; } = null;
+
+        /// <summary>
+        /// The entity that afflicted the StatusEffect
+        /// </summary>
+        public BattleEntity Afflicter { get; protected set; } = null;
 
         /// <summary>
         /// The number of turns the status effect is in effect for
@@ -59,6 +66,15 @@ namespace RPG_Battle_Test
         public virtual void Refresh()
         {
             TurnsPassed = 0;
+        }
+
+        /// <summary>
+        /// Sets the afflicter of the status effect
+        /// </summary>
+        /// <param name="entity">The entity that afflicted the status effect</param>
+        public void SetAfflicter(BattleEntity entity)
+        {
+            Afflicter = entity;
         }
 
         /// <summary>
@@ -128,7 +144,7 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Copies the StatusEffect's properties and returns a new instance
         /// </summary>
-        /// <returns>A new instance of the StatusEffect with the same properties</returns>
+        /// <returns>A new instance of the StatusEffect with the same properties. It does not copy the Afflicter and Receiver</returns>
         public abstract StatusEffect Copy();
     }
 }
