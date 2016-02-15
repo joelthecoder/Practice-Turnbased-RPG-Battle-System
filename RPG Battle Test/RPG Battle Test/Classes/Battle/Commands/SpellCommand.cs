@@ -22,7 +22,7 @@ namespace RPG_Battle_Test
                 usedOn = $" on {Victims[0].Name}";
             Debug.Log($"{Attacker.Name} cast {SpellCast.Name}{usedOn}!");
 
-            Attacker.DrainMP(Attacker, SpellCast.MPCost);
+            Attacker.DrainMP(new Globals.AffectableInfo(Attacker, SpellCast), SpellCast.MPCost);
             SpellCast.OnUse(Attacker, Victims);
         }
     }

@@ -56,6 +56,8 @@ namespace RPG_Battle_Test
         {
             Name = name;
             MPCost = mpCost;
+
+            AffectableType = AffectableTypes.Spell;
         }
 
         protected Spell(string name, int mpCost, bool multitarget) : this(name, mpCost)

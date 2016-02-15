@@ -26,7 +26,7 @@ namespace RPG_Battle_Test
         {
             for (int i = 0; i < Entities.Length; i++)
             {
-                Entities[i].TakeDamage(User, Damage, DamageType, Element);
+                Entities[i].TakeDamage(new Globals.AffectableInfo(User, this), Damage, DamageType, Element);
             }
         }
 

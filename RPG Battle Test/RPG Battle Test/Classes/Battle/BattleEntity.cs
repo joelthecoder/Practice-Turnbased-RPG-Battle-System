@@ -250,12 +250,12 @@ namespace RPG_Battle_Test
 
         /// <summary>
         /// Deals damage to the Entity, subtracting from its HP
-        /// </summary>
-        /// <param name="attacker">The Entity that attacked this one. A value of null should be handled</param>
+        /// </summary
+        /// <param name="affectableInfo">Contains the Entity and what it dealt damage with</param>
         /// <param name="damage">The amount of total damage dealt</param>
         /// <param name="damagetype">The type of damage dealt</param>
         /// <param name="element">The element of the damage</param>
-        public void TakeDamage(BattleEntity attacker, int damage, DamageTypes damagetype, Elements element)
+        public void TakeDamage(AffectableInfo affectableInfo, int damage, DamageTypes damagetype, Elements element)
         {
             int totaldamage = CalculateDamageReceived(damage, damagetype, element);
             ModifyHP(CurHP - totaldamage);
@@ -269,9 +269,9 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Drains MP from the Entity
         /// </summary>
-        /// <param name="attacker">The Entity that drained the MP of this one. A value of null should be handled</param>
+        /// <param name="affectableInfo">Contains the Entity and what it drained MP with</param>
         /// <param name="mp">The total amount of MP to drain</param>
-        public void DrainMP(BattleEntity attacker, int mp)
+        public void DrainMP(AffectableInfo affectableInfo, int mp)
         {
             ModifyMP(CurMP - mp);
 

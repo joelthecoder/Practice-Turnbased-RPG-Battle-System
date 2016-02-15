@@ -9,7 +9,7 @@ namespace RPG_Battle_Test
     /// <summary>
     /// The base, abstract class for Status Effects. Status Effects can range from poison to just about anything
     /// </summary>
-    public abstract class StatusEffect
+    public abstract class StatusEffect : AffectableBase
     {
         public enum StatusTypes
         {
@@ -36,11 +36,6 @@ namespace RPG_Battle_Test
         public int Turns { get; protected set; } = 1;
 
         /// <summary>
-        /// The name of the status effect
-        /// </summary>
-        public string Name { get; protected set; } = "StatusEffect";
-
-        /// <summary>
         /// The type of status this is - Neutral, Positive, or Negative
         /// </summary>
         public StatusTypes StatusType { get; protected set; } = StatusTypes.Neutral;
@@ -58,6 +53,8 @@ namespace RPG_Battle_Test
         protected StatusEffect(int turns)
         {
             Turns = turns;
+            Name = "StatusEffect";
+            AffectableType = AffectableTypes.Status;
         }
 
         /// <summary>

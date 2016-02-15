@@ -8,6 +8,8 @@ namespace RPG_Battle_Test
 {
     public static class Globals
     {
+        #region Enumerations
+
         /// <summary>
         /// Enumeration of different damage types. 
         /// None represents neutral damage, which is not reduced by Defense or Magic Defense.
@@ -25,6 +27,30 @@ namespace RPG_Battle_Test
         {
             Neutral, Fire, Earth, Ice, Poison
         }
+
+        #endregion
+
+        #region Structs
+
+        /// <summary>
+        /// A struct containing information about the BattleEntity and the AffectableBase affecting another BattleEntity.
+        /// Keep in mind that the Entity reference here can be the same as the Entity being affected if it affected itself
+        /// </summary>
+        public struct AffectableInfo
+        {
+            public BattleEntity Affector;
+            public AffectableBase AffectableObj;
+
+            public AffectableInfo(BattleEntity affector, AffectableBase affectableobj)
+            {
+                Affector = affector;
+                AffectableObj = affectableobj;
+            }
+        }
+
+        #endregion
+
+        #region Constant Values
 
         /// <summary>
         /// The amount damage is modified by when an entity resists a particular element
@@ -46,6 +72,12 @@ namespace RPG_Battle_Test
         /// </summary>
         public const int MAX_DMG = 99999;
 
+        #endregion
+
+        #region Static Global Objects
+
         public static readonly Random Randomizer = new Random();
+
+        #endregion
     }
 }

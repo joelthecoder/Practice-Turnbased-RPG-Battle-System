@@ -40,7 +40,7 @@ namespace RPG_Battle_Test
             for (int i = 0; i < Entities.Length; i++)
             {
                 //Calculate damage and add the Spell's damage
-                Entities[i].TakeDamage(User, User.CalculateDamageDealt(DamageType, Element) + Damage, DamageType, Element);
+                Entities[i].TakeDamage(new AffectableInfo(User, this), User.CalculateDamageDealt(DamageType, Element) + Damage, DamageType, Element);
 
                 //If no Status (only damage), don't bother inflicting
                 if (Status != null)

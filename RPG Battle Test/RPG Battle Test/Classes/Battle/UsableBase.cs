@@ -10,7 +10,7 @@ namespace RPG_Battle_Test
     /// The base class for anything usable by BattleEntities.
     /// This includes, but is not limited to, Items and Spells
     /// </summary>
-    public abstract class UsableBase
+    public abstract class UsableBase : AffectableBase
     {
         /// <summary>
         /// The alignment types of the Usable
@@ -19,11 +19,6 @@ namespace RPG_Battle_Test
         {
             Neutral, Positive, Negative
         }
-
-        /// <summary>
-        /// The name of the Usable
-        /// </summary>
-        public string Name { get; protected set; } = "Usable";
 
         /// <summary>
         /// Whether the Usable is multi-target or not.
@@ -41,14 +36,14 @@ namespace RPG_Battle_Test
         /// </summary>
         public BattleManager.EntityFilterStates FilterState { get; protected set; } = BattleManager.EntityFilterStates.Alive;
 
-        protected UsableBase()
+        protected UsableBase() : base("Usable")
         {
             
         }
 
-        protected UsableBase(string name)
+        protected UsableBase(string name) : base(name)
         {
-            Name = name;
+            
         }
 
         protected UsableBase(string name, bool multitarget) : this(name)

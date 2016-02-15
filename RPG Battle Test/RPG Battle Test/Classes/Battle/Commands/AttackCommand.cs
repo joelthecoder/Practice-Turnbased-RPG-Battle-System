@@ -18,7 +18,7 @@ namespace RPG_Battle_Test
             for (int i = 0; i < Victims.Length; i++)
             {
                 Debug.Log(Attacker.Name + " attacked " + Victims[i].Name + "!");
-                Victims[i].TakeDamage(Attacker, Attacker.CalculateDamageDealt(Attacker.GetAttackDamageType(), Attacker.GetAttackElement())
+                Victims[i].TakeDamage(new Globals.AffectableInfo(Attacker, null), Attacker.CalculateDamageDealt(Attacker.GetAttackDamageType(), Attacker.GetAttackElement())
                 , Attacker.GetAttackDamageType(), Attacker.GetAttackElement());
             }
         }

@@ -16,6 +16,12 @@ namespace RPG_Battle_Test
     public abstract class BattleCommand
     {
         /// <summary>
+        /// Returns whether the Command is finished or not.
+        /// This is used for keeping a BattleEntity locked into a certain Command until it ends (Ex. casting time for a spell)
+        /// </summary>
+        public virtual bool IsCommandFinished => true;
+
+        /// <summary>
         /// Perform a command
         /// </summary>
         /// <param name="Attacker">The BattleEntity performing the action</param>

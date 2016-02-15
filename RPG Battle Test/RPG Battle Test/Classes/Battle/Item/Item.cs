@@ -47,18 +47,12 @@ namespace RPG_Battle_Test
         protected Item(string name) : base(name)
         {
             Name = name;
+            AffectableType = AffectableTypes.Item;
         }
 
         protected Item(string name, bool multitarget) : this(name)
         {
             MultiTarget = multitarget;
-        }
-
-        protected Item(Item item)
-        {
-            Name = item.Name;
-            MultiTarget = MultiTarget;
-            TypeList = new Dictionary<ItemTypes, bool>(item.TypeList);
         }
 
         /// <summary>

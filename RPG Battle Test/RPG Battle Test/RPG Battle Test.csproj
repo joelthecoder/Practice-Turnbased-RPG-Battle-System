@@ -124,6 +124,7 @@
     <Compile Include="Classes\Battle UI\UIElements\UIElement.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UITextElement.cs" />
     <Compile Include="Classes\Battle UI\UIElements\UITimedTextElement.cs" />
+    <Compile Include="Classes\Battle\AffectableBase.cs" />
     <Compile Include="Classes\Battle\Commands\DefendCommand.cs" />
     <Compile Include="Classes\Battle\Commands\ItemCommand.cs" />
     <Compile Include="Classes\Battle\Commands\SpellCommand.cs" />
