@@ -10,7 +10,7 @@ namespace RPG_Battle_Test
     {
         protected Spell SpellCast = null;    
 
-        public SpellCommand(Spell spellCast)
+        public SpellCommand(Spell spellCast) : base("Magic")
         {
             SpellCast = spellCast;
         }

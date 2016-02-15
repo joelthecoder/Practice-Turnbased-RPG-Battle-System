@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RPG_Battle_Test.UsableBase;
 
 namespace RPG_Battle_Test
 {
@@ -11,11 +12,6 @@ namespace RPG_Battle_Test
     /// </summary>
     public abstract class StatusEffect : AffectableBase
     {
-        public enum StatusTypes
-        {
-            Neutral, Positive, Negative
-        }
-
         public delegate void StatusFinished(StatusEffect status);
 
         public event StatusFinished StatusFinishedEvent = null;
@@ -36,9 +32,9 @@ namespace RPG_Battle_Test
         public int Turns { get; protected set; } = 1;
 
         /// <summary>
-        /// The type of status this is - Neutral, Positive, or Negative
+        /// The alignment of the status
         /// </summary>
-        public StatusTypes StatusType { get; protected set; } = StatusTypes.Neutral;
+        public UsableAlignment StatusAlignment { get; protected set; } = UsableAlignment.Neutral;
 
         /// <summary>
         /// The number of turns the status effect has been in effect for

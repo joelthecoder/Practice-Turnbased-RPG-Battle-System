@@ -61,6 +61,7 @@ namespace RPG_Battle_Test
         protected readonly Dictionary<string, Spell> LearnedSpells = new Dictionary<string, Spell>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
+        //protected readonly Dictionary<string, BattleCommand> KnownCommands = new Dictionary<string, BattleCommand>();
 
         protected readonly StatModifiers StatModifications = new StatModifiers();
 

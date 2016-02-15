@@ -18,7 +18,7 @@ namespace RPG_Battle_Test
         public Silence(int turns) : base(turns)
         {
             Name = "Silence";
-            StatusType = StatusTypes.Negative;
+            StatusAlignment = UsableBase.UsableAlignment.Negative;
         }
 
         public override void OnInflict()

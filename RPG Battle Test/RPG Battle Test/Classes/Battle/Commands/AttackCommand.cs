@@ -13,6 +13,11 @@ namespace RPG_Battle_Test
 {
     public class AttackCommand : BattleCommand
     {
+        public AttackCommand() : base("Attack")
+        {
+            
+        }
+
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
             for (int i = 0; i < Victims.Length; i++)

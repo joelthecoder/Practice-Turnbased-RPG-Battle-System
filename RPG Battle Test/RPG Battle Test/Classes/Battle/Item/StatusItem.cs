@@ -14,9 +14,7 @@ namespace RPG_Battle_Test
         {
             Status = status;
 
-            if (status.StatusType == StatusEffect.StatusTypes.Negative)
-                TypeList.Add(ItemTypes.NegativeStatus, true);
-            else TypeList.Add(ItemTypes.PositiveStatus, true);
+            Alignment = Status.StatusAlignment;
         }
 
         protected override void UseItem(BattleEntity User, params BattleEntity[] Entities)

@@ -10,7 +10,7 @@ namespace RPG_Battle_Test
     {
         protected Item ItemUsed = null;
 
-        public ItemCommand(Item itemUsed)
+        public ItemCommand(Item itemUsed) : base("Item")
         {
             ItemUsed = itemUsed;
         }

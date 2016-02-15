@@ -25,7 +25,7 @@ namespace RPG_Battle_Test
 
             if (Status != null)
             {
-                Alignment = (UsableAlignment)Status.StatusType;
+                Alignment = Status.StatusAlignment;
             }
         }
 

@@ -8,6 +8,11 @@ namespace RPG_Battle_Test
 {
     public sealed class DefendCommand : BattleCommand
     {
+        public DefendCommand() : base("Defend")
+        {
+            
+        }
+
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
             //Grant the entity 50% more defense until its next turn

@@ -18,7 +18,7 @@ namespace RPG_Battle_Test
             Name = "Haste";
             AmountIncrease = amountIncrease;
 
-            StatusType = StatusTypes.Positive;
+            StatusAlignment = UsableBase.UsableAlignment.Positive;
         }
 
         public override void OnInflict()

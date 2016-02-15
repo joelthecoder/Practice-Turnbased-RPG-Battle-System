@@ -107,18 +107,9 @@ namespace RPG_Battle_Test
 
         protected void ItemSelection(Item item)
         {
-            EntityTypes entityType = EntityTypes.None;
+            EntityTypes entityType = item.GetEntityTypeBasedOnAlignment(EntityType);
             bool multiTarget = item.MultiTarget;
             BattleManager.EntityFilterStates filterState = item.FilterState;
-
-            if (item.IsOfType(Item.ItemTypes.Damage) || item.IsOfType(Item.ItemTypes.NegativeStatus))
-            {
-                entityType = EntityTypes.Enemy;
-            }
-            else if (item.IsOfType(Item.ItemTypes.Heal) || item.IsOfType(Item.ItemTypes.PositiveStatus))
-            {
-                entityType = EntityTypes.Player;
-            }
 
             BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterState), multiTarget);
 
@@ -133,18 +124,9 @@ namespace RPG_Battle_Test
                 return;
             }
 
-            EntityTypes entityType = EntityTypes.None;
+            EntityTypes entityType = spell.GetEntityTypeBasedOnAlignment(EntityType);
             bool multiTarget = spell.MultiTarget;
-            BattleManager.EntityFilterStates filterState = BattleManager.EntityFilterStates.Alive;
-
-            if (spell.Alignment == UsableBase.UsableAlignment.Negative)
-            {
-                entityType = EntityTypes.Enemy;
-            }
-            else if (spell.Alignment == UsableBase.UsableAlignment.Positive)
-            {
-                entityType = EntityTypes.Player;
-            }
+            BattleManager.EntityFilterStates filterState = spell.FilterState;
 
             BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterState), multiTarget);
 

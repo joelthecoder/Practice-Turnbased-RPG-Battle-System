@@ -17,7 +17,7 @@ namespace RPG_Battle_Test
             MPRestored = mpRestored;
 
             MultiTarget = multitarget;
-            TypeList.Add(ItemTypes.Heal, true);
+            Alignment = UsableAlignment.Positive;
         }
 
         protected HealingItem(string name, bool multitarget) : this(name, multitarget, 0, 0)

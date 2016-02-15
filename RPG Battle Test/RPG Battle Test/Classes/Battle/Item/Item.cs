@@ -28,11 +28,6 @@ namespace RPG_Battle_Test
         /// </summary>
         public static Item[] ItemTable = null;
 
-        /// <summary>
-        /// The dictionary of types the item is classified as. A particular key existing means the item is classified as that type
-        /// </summary>
-        public readonly Dictionary<ItemTypes, bool> TypeList = new Dictionary<ItemTypes, bool>();
-
         static Item()
         {
             ItemTable = new Item[]
@@ -72,31 +67,6 @@ namespace RPG_Battle_Test
         /// </summary>
         /// <param name="Entities"></param>
         protected abstract void UseItem(BattleEntity User, params BattleEntity[] Entities);
-
-        /// <summary>
-        /// Tells if an item is a particular type
-        /// </summary>
-        /// <param name="itemtype">The type of item to test comparison for</param>
-        /// <returns>true if the item is classified as the given type</returns>
-        public bool IsOfType(ItemTypes itemtype)
-        {
-            return TypeList.ContainsKey(itemtype);
-        }
-
-        /// <summary>
-        /// Tells if an item is of all the given types
-        /// </summary>
-        /// <param name="itemtypes">An array of ItemTypes to test comparison for</param>
-        /// <returns>true if the item is classified as all of the given types, otherwise false</returns>
-        public bool IsOfAllTypes(params ItemTypes[] itemtypes)
-        {
-            for (int i = 0; i < itemtypes.Length; i++)
-            {
-                if (IsOfType(itemtypes[i]) == false)
-                    return false;
-            }
-            return true;
-        }
 
         /// <summary>
         /// Returns a new copy of the Item instance

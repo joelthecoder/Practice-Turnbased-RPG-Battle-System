@@ -67,5 +67,27 @@ namespace RPG_Battle_Test
             Alignment = alignment;
             FilterState = filterstate;
         }
+
+        public BattleEntity.EntityTypes GetEntityTypeBasedOnAlignment(BattleEntity.EntityTypes entityType)
+        {
+            UsableAlignment alignment = Alignment;
+
+            //Neutral or no EntityType
+            if (alignment == UsableAlignment.Neutral || entityType == BattleEntity.EntityTypes.None)
+            {
+                return BattleEntity.EntityTypes.None;
+            }
+            
+            //If positive, return EntityTypes.Player if a player, otherwise return EntityTypes.Enemy
+            if (alignment == UsableAlignment.Positive)
+            {
+                return entityType == BattleEntity.EntityTypes.Player ? BattleEntity.EntityTypes.Player : BattleEntity.EntityTypes.Enemy;
+            }
+            //If negative, return EntityTypes.Enemy if a player, otherwise return EntityTypes.Player
+            else
+            {
+                return entityType == BattleEntity.EntityTypes.Player ? BattleEntity.EntityTypes.Enemy : BattleEntity.EntityTypes.Player;
+            }
+        }
     }
 }

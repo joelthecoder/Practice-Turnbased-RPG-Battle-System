@@ -19,7 +19,7 @@ namespace RPG_Battle_Test
             DamageType = damageType;
             Element = element;
 
-            TypeList.Add(ItemTypes.Damage, true);
+            Alignment = UsableAlignment.Negative;
         }
 
         protected override void UseItem(BattleEntity User, params BattleEntity[] Entities)
