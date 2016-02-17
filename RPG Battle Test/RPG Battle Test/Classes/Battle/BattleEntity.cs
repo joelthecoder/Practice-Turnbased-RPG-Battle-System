@@ -283,9 +283,10 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Restores an Entity's HP and MP values by the given amount
         /// </summary>
+        /// <param name="affectableInfo">Contains the Entity and what it restored HP/MP with</param>
         /// <param name="hp">The amount of HP to restore</param>
         /// <param name="mp">The amount of MP to restore</param>
-        public void Restore(uint hp, uint mp)
+        public void Restore(AffectableInfo affectableInfo, uint hp, uint mp)
         {
             ModifyHP(CurHP + (int)hp);
             ModifyMP(CurMP + (int)mp);
@@ -341,7 +342,7 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Makes the entity forget a Spell
         /// </summary>
-        /// <param name="spellName"></param>
+        /// <param name="spellName">The name of the Spell to forget</param>
         public void ForgetSpell(string spellName)
         {
             if (LearnedSpells.ContainsKey(spellName) == false)
@@ -365,9 +366,9 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Inflicts one or more StatusEffects on the entity
         /// </summary>
-        /// <param name="afflicter">The BattleEntity that afflicted the status on this one</param>
+        /// <param name="affectableInfo">Contains the Entity and what it inflicted the statuses with</param>
         /// <param name="statuses">The StatusEffects to inflict on the entity</param>
-        public void InflictStatus(BattleEntity afflicter, params StatusEffect[] statuses)
+        public void InflictStatus(AffectableInfo affectableInfo, params StatusEffect[] statuses)
         {
             //Don't inflict statuses if dead
             if (IsDead == true)
@@ -400,7 +401,7 @@ namespace RPG_Battle_Test
                 {
                     status.StatusFinishedEvent += OnStatusFinished;
                     AfflictedStatuses.Add(statusName, status);
-                    AfflictedStatuses[statusName].SetAfflicter(afflicter);
+                    AfflictedStatuses[statusName].SetAfflicter(affectableInfo.Affector);
                     AfflictedStatuses[statusName].SetReceiver(this);
                     AfflictedStatuses[statusName].OnInflict();
                     Debug.Log($"Inflicted status {AfflictedStatuses[statusName].Name} on {Name}!");
@@ -409,20 +410,24 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Removes all StatusEffects affecting an entity.
-        /// Functions the same as RemoveStatus
+        /// Removes one or more StatusEffects on an entity.
+        /// This method is the public one for use in curing StatusEffects via Items, Spells, and etc.
         /// </summary>
-        public void ClearAllStatuses()
+        /// <param name="affectableInfo">Contains the Entity and what it cured the StatusEffects with</param>
+        /// <param name="statuses">The names of the StatusEffects to cure</param>
+        public void CureStatuses(AffectableInfo affectableInfo, params string[] statuses)
         {
-            RemoveStatus(AfflictedStatuses.Keys.ToArray());
+            Debug.Log($"{affectableInfo.Affector?.Name} cured StatusEffects on {Name} with {affectableInfo.AffectableObj?.Name}!");
+
+            RemoveStatus(statuses);
         }
 
         /// <summary>
         /// Removes a set of StatusEffects affecting an entity.
         /// Each StatusEffect's OnEnd() method is called and the entity unsubscribes from the status finish events
         /// </summary>
-        /// <param name="statuses">The names of the StatusEffets to remove</param>
-        public void RemoveStatus(params string[] statuses)
+        /// <param name="statuses">The names of the StatusEffects to remove</param>
+        protected void RemoveStatus(params string[] statuses)
         {
             for (int i = 0; i < statuses.Length; i++)
             {
@@ -435,6 +440,15 @@ namespace RPG_Battle_Test
                     OnStatusFinished(status);
                 }
             }
+        }
+
+        /// <summary>
+        /// Removes all StatusEffects affecting an entity.
+        /// Functions the same as RemoveStatus
+        /// </summary>
+        public void ClearAllStatuses()
+        {
+            RemoveStatus(AfflictedStatuses.Keys.ToArray());
         }
 
         public void AddStatModifier(StatModifiers.StatModTypes statModType, int amount, float percentage)

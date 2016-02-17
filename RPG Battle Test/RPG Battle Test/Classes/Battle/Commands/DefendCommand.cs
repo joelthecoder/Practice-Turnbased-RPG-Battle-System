@@ -16,7 +16,7 @@ namespace RPG_Battle_Test
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
             //Grant the entity 50% more defense until its next turn
-            Attacker.InflictStatus(Attacker, new BigDefense());
+            Attacker.InflictStatus(new Globals.AffectableInfo(Attacker, null), new BigDefense());
 
             Debug.Log($"{Attacker.Name} has defended this turn!");
         }

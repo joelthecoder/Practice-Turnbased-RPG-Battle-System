@@ -30,7 +30,7 @@ namespace RPG_Battle_Test
                 uint hpRestored = (uint)(Entities[i].MaxHP * PercentageHP);
                 uint mpRestored = (uint)(Entities[i].MaxMP * PercentageMP);
 
-                Entities[i].Restore(hpRestored, mpRestored);
+                Entities[i].Restore(new Globals.AffectableInfo(User, this), hpRestored, mpRestored);
 
                 Debug.Log($"Healed {Entities[i].Name} for {hpRestored} HP and {mpRestored} MP!");
             }

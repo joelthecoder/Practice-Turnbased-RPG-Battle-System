@@ -61,11 +61,6 @@ namespace RPG_Battle_Test
             PartyInfo = new PartyInfoMenu(new Vector2f(440f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 40));
         }
 
-        ~BattleUIManager()
-        {
-            
-        }
-
         public void Start()
         {
             PartyInfo.SetUpPartyInfo();
@@ -78,6 +73,8 @@ namespace RPG_Battle_Test
 
             InputMenus.Clear();
             TargetMenu.Dispose();
+
+            instance = null;
         }
 
         public void PushInputMenu(BattleMenu menu)

@@ -34,6 +34,7 @@ namespace RPG_Battle_Test
             LearnSpell("Cure1");
             LearnSpell("Ultima");
             LearnSpell("Silence1");
+            LearnSpell("Esuna");
         }
     }
 }

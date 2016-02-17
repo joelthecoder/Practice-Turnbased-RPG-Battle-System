@@ -21,7 +21,7 @@ namespace RPG_Battle_Test
         {
             for (int i = 0; i < Entities.Length; i++)
             {
-                Entities[i].InflictStatus(User, Status);
+                Entities[i].InflictStatus(new Globals.AffectableInfo(User, this), Status);
             }
         }
 

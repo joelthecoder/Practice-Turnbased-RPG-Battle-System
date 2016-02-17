@@ -29,7 +29,7 @@ namespace RPG_Battle_Test
         {
             for (int i = 0; i < Entities.Length; i++)
             {
-                Entities[i].Restore(HPRestored, MPRestored);
+                Entities[i].Restore(new Globals.AffectableInfo(User, this), HPRestored, MPRestored);
 
                 Debug.Log($"Healed {Entities[i].Name} for {HPRestored} HP and {MPRestored} MP!");
             }

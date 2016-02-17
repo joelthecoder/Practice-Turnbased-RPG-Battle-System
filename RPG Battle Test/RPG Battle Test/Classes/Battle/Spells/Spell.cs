@@ -36,7 +36,8 @@ namespace RPG_Battle_Test
                 { "Ultima", new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f) },
                 { "Silence1", new StatusSpell("Silence1", 2, false, new Silence(2), 100f) },
                 { "Haste1", new StatusSpell("Haste1", 3, false, new Haste(3, 10), 100f) },
-                { "Sleep1", new StatusSpell("Sleep1", 2, false, new Sleep(3), 100f) }
+                { "Sleep1", new StatusSpell("Sleep1", 2, false, new Sleep(3), 100f) },
+                { "Esuna", new HealingSpell("Esuna", 4, false, 0, 0, "Poison") }
             };
         }
 

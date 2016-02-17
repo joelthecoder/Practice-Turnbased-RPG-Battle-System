@@ -74,12 +74,6 @@ namespace RPG_Battle_Test
             };
         }
 
-        ~BattleManager()
-        {
-            //Clear instance and event
-            instance = null;
-        }
-
         public BattleEntity CurrentEntityTurn => TurnOrder[0];
 
         public void Start(params BattleEntity[] entities)
@@ -131,7 +125,10 @@ namespace RPG_Battle_Test
                 Entities[i].Dispose();
             }
 
+            //Clear instance and event
             BattleEntity.EntityDeathEvent -= OnEntityDeath;
+
+            instance = null;
         }
 
         private void TurnStart()
