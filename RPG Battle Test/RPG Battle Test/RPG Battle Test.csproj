@@ -128,6 +128,11 @@
     <Compile Include="Classes\Battle\Commands\DefendCommand.cs" />
     <Compile Include="Classes\Battle\Commands\ItemCommand.cs" />
     <Compile Include="Classes\Battle\Commands\SpellCommand.cs" />
+    <Compile Include="Classes\Battle\EntityEffects\EntityDamageEffect.cs" />
+    <Compile Include="Classes\Battle\EntityEffects\EntityEffect.cs" />
+    <Compile Include="Classes\Battle\EntityEffects\EntityHealEffect.cs" />
+    <Compile Include="Classes\Battle\EntityEffects\EntityPercentHealEffect.cs" />
+    <Compile Include="Classes\Battle\EntityEffects\EntityStatusEffect.cs" />
     <Compile Include="Classes\Battle\Item\PercentageHealingItem.cs" />
     <Compile Include="Classes\Battle\IUsable.cs" />
     <Compile Include="Classes\Battle\PlayableCharacters\CecilK.cs" />
