@@ -82,6 +82,8 @@ namespace RPG_Battle_Test
             BattleEntity.EntityDeathEvent -= OnEntityDeath;
             BattleEntity.EntityDeathEvent += OnEntityDeath;
 
+            BattleState = BattleStates.Init;
+
             Entities = entities.ToList();
             TurnOrder = new List<BattleEntity>(Entities);
             TurnOrder.Sort(SortBySpeed);
@@ -321,8 +323,9 @@ namespace RPG_Battle_Test
         {
             if (BattleState == BattleStates.TurnDone)
                 TurnStart();
-
-            if (BattleState != BattleStates.GameOver && BattleState != BattleStates.Victory)
+            
+            //If an entity's turn ended immediately after it started via a StatusEffect, don't update the next entity yet
+            if (BattleState != BattleStates.TurnDone && BattleState != BattleStates.GameOver && BattleState != BattleStates.Victory)
             {
                 //This update is for the current entity's turn
                 CurrentEntityTurn.TurnUpdate();

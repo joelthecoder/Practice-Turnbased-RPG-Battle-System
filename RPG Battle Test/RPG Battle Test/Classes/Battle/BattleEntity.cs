@@ -417,7 +417,19 @@ namespace RPG_Battle_Test
         /// <param name="statuses">The names of the StatusEffects to cure</param>
         public void CureStatuses(AffectableInfo affectableInfo, params string[] statuses)
         {
-            Debug.Log($"{affectableInfo.Affector?.Name} cured StatusEffects on {Name} with {affectableInfo.AffectableObj?.Name}!");
+            string curedstatuses = "Status Effects";
+            if (statuses != null && statuses.Length > 0)
+            {
+                curedstatuses = string.Empty;
+                if (statuses.Length == 1) curedstatuses = statuses[0];
+                else
+                {
+                    for (int i = 0; i < statuses.Length; i++)
+                        curedstatuses += (i == (statuses.Length - 1) ? "and " + statuses[i] : statuses[i] + ", ");
+                }
+            }
+
+            Debug.Log($"{affectableInfo.Affector?.Name} cured {curedstatuses} on {Name} with {affectableInfo.AffectableObj?.Name}!");
 
             RemoveStatus(statuses);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RPG_Battle_Test.Globals;
 
 namespace RPG_Battle_Test
 {
@@ -17,21 +18,21 @@ namespace RPG_Battle_Test
             PercentageMP = Helper.Clamp(percentagemp, 0f, 1f);
         }
 
-        public override void OnUse(BattleEntity User, params BattleEntity[] Entities)
+        public override void UseEffect(AffectableInfo affectableInfo, params BattleEntity[] Entities)
         {
             for (int i = 0; i < Entities.Length; i++)
             {
                 uint hpRestored = (uint)(Entities[i].MaxHP * PercentageHP);
                 uint mpRestored = (uint)(Entities[i].MaxMP * PercentageMP);
 
-                Entities[i].Restore(new Globals.AffectableInfo(User, this), hpRestored, mpRestored);
+                Entities[i].Restore(affectableInfo, hpRestored, mpRestored);
 
                 Debug.Log($"Healed {Entities[i].Name} for {hpRestored} HP and {mpRestored} MP!");
 
                 //Cure StatusEffects if this effect should cure any
                 if (StatusesCured != null)
                 {
-                    Entities[i].CureStatuses(new Globals.AffectableInfo(User, this), StatusesCured);
+                    Entities[i].CureStatuses(affectableInfo, StatusesCured);
                 }
             }
         }

@@ -133,12 +133,9 @@
     <Compile Include="Classes\Battle\EntityEffects\EntityHealEffect.cs" />
     <Compile Include="Classes\Battle\EntityEffects\EntityPercentHealEffect.cs" />
     <Compile Include="Classes\Battle\EntityEffects\EntityStatusEffect.cs" />
-    <Compile Include="Classes\Battle\Item\PercentageHealingItem.cs" />
     <Compile Include="Classes\Battle\IUsable.cs" />
     <Compile Include="Classes\Battle\PlayableCharacters\CecilK.cs" />
     <Compile Include="Classes\Battle\PlayableCharacters\CecilP.cs" />
-    <Compile Include="Classes\Battle\Spells\HealingSpell.cs" />
-    <Compile Include="Classes\Battle\Spells\StatusSpell.cs" />
     <Compile Include="Classes\Battle\StatModifiers.cs" />
     <Compile Include="Classes\Battle\Status Effects\BigDefense.cs" />
     <Compile Include="Classes\Battle\Status Effects\Haste.cs" />
@@ -154,11 +151,7 @@
     <Compile Include="Classes\Battle\BattlePlayer.cs" />
     <Compile Include="Classes\Battle\Commands\AttackCommand.cs" />
     <Compile Include="Classes\Battle\Commands\BattleCommand.cs" />
-    <Compile Include="Classes\Battle\Item\DamageItem.cs" />
-    <Compile Include="Classes\Battle\Item\HealingItem.cs" />
-    <Compile Include="Classes\Battle\Item\Item.cs" />
-    <Compile Include="Classes\Battle\Item\StatusItem.cs" />
-    <Compile Include="Classes\Battle\Spells\DamageSpell.cs" />
+    <Compile Include="Classes\Battle\Items\Item.cs" />
     <Compile Include="Classes\Battle\Spells\Spell.cs" />
     <Compile Include="Classes\Battle\Status Effects\Poison.cs" />
     <Compile Include="Classes\Battle\Status Effects\StatusEffect.cs" />

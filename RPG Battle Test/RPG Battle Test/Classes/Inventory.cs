@@ -107,8 +107,12 @@ namespace RPG_Battle_Test
             return null;
         }
 
-        private void OnItemUse(Item item)
+        private void OnItemUse(Item item, BattleEntity User)
         {
+            //Don't subtract from the Inventory if the user is an enemy
+            if (User.IsEnemy == true)
+                return;
+
             if (ItemDictionary.ContainsKey(item))
             {
                 if (--ItemDictionary[item] <= 0)

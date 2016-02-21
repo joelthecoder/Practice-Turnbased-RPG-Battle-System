@@ -36,6 +36,11 @@ namespace RPG_Battle_Test
         /// </summary>
         public BattleManager.EntityFilterStates FilterState { get; protected set; } = BattleManager.EntityFilterStates.Alive;
 
+        /// <summary>
+        /// The EntityEffect that the Usable performs on the entities
+        /// </summary>
+        public EntityEffect Entityeffect { get; protected set; } = null;
+
         protected UsableBase() : base("Usable")
         {
             
@@ -66,6 +71,12 @@ namespace RPG_Battle_Test
         {
             Alignment = alignment;
             FilterState = filterstate;
+        }
+
+        protected UsableBase(string name, bool multitarget, UsableAlignment alignment, BattleManager.EntityFilterStates filterstate, EntityEffect effect)
+            : this(name, multitarget, alignment, filterstate)
+        {
+            Entityeffect = effect;
         }
 
         public BattleEntity.EntityTypes GetEntityTypeBasedOnAlignment(BattleEntity.EntityTypes entityType)

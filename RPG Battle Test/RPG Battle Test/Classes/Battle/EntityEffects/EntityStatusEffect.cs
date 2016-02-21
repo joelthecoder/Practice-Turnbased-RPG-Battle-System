@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RPG_Battle_Test.Globals;
 
 namespace RPG_Battle_Test
 {
@@ -17,7 +18,7 @@ namespace RPG_Battle_Test
             StatusPercent = Helper.Clamp(statuspercentage, 0f, 100f);
         }
 
-        public override void OnUse(BattleEntity User, params BattleEntity[] Entities)
+        public override void UseEffect(AffectableInfo affectableInfo, params BattleEntity[] Entities)
         {
             if (Status != null)
             {
@@ -26,13 +27,13 @@ namespace RPG_Battle_Test
                     float percent = (float)Math.Round(Globals.Randomizer.NextDouble() * 100f);
                     if (StatusPercent > percent)
                     {
-                        Entities[i].InflictStatus(new Globals.AffectableInfo(User, this), Status);
+                        Entities[i].InflictStatus(affectableInfo, Status);
                     }
                 }
             }
             else
             {
-                Debug.LogError($"Status for Spell {Name} by {User.Name} is null!");
+                Debug.LogError($"Status for Spell {Name} by {affectableInfo.Affector.Name} is null!");
             }
         }
 

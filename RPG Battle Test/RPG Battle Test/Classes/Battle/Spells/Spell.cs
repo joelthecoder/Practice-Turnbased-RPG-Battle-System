@@ -15,7 +15,7 @@ namespace RPG_Battle_Test
     /// Magic spells used by entities. They are enhanced by an entity's MagicAtk and resisted by an entity's MagicDef.
     /// Spells can have a variety of primary or secondary effects, including healing, status, increased resistance, or more
     /// </summary>
-    public abstract class Spell : UsableBase, IUsable
+    public class Spell : UsableBase, IUsable
     {
         /// <summary>
         /// The global Spell table
@@ -31,13 +31,13 @@ namespace RPG_Battle_Test
         {
             SpellTable = new Dictionary<string, Spell>()
             {
-                { "Demi1", new DamageSpell("Demi1", 3, 3, false, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f) },
-                { "Cure1", new HealingSpell("Cure1", 2, false, 10, 0) },
-                { "Ultima", new DamageSpell("Ultima", 4, 5, true, Globals.DamageTypes.Magic, Globals.Elements.Neutral, null, 0f) },
-                { "Silence1", new StatusSpell("Silence1", 2, false, new Silence(2), 100f) },
-                { "Haste1", new StatusSpell("Haste1", 3, false, new Haste(3, 10), 100f) },
-                { "Sleep1", new StatusSpell("Sleep1", 2, false, new Sleep(3), 100f) },
-                { "Esuna", new HealingSpell("Esuna", 4, false, 0, 0, "Poison") }
+                { "Demi1", new Spell("Demi1", 3, false, UsableAlignment.Negative, new EntityDamageEffect("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f, true)) },
+                { "Cure1", new Spell("Cure1", 2, false, UsableAlignment.Positive, new EntityHealEffect("Cure1", 10, 0)) },
+                { "Ultima", new Spell("Ultima", 4, true, UsableAlignment.Negative, new EntityDamageEffect("Ultima", 4, Globals.DamageTypes.Magic, Globals.Elements.Neutral, true)) },
+                { "Silence1", new Spell("Silence", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new Silence(2), 100f)) },
+                { "Haste1", new Spell("Haste1", 3, false, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new Haste(3, 10), 100f)) },
+                { "Sleep1", new Spell("Sleep1", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new Sleep(3), 100f)) },
+                { "Esuna", new Spell("Esuna", 4, false, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, "Poison")) }
             };
         }
 
@@ -53,17 +53,16 @@ namespace RPG_Battle_Test
             return null;
         }
 
-        protected Spell(string name, int mpCost) : base(name)
+        public Spell(string name, int mpCost, bool multitarget, UsableAlignment alignment, EntityEffect entityeffect)
+            : base(name, multitarget, alignment, BattleManager.EntityFilterStates.Alive, entityeffect)
         {
-            Name = name;
             MPCost = mpCost;
-
-            AffectableType = AffectableTypes.Spell;
         }
 
-        protected Spell(string name, int mpCost, bool multitarget) : this(name, mpCost)
+        public Spell(string name, int mpCost, bool multitarget, UsableAlignment alignment, BattleManager.EntityFilterStates filterState, EntityEffect entityeffect)
+            : base(name, multitarget, alignment, filterState, entityeffect)
         {
-            MultiTarget = multitarget;
+            MPCost = mpCost;
         }
 
         /// <summary>
@@ -71,12 +70,24 @@ namespace RPG_Battle_Test
         /// </summary>
         /// <param name="User"></param>
         /// <param name="Entities"></param>
-        public abstract void OnUse(BattleEntity User, params BattleEntity[] Entities);
+        public void OnUse(BattleEntity User, params BattleEntity[] Entities)
+        {
+            if (Entityeffect == null)
+            {
+                Debug.LogError($"Spell {Name}'s EntityEffect is null!");
+                return;
+            }
+
+            Entityeffect.UseEffect(new Globals.AffectableInfo(User, this), Entities);
+        }
 
         /// <summary>
         /// Copies the Spell's properties and returns a new instance
         /// </summary>
         /// <returns>A new instance of the Spell with the same properties</returns>
-        public abstract Spell Copy();
+        public Spell Copy()
+        {
+            return new Spell(Name, MPCost, MultiTarget, Alignment, FilterState, Entityeffect?.Copy());
+        }
     }
 }
