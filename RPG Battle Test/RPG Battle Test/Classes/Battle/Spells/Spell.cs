@@ -37,7 +37,7 @@ namespace RPG_Battle_Test
                 { "Silence1", new Spell("Silence", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new Silence(2), 100f)) },
                 { "Haste1", new Spell("Haste1", 3, false, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new Haste(3, 10), 100f)) },
                 { "Sleep1", new Spell("Sleep1", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new Sleep(3), 100f)) },
-                { "Esuna", new Spell("Esuna", 4, false, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, "Poison")) }
+                { "Esuna", new Spell("Esuna", 4, false, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, typeof(Poison))) }
             };
         }
 

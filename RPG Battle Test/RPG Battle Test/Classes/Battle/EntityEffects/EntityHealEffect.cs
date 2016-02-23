@@ -11,9 +11,9 @@ namespace RPG_Battle_Test
     {
         public uint HPRestored = 0;
         public uint MPRestored = 0;
-        public string[] StatusesCured = null;
+        public Type[] StatusesCured = null;
 
-        public EntityHealEffect(string name, uint hprestored, uint mprestored, params string[] statusescured) : base(name)
+        public EntityHealEffect(string name, uint hprestored, uint mprestored, params Type[] statusescured) : base(name)
         {
             HPRestored = hprestored;
             MPRestored = mprestored;

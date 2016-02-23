@@ -57,7 +57,11 @@ namespace RPG_Battle_Test
         /// </summary>
         protected BattleCommand PreviousCommand = null;
 
-        protected readonly Dictionary<string, StatusEffect> AfflictedStatuses = new Dictionary<string, StatusEffect>();
+        /// <summary>
+        /// The StatusEffects the entity is afflicted with. The key is the status' Type, which is used as a unique identifier.
+        /// This allows for more flexibility; an enum or other identifier can be used but may require more maintenance
+        /// </summary>
+        protected readonly Dictionary<Type, StatusEffect> AfflictedStatuses = new Dictionary<Type, StatusEffect>();
         protected readonly Dictionary<string, Spell> LearnedSpells = new Dictionary<string, Spell>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
@@ -390,21 +394,21 @@ namespace RPG_Battle_Test
                 //Copy the status for a new reference
                 status = statuses[i].Copy();
 
-                string statusName = status.Name;
+                Type statusType = status.GetType();
 
-                if (AfflictedStatuses.ContainsKey(statusName))
+                if (AfflictedStatuses.ContainsKey(statusType))
                 {
-                    AfflictedStatuses[statusName].Refresh();
-                    Debug.Log($"Refreshed status {AfflictedStatuses[statusName].Name} on {Name}!");
+                    AfflictedStatuses[statusType].Refresh();
+                    Debug.Log($"Refreshed status {AfflictedStatuses[statusType].Name} on {Name}!");
                 }
                 else
                 {
                     status.StatusFinishedEvent += OnStatusFinished;
-                    AfflictedStatuses.Add(statusName, status);
-                    AfflictedStatuses[statusName].SetAfflicter(affectableInfo.Affector);
-                    AfflictedStatuses[statusName].SetReceiver(this);
-                    AfflictedStatuses[statusName].OnInflict();
-                    Debug.Log($"Inflicted status {AfflictedStatuses[statusName].Name} on {Name}!");
+                    AfflictedStatuses.Add(statusType, status);
+                    AfflictedStatuses[statusType].SetAfflicter(affectableInfo.Affector);
+                    AfflictedStatuses[statusType].SetReceiver(this);
+                    AfflictedStatuses[statusType].OnInflict();
+                    Debug.Log($"Inflicted status {AfflictedStatuses[statusType].Name} on {Name}!");
                 }
             }
         }
@@ -415,17 +419,17 @@ namespace RPG_Battle_Test
         /// </summary>
         /// <param name="affectableInfo">Contains the Entity and what it cured the StatusEffects with</param>
         /// <param name="statuses">The names of the StatusEffects to cure</param>
-        public void CureStatuses(AffectableInfo affectableInfo, params string[] statuses)
+        public void CureStatuses(AffectableInfo affectableInfo, params Type[] statuses)
         {
             string curedstatuses = "Status Effects";
             if (statuses != null && statuses.Length > 0)
             {
                 curedstatuses = string.Empty;
-                if (statuses.Length == 1) curedstatuses = statuses[0];
+                if (statuses.Length == 1) curedstatuses = statuses[0].Name;
                 else
                 {
                     for (int i = 0; i < statuses.Length; i++)
-                        curedstatuses += (i == (statuses.Length - 1) ? "and " + statuses[i] : statuses[i] + ", ");
+                        curedstatuses += (i == (statuses.Length - 1) ? "and " + statuses[i].Name : statuses[i].Name + ", ");
                 }
             }
 
@@ -439,14 +443,14 @@ namespace RPG_Battle_Test
         /// Each StatusEffect's OnEnd() method is called and the entity unsubscribes from the status finish events
         /// </summary>
         /// <param name="statuses">The names of the StatusEffects to remove</param>
-        protected void RemoveStatus(params string[] statuses)
+        protected void RemoveStatus(params Type[] statuses)
         {
             for (int i = 0; i < statuses.Length; i++)
             {
-                string statusName = statuses[i];
-                if (AfflictedStatuses.ContainsKey(statusName))
+                Type statusType = statuses[i];
+                if (AfflictedStatuses.ContainsKey(statusType))
                 {
-                    StatusEffect status = AfflictedStatuses[statusName];
+                    StatusEffect status = AfflictedStatuses[statusType];
                     status.End();
 
                     OnStatusFinished(status);
@@ -487,9 +491,11 @@ namespace RPG_Battle_Test
         {
             status.StatusFinishedEvent -= OnStatusFinished;
 
-            if (AfflictedStatuses.ContainsKey(status.Name))
+            Type statusType = status.GetType();
+
+            if (AfflictedStatuses.ContainsKey(statusType))
             {
-                AfflictedStatuses.Remove(status.Name);
+                AfflictedStatuses.Remove(statusType);
                 Debug.Log($"{status.Name} ended on {Name}!");
             }
             else

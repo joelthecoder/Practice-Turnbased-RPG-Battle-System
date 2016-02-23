@@ -12,7 +12,7 @@ namespace RPG_Battle_Test
         private float PercentageHP = 0f;
         private float PercentageMP = 0f;
 
-        public EntityPercentHealEffect(string name, float percentagehp, float percentagemp, params string[] statusescured) : base(name, 0, 0, statusescured)
+        public EntityPercentHealEffect(string name, float percentagehp, float percentagemp, params Type[] statusescured) : base(name, 0, 0, statusescured)
         {
             PercentageHP = Helper.Clamp(percentagehp, 0f, 1f);
             PercentageMP = Helper.Clamp(percentagemp, 0f, 1f);
