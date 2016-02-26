@@ -160,7 +160,7 @@ namespace RPG_Battle_Test
             base.DrawElements();
 
             Arrow.Position = new Vector2f(ObjList[CurOption].Position.X - 35, ObjList[CurOption].Position.Y + 18);
-            GameCore.spriteSorter.Add(Arrow, Constants.BASE_UI_LAYER + .4f);
+            GameCore.spriteSorter.Add(Arrow, Globals.BASE_UI_LAYER + .4f);
         }
     }
 }

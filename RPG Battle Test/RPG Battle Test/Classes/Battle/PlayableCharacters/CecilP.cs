@@ -27,7 +27,7 @@ namespace RPG_Battle_Test
             CurHP = MaxHP;
             CurMP = MaxMP;
 
-            EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + "CecilP.png"), false, new IntRect(7, 44, 16, 24));
+            EntitySprite = Helper.CreateSprite(new Texture(Globals.ContentPath + "CecilP.png"), false, new IntRect(7, 44, 16, 24));
             EntitySprite.Scale *= 3f;
 
             LearnSpell("Demi1");

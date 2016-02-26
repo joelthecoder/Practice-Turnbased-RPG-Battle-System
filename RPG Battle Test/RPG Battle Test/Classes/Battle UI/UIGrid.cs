@@ -104,7 +104,7 @@ namespace RPG_Battle_Test
                     //Put the origin for the text on the top-left
                     gridItem.Origin = new Vector2f(0, 0);
 
-                    GameCore.spriteSorter.Add(gridItem, Constants.BASE_UI_LAYER + .3f);
+                    GameCore.spriteSorter.Add(gridItem, Globals.BASE_UI_LAYER + .3f);
                 }
             }
         }

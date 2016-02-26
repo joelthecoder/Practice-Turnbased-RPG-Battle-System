@@ -19,8 +19,16 @@ namespace RPG_Battle_Test
             None, Heal, Damage, NegativeStatus, PositiveStatus
         }
 
-        public delegate void ItemUse(Item item, BattleEntity User);
+        /// <summary>
+        /// Delegate for the ItemUseEvent
+        /// </summary>
+        /// <param name="Item">The Item that was used</param>
+        /// <param name="User">The BattleEntity that used the Item</param>
+        public delegate void ItemUse(Item Item, BattleEntity User);
 
+        /// <summary>
+        /// The event called whenever an Item is used
+        /// </summary>
         public static event ItemUse ItemUseEvent = null;
 
         /// <summary>
@@ -63,23 +71,15 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Uses the item. This is here so we can call events
+        /// Uses the item, inflicting the EntityEffect on the designated entities
         /// </summary>
-        /// <param name="Entities"></param>
+        /// <param name="User">The BattleEntity that used the Item</param>
+        /// <param name="Entities">The BattleEntities affected by the Item</param>
         public void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
             //Call use event
             ItemUseEvent?.Invoke(this, User);
 
-            UseItem(User, Entities);
-        }
-
-        /// <summary>
-        /// What happens to the entities when the Item is used on them
-        /// </summary>
-        /// <param name="Entities"></param>
-        protected void UseItem(BattleEntity User, params BattleEntity[] Entities)
-        {
             if (Entityeffect == null)
             {
                 Debug.LogError($"Item {Name}'s EntityEffect is null!");
@@ -92,7 +92,7 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Returns a new copy of the Item instance
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A deep copy of this Item</returns>
         public Item Copy()
         {
             return new Item(Name, MultiTarget, Alignment, FilterState, Entityeffect?.Copy());

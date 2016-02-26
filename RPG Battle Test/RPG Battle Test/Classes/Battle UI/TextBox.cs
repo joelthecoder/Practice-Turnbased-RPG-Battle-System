@@ -72,8 +72,7 @@ namespace RPG_Battle_Test
         public override void Draw()
         {
             base.Draw();
-            GameCore.spriteSorter.Add(TextMessage, Constants.BASE_UI_LAYER + .2f);
-            //TextMessage.Draw(GameCore.GameWindow, RenderStates.Default);
+            GameCore.spriteSorter.Add(TextMessage, Globals.BASE_UI_LAYER + .2f);
         }
     }
 }

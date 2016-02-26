@@ -12,10 +12,13 @@ using SFML.Audio;
 namespace RPG_Battle_Test
 {
     /// <summary>
-    /// Sprite animation
+    /// The base class for sprite animation
     /// </summary>
     public class Animation
     {
+        /// <summary>
+        /// How the animation plays
+        /// </summary>
         public enum AnimationTypes
         {
             Forward, Looping
@@ -31,6 +34,9 @@ namespace RPG_Battle_Test
         protected float FrameRate = 15f;
         protected float PrevFrameTimer = 0f;
 
+        /// <summary>
+        /// The type of animation this is
+        /// </summary>
         public AnimationTypes AnimationType { get; protected set; } = AnimationTypes.Forward;
 
         public Animation(Texture texture, float frameRate, params IntRect[] frameRects)

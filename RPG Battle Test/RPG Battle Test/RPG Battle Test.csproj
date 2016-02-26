@@ -155,7 +155,6 @@
     <Compile Include="Classes\Battle\Spells\Spell.cs" />
     <Compile Include="Classes\Battle\Status Effects\Poison.cs" />
     <Compile Include="Classes\Battle\Status Effects\StatusEffect.cs" />
-    <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\GameCore.cs" />

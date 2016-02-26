@@ -27,13 +27,13 @@ namespace RPG_Battle_Test
 
         public static void LoadAssets()
         {
-            TextFont = new Font(Constants.ContentPath + "arial.ttf");
+            TextFont = new Font(Globals.ContentPath + "arial.ttf");
 
-            MsgBoxM = new Texture(Constants.ContentPath + "MessageBox\\MsgBoxM.png");
-            MsgBoxL = new Texture(Constants.ContentPath + "MessageBox\\MsgBoxL.png");
-            MsgBoxT = new Texture(Constants.ContentPath + "MessageBox\\MsgBoxT.png");
-            MsgBoxTL = new Texture(Constants.ContentPath + "MessageBox\\MsgBoxTL.png");
-            SelectionArrow = new Texture(Constants.ContentPath + "Arrow.png");
+            MsgBoxM = new Texture(Globals.ContentPath + "MessageBox\\MsgBoxM.png");
+            MsgBoxL = new Texture(Globals.ContentPath + "MessageBox\\MsgBoxL.png");
+            MsgBoxT = new Texture(Globals.ContentPath + "MessageBox\\MsgBoxT.png");
+            MsgBoxTL = new Texture(Globals.ContentPath + "MessageBox\\MsgBoxTL.png");
+            SelectionArrow = new Texture(Globals.ContentPath + "Arrow.png");
         }
 
         private static bool FileExists(string path)

@@ -41,13 +41,23 @@ namespace RPG_Battle_Test
             };
         }
 
+        /// <summary>
+        /// Tells whether a Spell with a particular name exists in the global Spell table
+        /// </summary>
+        /// <param name="spellName">The name of the Spell to search for</param>
+        /// <returns>true if a Spell with spellName exists, otherwise false</returns>
         public static bool SpellExists(string spellName) => SpellTable.ContainsKey(spellName);
 
+        /// <summary>
+        /// Gets a Spell in the global Spell table by name
+        /// </summary>
+        /// <param name="spellName">The name of the Spell to get</param>
+        /// <returns>A deep copy of the Spell if found, otherwise null</returns>
         public static Spell GetSpell(string spellName)
         {
             if (SpellExists(spellName) == true)
             {
-                return SpellTable[spellName];
+                return SpellTable[spellName].Copy();
             }
             
             return null;
@@ -68,8 +78,8 @@ namespace RPG_Battle_Test
         /// <summary>
         /// What happens to the entities when the Spell is used on them
         /// </summary>
-        /// <param name="User"></param>
-        /// <param name="Entities"></param>
+        /// <param name="User">The BattleEntity that used this Spell</param>
+        /// <param name="Entities">The BattleEntities affected by the Spell</param>
         public void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
             if (Entityeffect == null)
@@ -82,9 +92,9 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
-        /// Copies the Spell's properties and returns a new instance
+        /// Returns a new instance of this Spell with the same properties
         /// </summary>
-        /// <returns>A new instance of the Spell with the same properties</returns>
+        /// <returns>A deep copy of the Spell</returns>
         public Spell Copy()
         {
             return new Spell(Name, MPCost, MultiTarget, Alignment, FilterState, Entityeffect?.Copy());

@@ -75,7 +75,7 @@ namespace RPG_Battle_Test
             }
         }
 
-        public UITextElement(string text) : base(Constants.BASE_UI_LAYER)
+        public UITextElement(string text) : base(Globals.BASE_UI_LAYER)
         {
             TextObject = Helper.CreateText(text, AssetManager.TextFont, new Vector2f(0, 0), Color.White);
         }

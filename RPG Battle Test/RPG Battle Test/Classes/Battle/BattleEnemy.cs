@@ -35,7 +35,7 @@ namespace RPG_Battle_Test
                 Speed = 2;
             }
 
-            EntitySprite = Helper.CreateSprite(new Texture(Constants.ContentPath + "Enemies.png"), true, rect);
+            EntitySprite = Helper.CreateSprite(new Texture(Globals.ContentPath + "Enemies.png"), true, rect);
             EntitySprite.Scale *= 3f;
         }
 

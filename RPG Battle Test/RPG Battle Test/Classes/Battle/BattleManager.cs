@@ -282,26 +282,12 @@ namespace RPG_Battle_Test
             //Filter out dead entities
             if (filterState == EntityFilterStates.Alive)
             {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    if (list[i].IsDead == true)
-                    {
-                        list.RemoveAt(i);
-                        i--;
-                    }
-                }
+                list.RemoveAll((entity) => entity.IsDead == true);
             }
             //Filter out alive entities
             else if (filterState == EntityFilterStates.Dead)
             {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    if (list[i].IsDead == false)
-                    {
-                        list.RemoveAt(i);
-                        i--;
-                    }
-                }
+                list.RemoveAll((entity) => entity.IsDead == false);
             }
 
             return list;

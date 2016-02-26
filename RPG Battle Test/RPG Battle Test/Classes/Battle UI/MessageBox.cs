@@ -124,9 +124,8 @@ namespace RPG_Battle_Test
         {
             for (int i = 0; i < Parts.Count; i++)
             {
-                float layer = Constants.BASE_UI_LAYER + (.01f + (i * .01f));
+                float layer = Globals.BASE_UI_LAYER + (.01f + (i * .01f));
                 GameCore.spriteSorter.Add(Parts[i], layer);
-                //Parts[i].Draw(GameCore.GameWindow, RenderStates.Default);
             }
         }
     }

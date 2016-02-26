@@ -42,7 +42,7 @@ namespace RPG_Battle_Test
         /// <returns></returns>
         public static Text CreateText(string text, string fontName, Vector2f position, Color color)
         {
-            return CreateText(text, new Font(Constants.ContentPath + fontName), position, color);
+            return CreateText(text, new Font(Globals.ContentPath + fontName), position, color);
         }
 
         public static Vector2f GetTextOrigin(Text textobj, float xPercent = .5f, float yPercent = .5f)

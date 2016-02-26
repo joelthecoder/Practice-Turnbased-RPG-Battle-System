@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace RPG_Battle_Test
 {
     /// <summary>
-    /// Immobilizes an Entity for a specified amount of turns.
+    /// Immobilizes an Entity for a specified number of turns.
     /// <para>IMPORTANT NOTE: This automatically ends an Entity's turn if the effect has not worn off yet.
     /// It's not recommended to have this and similar StatusEffects (Petrify, etc.) on the same entity at the same time,
     /// as it can cause OnTurnEnd() of some inflicted statuses to occur before OnTurnStart()</para>

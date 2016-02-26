@@ -12,8 +12,16 @@ namespace RPG_Battle_Test
     /// </summary>
     public abstract class StatusEffect : AffectableBase
     {
+        /// <summary>
+        /// Delegate for the StatusFinishedEvent
+        /// </summary>
+        /// <param name="status">The StatusEffect that has just finished</param>
         public delegate void StatusFinished(StatusEffect status);
 
+        /// <summary>
+        /// The event called whenever this StatusEffect is finished. This automatically subscribes to the BattleEntity afflicted
+        /// with this StatusEffect
+        /// </summary>
         public event StatusFinished StatusFinishedEvent = null;
         
         /// <summary>

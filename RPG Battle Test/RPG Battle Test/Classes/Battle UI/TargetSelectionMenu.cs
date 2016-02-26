@@ -155,7 +155,7 @@ namespace RPG_Battle_Test
 
             for (int i = 0; i < Arrows.Count; i++)
             {
-                GameCore.spriteSorter.Add(Arrows[i], Constants.BASE_UI_LAYER + .03f);
+                GameCore.spriteSorter.Add(Arrows[i], Globals.BASE_UI_LAYER + .03f);
             }
         }
     }

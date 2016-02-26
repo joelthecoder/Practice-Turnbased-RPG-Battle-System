@@ -43,7 +43,7 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
-        public int TrueSpeed => CalculateTotalStat(Speed, StatModifiers.StatModTypes.Speed);
+        public int TrueSpeed => CalculateTotalStat(StatModifiers.StatModTypes.Speed);
 
         /// <summary>
         /// The current BattleCommand the entity is about to perform.
@@ -158,18 +158,18 @@ namespace RPG_Battle_Test
             //Calculate physical attack
             if (damageType == DamageTypes.Physical)
             {
-                totalDamage = CalculateTotalStat(Attack, StatModifiers.StatModTypes.Attack);
+                totalDamage = CalculateTotalStat(StatModifiers.StatModTypes.Attack);
             }
             //Calculate magic attack
             else if (damageType == DamageTypes.Magic)
             {
-                totalDamage = CalculateTotalStat(MagicAtk, StatModifiers.StatModTypes.MagicAtk);
+                totalDamage = CalculateTotalStat(StatModifiers.StatModTypes.MagicAtk);
             }
             //Use the higher of the total physical or magical attack if damageType is None
             else
             {
-                int physical = CalculateTotalStat(Attack, StatModifiers.StatModTypes.Attack);
-                int magic = CalculateTotalStat(MagicAtk, StatModifiers.StatModTypes.MagicAtk);
+                int physical = CalculateTotalStat(StatModifiers.StatModTypes.Attack);
+                int magic = CalculateTotalStat(StatModifiers.StatModTypes.MagicAtk);
 
                 totalDamage = physical >= magic ? physical : magic;
             }
@@ -180,17 +180,35 @@ namespace RPG_Battle_Test
         /// <summary>
         /// Calculates the total value of a stat, factoring in StatModifiers
         /// </summary>
-        /// <param name="stat">The value of the stat to calculate. For example, Defense</param>
         /// <param name="statModType">The type of the stat to apply StatModifiers to</param>
-        /// <returns></returns>
-        protected int CalculateTotalStat(int stat, StatModifiers.StatModTypes statModType)
+        /// <returns>The total value of the stat with all StatModifiers factored in</returns>
+        protected int CalculateTotalStat(StatModifiers.StatModTypes statModType)
         {
+            int stat = GetStatForStatMod(statModType);
             int total = (int)((stat + StatModifications.GetModifierAmount(statModType)) * StatModifications.GetModifierPercent(statModType));
             /*Debug.Log($"BASE STAT OF TYPE {statModType}: {stat}");
             Debug.Log($"AMOUNT MODIFIER: {StatModifications.GetModifierAmount(statModType)}");
             Debug.Log($"PERCENTAGE MODIFIER: {StatModifications.GetModifierPercent(statModType)}");
             Debug.Log($"TOTAL: {total}");*/
             return total;
+        }
+
+        /// <summary>
+        /// Returns the value of the appropriate stat based on the StatModType passed in
+        /// </summary>
+        /// <param name="statModType">The type of the stat</param>
+        /// <returns>The value of the stat that corresponds to the StatModType passed in</returns>
+        protected int GetStatForStatMod(StatModifiers.StatModTypes statModType)
+        {
+            switch (statModType)
+            {
+                default:
+                case StatModifiers.StatModTypes.Attack: return Attack;
+                case StatModifiers.StatModTypes.Defense: return Defense;
+                case StatModifiers.StatModTypes.MagicAtk: return MagicAtk;
+                case StatModifiers.StatModTypes.MagicDef: return MagicDef;
+                case StatModifiers.StatModTypes.Speed: return Speed;
+            }
         }
 
         /// <summary>
@@ -206,11 +224,11 @@ namespace RPG_Battle_Test
             int totaldamage = damage;
             if (damageType == DamageTypes.Physical)
             {
-                totaldamage -= CalculateTotalStat(Defense, StatModifiers.StatModTypes.Defense);
+                totaldamage -= CalculateTotalStat(StatModifiers.StatModTypes.Defense);
             }
             else if (damageType == DamageTypes.Magic)
             {
-                totaldamage -= CalculateTotalStat(MagicDef, StatModifiers.StatModTypes.MagicDef);
+                totaldamage -= CalculateTotalStat(StatModifiers.StatModTypes.MagicDef);
             }
 
             if (element != Elements.Neutral)
@@ -266,7 +284,7 @@ namespace RPG_Battle_Test
             ModifyHP(CurHP - totaldamage);
 
             BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(damagetype, element, .75f, totaldamage.ToString(),
-            new Vector2f(Position.X, Position.Y - 50f), Constants.BASE_UI_LAYER + .6f));
+            new Vector2f(Position.X, Position.Y - 50f), Globals.BASE_UI_LAYER + .6f));
 
             Debug.Log($"{Name} received {totaldamage} damage!");
         }
@@ -299,13 +317,13 @@ namespace RPG_Battle_Test
             {
                 //Emerald green
                 BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(.75f, hp.ToString(),
-                new Vector2f(Position.X, Position.Y - 50f), new Color(85, 212, 63, 255), Constants.BASE_UI_LAYER + .6f));
+                new Vector2f(Position.X, Position.Y - 50f), new Color(85, 212, 63, 255), Globals.BASE_UI_LAYER + .6f));
             }
             if (mp != 0)
             {
                 //Turquoise-ish
                 BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(.75f, mp.ToString(),
-                new Vector2f(Position.X, Position.Y - 50f), new Color(72, 241, 241, 255), Constants.BASE_UI_LAYER + .6f));
+                new Vector2f(Position.X, Position.Y - 50f), new Color(72, 241, 241, 255), Globals.BASE_UI_LAYER + .6f));
             }
         }
 
@@ -530,7 +548,7 @@ namespace RPG_Battle_Test
         {
             if (IsDead == false)
             {
-                GameCore.spriteSorter.Add(EntitySprite, Constants.BASE_ENTITY_LAYER + (Position.Y / 1000f));
+                GameCore.spriteSorter.Add(EntitySprite, Globals.BASE_ENTITY_LAYER + (Position.Y / 1000f));
             }
         }
     }

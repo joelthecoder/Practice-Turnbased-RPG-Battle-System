@@ -107,22 +107,22 @@ namespace RPG_Battle_Test
             return null;
         }
 
-        private void OnItemUse(Item item, BattleEntity User)
+        private void OnItemUse(Item Item, BattleEntity User)
         {
             //Don't subtract from the Inventory if the user is an enemy
             if (User.IsEnemy == true)
                 return;
 
-            if (ItemDictionary.ContainsKey(item))
+            if (ItemDictionary.ContainsKey(Item))
             {
-                if (--ItemDictionary[item] <= 0)
+                if (--ItemDictionary[Item] <= 0)
                 {
-                    ItemDictionary.Remove(item);
+                    ItemDictionary.Remove(Item);
                 }
             }
             else
             {
-                Debug.LogError($"Somehow used item {item.Name}, which doesn't exist in the inventory!");
+                Debug.LogError($"Somehow used item {Item.Name}, which doesn't exist in the inventory!");
             }
         }
     }

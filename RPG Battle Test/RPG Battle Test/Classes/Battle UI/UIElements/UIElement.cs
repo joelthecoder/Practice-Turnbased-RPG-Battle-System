@@ -17,7 +17,7 @@ namespace RPG_Battle_Test
     /// </summary>
     public abstract class UIElement : Drawable
     {
-        public float DrawDepth { get; set; } = Constants.BASE_UI_LAYER;
+        public float DrawDepth { get; set; } = Globals.BASE_UI_LAYER;
 
         public bool IsFinished = false;
 
