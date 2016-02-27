@@ -8,7 +8,8 @@ using static RPG_Battle_Test.UsableBase;
 namespace RPG_Battle_Test
 {
     /// <summary>
-    /// The base, abstract class for Status Effects. Status Effects can range from poison to just about anything
+    /// The base, abstract class for Status Effects. Status Effects can range from poison to just about anything.
+    /// <para>All derived classes should have the "Status" suffix at the end of their type names for clarity purposes</para>
     /// </summary>
     public abstract class StatusEffect : AffectableBase
     {
@@ -40,14 +41,9 @@ namespace RPG_Battle_Test
         public int Turns { get; protected set; } = 1;
 
         /// <summary>
-        /// The alignment of the status
-        /// </summary>
-        public UsableAlignment StatusAlignment { get; protected set; } = UsableAlignment.Neutral;
-
-        /// <summary>
         /// The number of turns the status effect has been in effect for
         /// </summary>
-        protected int TurnsPassed = 0;
+        protected int TurnsPassed { get; private set; } = 0;
 
         /// <summary>
         /// States if the status effect is finished

@@ -137,13 +137,16 @@ namespace RPG_Battle_Test
         {
             BattleEntity entity = CurrentEntityTurn;
 
-            BattleUIManager.Instance.SetHeaderText(entity.Name + "'s turn!");
-
             Debug.LogWarning($"Started {entity.Name}'s Turn!");
 
             BattleState = BattleStates.Combat;
 
             entity.StartTurn();
+
+            if (entity.IsTurn)
+            {
+                BattleUIManager.Instance.SetHeaderText(entity.Name + "'s turn!");
+            }
         }
 
         public void TurnEnd()

@@ -137,10 +137,11 @@
     <Compile Include="Classes\Battle\PlayableCharacters\CecilK.cs" />
     <Compile Include="Classes\Battle\PlayableCharacters\CecilP.cs" />
     <Compile Include="Classes\Battle\StatModifiers.cs" />
-    <Compile Include="Classes\Battle\Status Effects\BigDefense.cs" />
-    <Compile Include="Classes\Battle\Status Effects\Haste.cs" />
-    <Compile Include="Classes\Battle\Status Effects\Silence.cs" />
-    <Compile Include="Classes\Battle\Status Effects\Sleep.cs" />
+    <Compile Include="Classes\Battle\Status Effects\BigDefenseStatus.cs" />
+    <Compile Include="Classes\Battle\Status Effects\FastStatus.cs" />
+    <Compile Include="Classes\Battle\Status Effects\HasteStatus.cs" />
+    <Compile Include="Classes\Battle\Status Effects\SilenceStatus.cs" />
+    <Compile Include="Classes\Battle\Status Effects\SleepStatus.cs" />
     <Compile Include="Classes\Battle\UsableBase.cs" />
     <Compile Include="Classes\Visual\Animation.cs" />
     <Compile Include="Classes\Battle UI\BattleMenu.cs" />
@@ -153,7 +154,7 @@
     <Compile Include="Classes\Battle\Commands\BattleCommand.cs" />
     <Compile Include="Classes\Battle\Items\Item.cs" />
     <Compile Include="Classes\Battle\Spells\Spell.cs" />
-    <Compile Include="Classes\Battle\Status Effects\Poison.cs" />
+    <Compile Include="Classes\Battle\Status Effects\PoisonStatus.cs" />
     <Compile Include="Classes\Battle\Status Effects\StatusEffect.cs" />
     <Compile Include="Classes\Debug.cs" />
     <Compile Include="Classes\Extensions.cs" />

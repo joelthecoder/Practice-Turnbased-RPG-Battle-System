@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SFML;
-using SFML.System;
-using SFML.Window;
-using SFML.Graphics;
-using SFML.Audio;
 
 namespace RPG_Battle_Test
 {
     /// <summary>
-    /// The Poison status effect. Entities lose 10% of their HP, rounding down, each time they end their turn
+    /// The Fast status. It allows a BattleEntity to move more than once per turn
     /// </summary>
-    public sealed class Poison : StatusEffect
+    public sealed class FastStatus : StatusEffect
     {
-        public Poison(int turns) : base(turns)
+        public uint NumActions = 2;
+
+        public FastStatus(int turns, uint numActions) : base(turns)
         {
-            Name = "Poison";
-            StatusAlignment = UsableBase.UsableAlignment.Negative;
+            Name = "Fast";
+            NumActions = Helper.Clamp(numActions, Globals.MIN_ENTITY_TURNS, Globals.MAX_ENTITY_TURNS);
         }
 
         public override void OnInflict()
@@ -34,18 +31,17 @@ namespace RPG_Battle_Test
 
         protected override void OnTurnStart()
         {
-            
+            Entity.ModifyNumActions(NumActions);
         }
 
         protected override void OnTurnEnd()
         {
-            Entity.TakeDamage(new Globals.AffectableInfo(Afflicter, this), (int)(Entity.MaxHP / 10f), Globals.DamageTypes.None, Globals.Elements.Poison);
             IncrementTurns();
         }
 
         public override StatusEffect Copy()
         {
-            return new Poison(Turns);
+            return new FastStatus(Turns, NumActions);
         }
     }
 }

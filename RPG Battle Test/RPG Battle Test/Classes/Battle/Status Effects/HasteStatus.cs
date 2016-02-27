@@ -9,16 +9,14 @@ namespace RPG_Battle_Test
     /// <summary>
     /// The Haste status effect. An entity's Speed is increased by a specified amount
     /// </summary>
-    public class Haste : StatusEffect
+    public class HasteStatus : StatusEffect
     {
         private int AmountIncrease = 0;
 
-        public Haste(int turns, int amountIncrease) : base(turns)
+        public HasteStatus(int turns, int amountIncrease) : base(turns)
         {
             Name = "Haste";
             AmountIncrease = amountIncrease;
-
-            StatusAlignment = UsableBase.UsableAlignment.Positive;
         }
 
         public override void OnInflict()
@@ -43,7 +41,7 @@ namespace RPG_Battle_Test
 
         public override StatusEffect Copy()
         {
-            return new Haste(Turns, AmountIncrease);
+            return new HasteStatus(Turns, AmountIncrease);
         }
     }
 }

@@ -30,6 +30,7 @@ namespace RPG_Battle_Test
 
             LearnSpell("Haste1");
             LearnSpell("Sleep1");
+            LearnSpell("Fast1");
         }
 
         protected override void OnTurnStarted()

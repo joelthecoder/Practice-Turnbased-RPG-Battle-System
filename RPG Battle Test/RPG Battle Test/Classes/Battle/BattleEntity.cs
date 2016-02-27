@@ -29,7 +29,12 @@ namespace RPG_Battle_Test
         public static event EntityDeath EntityDeathEvent = null;
 
         public Sprite EntitySprite = null;
-        public int NumActions = 1;
+
+        /// <summary>
+        /// The number of actions the Entity can perform this turn.
+        /// If modifying this value via a StatusEffect, put it in the StatusEffect's OnTurnStart() method
+        /// </summary>
+        public uint NumActions { get; protected set; } = 1;
 
         //Stats
         public string Name = "ERROR";
@@ -43,12 +48,14 @@ namespace RPG_Battle_Test
         public int MagicDef { get; protected set; } = 0;
         public int Speed { get; protected set; } = 1;
 
+        /// <summary>
+        /// The Speed of the entity after all StatModifiers are factored in
+        /// </summary>
         public int TrueSpeed => CalculateTotalStat(StatModifiers.StatModTypes.Speed);
 
         /// <summary>
         /// The current BattleCommand the entity is about to perform.
         /// For players, once the command is set, the player selects the target(s)
-        /// NOTE: We might be able to put the target list INTO the commands, which will work nicely to consolidate everything
         /// </summary>
         protected BattleCommand CurrentCommand = null;
 
@@ -106,8 +113,19 @@ namespace RPG_Battle_Test
         //Battle-turn related methods
         public void StartTurn()
         {
+            //Default to one action. If a StatusEffect changes this, it'll happen in the TurnStartEvent
+            NumActions = 1;
+
             OnTurnStarted();
             TurnStartEvent?.Invoke();
+
+            /*NOTE: We check if NumActions is 0 here then end the turn if so. If NumActions is already 0, don't allow it
+            to be set to any other value in ModifyNumActions().
+            This fixes problems with Sleep, Fast, and other turn-modifying StatusEffects on an Entity at the same time*/
+            if (NumActions == 0)
+            {
+                EndTurn();
+            }
         }
 
         protected virtual void OnTurnStarted()
@@ -117,16 +135,54 @@ namespace RPG_Battle_Test
 
         public void EndTurn()
         {
-            OnTurnEnded();
-            TurnEndEvent?.Invoke();
+            //StatusEffects can have this at 0 before it gets here
+            if (NumActions > 0)
+                NumActions--;
 
-            BattleManager.Instance.TurnEnd();
+            //If the entity is out of actions for this turn, end the turn
+            if (NumActions == 0)
+            {
+                OnTurnEnded();
+                TurnEndEvent?.Invoke();
+
+                BattleManager.Instance.TurnEnd();
+            }
+            //Otherwise restart the turn
+            else
+            {
+                RestartTurn();
+            }
         }
 
         protected virtual void OnTurnEnded()
         {
             PreviousCommand = CurrentCommand;
             CurrentCommand = null;
+        }
+
+        /// <summary>
+        /// Restarts the Entity's turn, allowing it to make another action
+        /// </summary>
+        protected void RestartTurn()
+        {
+            OnTurnEnded();
+            OnTurnStarted();
+        }
+
+        /// <summary>
+        /// Modifies how many actions the Entity can perform this turn
+        /// </summary>
+        /// <param name="numActions">The number of actions to allow the Entity to perform this turn.
+        /// This value is clamped by the min and max turns, defined in Globals, and if the Entity's actions are already at 
+        /// 0, it won't change its value</param>
+        /// <returns>false if the Entity's action count is 0 and true otherwise</returns>
+        public bool ModifyNumActions(uint numActions)
+        {
+            if (NumActions == MIN_ENTITY_TURNS)
+                return false;
+
+            NumActions = Helper.Clamp(numActions, MIN_ENTITY_TURNS, MAX_ENTITY_TURNS);
+            return true;
         }
 
         /// <summary>

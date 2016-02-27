@@ -31,13 +31,14 @@ namespace RPG_Battle_Test
         {
             SpellTable = new Dictionary<string, Spell>()
             {
-                { "Demi1", new Spell("Demi1", 3, false, UsableAlignment.Negative, new EntityDamageEffect("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new Poison(2), 50f, true)) },
+                { "Demi1", new Spell("Demi1", 3, false, UsableAlignment.Negative, new EntityDamageEffect("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new PoisonStatus(2), 50f, true)) },
                 { "Cure1", new Spell("Cure1", 2, false, UsableAlignment.Positive, new EntityHealEffect("Cure1", 10, 0)) },
                 { "Ultima", new Spell("Ultima", 4, true, UsableAlignment.Negative, new EntityDamageEffect("Ultima", 4, Globals.DamageTypes.Magic, Globals.Elements.Neutral, true)) },
-                { "Silence1", new Spell("Silence", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new Silence(2), 100f)) },
-                { "Haste1", new Spell("Haste1", 3, false, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new Haste(3, 10), 100f)) },
-                { "Sleep1", new Spell("Sleep1", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new Sleep(3), 100f)) },
-                { "Esuna", new Spell("Esuna", 4, false, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, typeof(Poison))) }
+                { "Silence1", new Spell("Silence", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new SilenceStatus(2), 100f)) },
+                { "Haste1", new Spell("Haste1", 3, false, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new HasteStatus(3, 10), 100f)) },
+                { "Sleep1", new Spell("Sleep1", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new SleepStatus(3), 100f)) },
+                { "Esuna", new Spell("Esuna", 4, false, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, typeof(PoisonStatus))) },
+                { "Fast1", new Spell("Fast1", 2, false, UsableAlignment.Positive, new EntityStatusEffect("Fast1", new FastStatus(2, 2), 100f)) }
             };
         }
 
@@ -67,12 +68,14 @@ namespace RPG_Battle_Test
             : base(name, multitarget, alignment, BattleManager.EntityFilterStates.Alive, entityeffect)
         {
             MPCost = mpCost;
+            AffectableType = AffectableTypes.Spell;
         }
 
         public Spell(string name, int mpCost, bool multitarget, UsableAlignment alignment, BattleManager.EntityFilterStates filterState, EntityEffect entityeffect)
             : base(name, multitarget, alignment, filterState, entityeffect)
         {
             MPCost = mpCost;
+            AffectableType = AffectableTypes.Spell;
         }
 
         /// <summary>

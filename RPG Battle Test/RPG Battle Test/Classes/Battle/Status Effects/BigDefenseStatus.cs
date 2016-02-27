@@ -9,9 +9,9 @@ namespace RPG_Battle_Test
     /// <summary>
     /// A special StatusEffect received when an entity performs the "Defend" command
     /// </summary>
-    public sealed class BigDefense : StatusEffect
+    public sealed class BigDefenseStatus : StatusEffect
     {
-        public BigDefense() : base(1)
+        public BigDefenseStatus() : base(1)
         {
             Name = "BigDefense";
         }
@@ -41,7 +41,7 @@ namespace RPG_Battle_Test
 
         public override StatusEffect Copy()
         {
-            return new BigDefense();
+            return new BigDefenseStatus();
         }
     }
 }

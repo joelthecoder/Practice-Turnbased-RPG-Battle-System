@@ -96,6 +96,11 @@ namespace RPG_Battle_Test
             return (value < min) ? min : (value > max) ? max : value;
         }
 
+        public static uint Clamp(uint value, uint min, uint max)
+        {
+            return (value < min) ? min : (value > max) ? max : value;
+        }
+
         public static float Clamp(float value, float min, float max)
         {
             return (value < min) ? min : (value > max) ? max : value;

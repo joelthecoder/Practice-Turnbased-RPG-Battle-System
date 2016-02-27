@@ -72,6 +72,9 @@ namespace RPG_Battle_Test
         /// </summary>
         public const int MAX_DMG = 99999;
 
+        public const uint MIN_ENTITY_TURNS = 0;
+        public const uint MAX_ENTITY_TURNS = 10;
+
         private static readonly string CurPath = Environment.CurrentDirectory + "/";
         public static readonly string ContentPath = CurPath + "Content/";
 

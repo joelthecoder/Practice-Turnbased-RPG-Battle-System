@@ -11,14 +11,13 @@ namespace RPG_Battle_Test
     /// </summary>
     /*NOTE: This isn't the same as indicating that Magic is disabled; it's just a simple entity-independent solution that doesn't
       require any changes in BattleEntity*/
-    public sealed class Silence : StatusEffect
+    public sealed class SilenceStatus : StatusEffect
     {
         private Dictionary<string, Spell> EntitySpells = null;
 
-        public Silence(int turns) : base(turns)
+        public SilenceStatus(int turns) : base(turns)
         {
             Name = "Silence";
-            StatusAlignment = UsableBase.UsableAlignment.Negative;
         }
 
         public override void OnInflict()
@@ -51,7 +50,7 @@ namespace RPG_Battle_Test
 
         public override StatusEffect Copy()
         {
-            return new Silence(Turns);
+            return new SilenceStatus(Turns);
         }
     }
 }
