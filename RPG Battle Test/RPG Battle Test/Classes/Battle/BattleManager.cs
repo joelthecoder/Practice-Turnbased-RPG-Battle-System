@@ -58,6 +58,8 @@ namespace RPG_Battle_Test
         private readonly List<Vector2f> EnemyPositions = null;
         private readonly List<Vector2f> PlayerPositions = null;
 
+        public bool IsBattleOver => BattleState == BattleStates.Victory || BattleState == BattleStates.GameOver;
+
         private BattleManager()
         {
             EnemyPositions = new List<Vector2f>()
@@ -117,6 +119,23 @@ namespace RPG_Battle_Test
             BattlePlayer.BattleStart();
         }
 
+        /// <summary>
+        /// Ends the combat part of the battle - Victory and results if 
+        /// </summary>
+        public void EndBattle(bool victory)
+        {
+            BattleState = victory ? BattleStates.Victory : BattleStates.GameOver;
+
+            Debug.Log($"The battle has ended in {BattleState}!");
+
+            CurrentEntityTurn?.EndTurn(true);
+
+            for (int i = 0; i < Entities.Count; i++)
+            {
+                Entities[i].OnBattleEnd();
+            }
+        }
+
         public void Dispose()
         {
             BattleUIManager.Instance.Dispose();
@@ -135,6 +154,12 @@ namespace RPG_Battle_Test
 
         private void TurnStart()
         {
+            if (IsBattleOver == true)
+            {
+                Debug.LogError("Trying to start a turn when the battle is over!");
+                return;
+            }
+
             BattleEntity entity = CurrentEntityTurn;
 
             Debug.LogWarning($"Started {entity.Name}'s Turn!");
@@ -151,24 +176,13 @@ namespace RPG_Battle_Test
 
         public void TurnEnd()
         {
+            if (IsBattleOver == true)
+            {
+                Debug.LogError("Trying to end a turn when the battle is over!");
+                return;
+            }
+
             Debug.LogWarning($"Ended {CurrentEntityTurn.Name}'s Turn!");
-
-            BattleState = BattleStates.TurnDone;
-
-            UpdateBattleState();
-
-            if (BattleState == BattleStates.Victory)
-            {
-                //Start victory here
-                BattleUIManager.Instance.SetHeaderText("Victory!");
-                return;
-            }
-            else if (BattleState == BattleStates.GameOver)
-            {
-                //Start game over here
-                BattleUIManager.Instance.SetHeaderText("Game over...");
-                return;
-            }
 
             //Update the next turn cycle
             TurnOrder.RemoveAt(0);
@@ -187,12 +201,16 @@ namespace RPG_Battle_Test
             }
 
             TurnOrder.Sort(SortBySpeed);
+
+            BattleState = BattleStates.TurnDone;
+
+            UpdateBattleState();
         }
 
         //Update the battle state after each turn
         private void UpdateBattleState()
         {
-            if (BattleState == BattleStates.Victory || BattleState == BattleStates.GameOver)
+            if (IsBattleOver == true)
                 return;
 
             bool allDead = true;
@@ -211,7 +229,8 @@ namespace RPG_Battle_Test
             //All players are dead - GameOver
             if (allDead == true)
             {
-                BattleState = BattleStates.GameOver;
+                EndBattle(false);
+                BattleUIManager.Instance.SetHeaderText("Game over...");
                 return;
             }
 
@@ -229,7 +248,8 @@ namespace RPG_Battle_Test
             //All enemies are dead - Victory
             if (allDead == true)
             {
-                BattleState = BattleStates.Victory;
+                EndBattle(true);
+                BattleUIManager.Instance.SetHeaderText("Victory!");
             }
         }
 
@@ -255,6 +275,9 @@ namespace RPG_Battle_Test
             {
                 TurnOrder.Remove(entity);
             }
+
+            //Update the battle state as the current entity could have more than one action per turn
+            UpdateBattleState();
         }
 
         /// <summary>
@@ -314,7 +337,7 @@ namespace RPG_Battle_Test
                 TurnStart();
             
             //If an entity's turn ended immediately after it started via a StatusEffect, don't update the next entity yet
-            if (BattleState != BattleStates.TurnDone && BattleState != BattleStates.GameOver && BattleState != BattleStates.Victory)
+            if (BattleState != BattleStates.TurnDone && IsBattleOver == false)
             {
                 //This update is for the current entity's turn
                 CurrentEntityTurn.TurnUpdate();

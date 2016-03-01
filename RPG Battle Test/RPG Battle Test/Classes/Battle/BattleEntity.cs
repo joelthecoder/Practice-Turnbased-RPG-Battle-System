@@ -110,6 +110,12 @@ namespace RPG_Battle_Test
             
         }
 
+        public virtual void OnBattleEnd()
+        {
+            ClearAllStatuses();
+            ClearStatModifiers();
+        }
+
         //Battle-turn related methods
         public void StartTurn()
         {
@@ -133,14 +139,14 @@ namespace RPG_Battle_Test
             
         }
 
-        public void EndTurn()
+        public void EndTurn(bool forced = false)
         {
             //StatusEffects can have this at 0 before it gets here
             if (NumActions > 0)
                 NumActions--;
 
             //If the entity is out of actions for this turn, end the turn
-            if (NumActions == 0)
+            if (forced == true || NumActions == 0)
             {
                 OnTurnEnded();
                 TurnEndEvent?.Invoke();
