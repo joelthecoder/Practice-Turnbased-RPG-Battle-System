@@ -32,7 +32,9 @@ namespace RPG_Battle_Test
 
         /// <summary>
         /// The number of actions the Entity can perform this turn.
-        /// If modifying this value via a StatusEffect, put it in the StatusEffect's OnTurnStart() method
+        /// If modifying this value via a StatusEffect, put it in the StatusEffect's OnTurnStart() method.
+        /// <para>Once this value is set to 0, it means that the Entity's turn should end and will ignore any value changes
+        /// until the start of the Entity's next turn.</para>
         /// </summary>
         public uint NumActions { get; protected set; } = 1;
 
@@ -348,7 +350,7 @@ namespace RPG_Battle_Test
             BattleUIManager.Instance.AddElement(new UIDamageTextDisplay(damagetype, element, .75f, totaldamage.ToString(),
             new Vector2f(Position.X, Position.Y - 50f), Globals.BASE_UI_LAYER + .6f));
 
-            Debug.Log($"{Name} received {totaldamage} damage!");
+            OnDamageReceived(affectableInfo, totaldamage, damagetype, element);
         }
 
         /// <summary>
@@ -390,6 +392,18 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
+        /// What occurs when the Entity receives damage
+        /// </summary
+        /// <param name="affectableInfo">Contains the Entity and what it dealt damage with</param>
+        /// <param name="totaldamage">The amount of total damage received</param>
+        /// <param name="damagetype">The type of damage dealt</param>
+        /// <param name="element">The element of the damage</param>
+        public virtual void OnDamageReceived(AffectableInfo affectableInfo, int totaldamage, DamageTypes damagetype, Elements element)
+        {
+            Debug.Log($"{Name} received {totaldamage} damage!");
+        }
+
+        /// <summary>
         /// Gets all the Spells the entity knows. This returns a copy of the LearnedSpells dictionary
         /// </summary>
         public Dictionary<string, Spell> GetAllSpells()
@@ -403,7 +417,7 @@ namespace RPG_Battle_Test
         /// <param name="spellName">The name of the Spell to learn</param>
         public void LearnSpell(string spellName)
         {
-            if (LearnedSpells.ContainsKey(spellName) == true)
+            if (KnowsSpell(spellName) == true)
             {
                 Debug.LogError($"{Name} already knows {spellName}!");
                 return;
@@ -424,19 +438,34 @@ namespace RPG_Battle_Test
         }
 
         /// <summary>
+        /// Tells if the entity knows a particular Spell
+        /// </summary>
+        /// <param name="spellName">The name of the Spell to check that the entity knows</param>
+        /// <returns>true if the entity knows the Spell, otherwise false</returns>
+        public bool KnowsSpell(string spellName)
+        {
+            return LearnedSpells.ContainsKey(spellName);
+        }
+
+        /// <summary>
         /// Makes the entity forget a Spell
         /// </summary>
-        /// <param name="spellName">The name of the Spell to forget</param>
-        public void ForgetSpell(string spellName)
+        /// <param name="spellNames">The name of the Spell to forget</param>
+        public void ForgetSpell(params string[] spellNames)
         {
-            if (LearnedSpells.ContainsKey(spellName) == false)
+            for (int i = 0; i < spellNames.Length; i++)
             {
-                Debug.LogError($"{Name} doesn't know {spellName}!");
-                return;
-            }
+                string spellName = spellNames[i];    
 
-            LearnedSpells.Remove(spellName);
-            Debug.Log($"{Name} forgot {spellName}!");
+                if (KnowsSpell(spellName) == false)
+                {
+                    Debug.LogError($"{Name} doesn't know {spellName}!");
+                    return;
+                }
+
+                LearnedSpells.Remove(spellName);
+                Debug.Log($"{Name} forgot {spellName}!");
+            }
         }
 
         /// <summary>
@@ -444,7 +473,7 @@ namespace RPG_Battle_Test
         /// </summary>
         public void ForgetAllSpells()
         {
-            LearnedSpells.Clear();
+            ForgetSpell(LearnedSpells.Keys.ToArray());
         }
 
         /// <summary>

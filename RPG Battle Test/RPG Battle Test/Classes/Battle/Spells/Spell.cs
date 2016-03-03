@@ -27,18 +27,33 @@ namespace RPG_Battle_Test
         /// </summary>
         public int MPCost { get; protected set; } = 2;
 
+        /// <summary>
+        /// The number of turns it takes to cast this spell. A value of 0 means the spell is cast on the same turn it is used
+        /// </summary>
+        public uint CastTurns { get; protected set; } = 0;
+
+        /// <summary>
+        /// The number of turns spent casting this spell
+        /// </summary>
+        private uint TurnsSpentCasting = 0;
+
+        /// <summary>
+        /// Tells if the spell has been cast or not
+        /// </summary>
+        public bool HasCast => (TurnsSpentCasting > CastTurns);
+
         static Spell()
         {
             SpellTable = new Dictionary<string, Spell>()
             {
-                { "Demi1", new Spell("Demi1", 3, false, UsableAlignment.Negative, new EntityDamageEffect("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new PoisonStatus(2), 50f, true)) },
-                { "Cure1", new Spell("Cure1", 2, false, UsableAlignment.Positive, new EntityHealEffect("Cure1", 10, 0)) },
-                { "Ultima", new Spell("Ultima", 4, true, UsableAlignment.Negative, new EntityDamageEffect("Ultima", 4, Globals.DamageTypes.Magic, Globals.Elements.Neutral, true)) },
-                { "Silence1", new Spell("Silence", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new SilenceStatus(2), 100f)) },
-                { "Haste1", new Spell("Haste1", 3, false, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new HasteStatus(3, 10), 100f)) },
-                { "Sleep1", new Spell("Sleep1", 2, false, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new SleepStatus(3), 100f)) },
-                { "Esuna", new Spell("Esuna", 4, false, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, typeof(PoisonStatus))) },
-                { "Fast1", new Spell("Fast1", 2, false, UsableAlignment.Positive, new EntityStatusEffect("Fast1", new FastStatus(2, 2), 100f)) }
+                { "Demi1", new Spell("Demi1", 3, false, 0, UsableAlignment.Negative, new EntityDamageEffect("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new PoisonStatus(2), 50f, true)) },
+                { "Cure1", new Spell("Cure1", 2, false, 0, UsableAlignment.Positive, new EntityHealEffect("Cure1", 10, 0)) },
+                { "Ultima", new Spell("Ultima", 4, true, 0, UsableAlignment.Negative, new EntityDamageEffect("Ultima", 4, Globals.DamageTypes.Magic, Globals.Elements.Neutral, true)) },
+                { "Silence1", new Spell("Silence", 2, false, 0, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new SilenceStatus(2), 100f)) },
+                { "Haste1", new Spell("Haste1", 3, false, 0, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new HasteStatus(3, 10), 100f)) },
+                { "Sleep1", new Spell("Sleep1", 2, false, 0, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new SleepStatus(3), 100f)) },
+                { "Esuna", new Spell("Esuna", 4, false, 0, UsableAlignment.Positive, new EntityHealEffect("Esuna", 0, 0, typeof(PoisonStatus))) },
+                { "Fast1", new Spell("Fast1", 2, false, 0, UsableAlignment.Positive, new EntityStatusEffect("Fast1", new FastStatus(2, 2), 100f)) }
             };
         }
 
@@ -64,18 +79,19 @@ namespace RPG_Battle_Test
             return null;
         }
 
-        public Spell(string name, int mpCost, bool multitarget, UsableAlignment alignment, EntityEffect entityeffect)
-            : base(name, multitarget, alignment, BattleManager.EntityFilterStates.Alive, entityeffect)
+        public Spell(string name, int mpCost, bool multitarget, uint castTurns, UsableAlignment alignment, EntityEffect entityeffect)
+            : this(name, mpCost, multitarget, castTurns, alignment, BattleManager.EntityFilterStates.Alive, entityeffect)
         {
-            MPCost = mpCost;
-            AffectableType = AffectableTypes.Spell;
+            
         }
 
-        public Spell(string name, int mpCost, bool multitarget, UsableAlignment alignment, BattleManager.EntityFilterStates filterState, EntityEffect entityeffect)
+        public Spell(string name, int mpCost, bool multitarget, uint castTurns, UsableAlignment alignment, BattleManager.EntityFilterStates filterState, EntityEffect entityeffect)
             : base(name, multitarget, alignment, filterState, entityeffect)
         {
             MPCost = mpCost;
             AffectableType = AffectableTypes.Spell;
+
+            CastTurns = castTurns;
         }
 
         /// <summary>
@@ -85,13 +101,30 @@ namespace RPG_Battle_Test
         /// <param name="Entities">The BattleEntities affected by the Spell</param>
         public void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
+            TurnsSpentCasting++;
+            if (HasCast == false)
+            {
+                Debug.Log($"{User.Name} is casting {Name}! Turns spent: {TurnsSpentCasting - 1}");
+                return;
+            }
+
             if (Entityeffect == null)
             {
                 Debug.LogError($"Spell {Name}'s EntityEffect is null!");
                 return;
             }
 
+            RefreshCastTime();
+
             Entityeffect.UseEffect(new Globals.AffectableInfo(User, this), Entities);
+        }
+
+        /// <summary>
+        /// Refreshes the casting time of the Spell
+        /// </summary>
+        public void RefreshCastTime()
+        {
+            TurnsSpentCasting = 0;
         }
 
         /// <summary>
@@ -100,7 +133,7 @@ namespace RPG_Battle_Test
         /// <returns>A deep copy of the Spell</returns>
         public Spell Copy()
         {
-            return new Spell(Name, MPCost, MultiTarget, Alignment, FilterState, Entityeffect?.Copy());
+            return new Spell(Name, MPCost, MultiTarget, CastTurns, Alignment, FilterState, Entityeffect?.Copy());
         }
     }
 }

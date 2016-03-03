@@ -31,6 +31,16 @@ namespace RPG_Battle_Test
         /// </summary>
         public virtual bool IsCommandFinished => true;
 
+        /// <summary>
+        /// The previous BattleEntity that used this command
+        /// </summary>
+        private BattleEntity PrevAttacker = null;
+
+        /// <summary>
+        /// The previous set of BattleEntities targeted with this command
+        /// </summary>
+        private BattleEntity[] PrevVictims = null;
+
         protected BattleCommand(string name)
         {
             Name = name;
@@ -43,7 +53,18 @@ namespace RPG_Battle_Test
         /// <param name="Victims">The BattleEntities on the receiving end of the action</param>
         public void PerformAction(BattleEntity Attacker, params BattleEntity[] Victims)
         {
+            PrevAttacker = Attacker;
+            PrevVictims = Victims;
+
             Perform(Attacker, Victims);
+        }
+
+        /// <summary>
+        /// Performs the command with the same Attacker and Victims it was performed with previously
+        /// </summary>
+        public void Reperform()
+        {
+            Perform(PrevAttacker, PrevVictims);
         }
 
         /// <summary>

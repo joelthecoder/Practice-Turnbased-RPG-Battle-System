@@ -8,7 +8,7 @@ namespace RPG_Battle_Test
 {
     public class SpellCommand : BattleCommand
     {
-        protected Spell SpellCast = null;    
+        protected Spell SpellCast = null;
 
         public SpellCommand(Spell spellCast) : base("Magic")
         {
