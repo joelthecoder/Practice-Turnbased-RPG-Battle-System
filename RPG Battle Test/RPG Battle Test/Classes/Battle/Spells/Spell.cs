@@ -32,23 +32,13 @@ namespace RPG_Battle_Test
         /// </summary>
         public uint CastTurns { get; protected set; } = 0;
 
-        /// <summary>
-        /// The number of turns spent casting this spell
-        /// </summary>
-        private uint TurnsSpentCasting = 0;
-
-        /// <summary>
-        /// Tells if the spell has been cast or not
-        /// </summary>
-        public bool HasCast => (TurnsSpentCasting > CastTurns);
-
         static Spell()
         {
             SpellTable = new Dictionary<string, Spell>()
             {
                 { "Demi1", new Spell("Demi1", 3, false, 0, UsableAlignment.Negative, new EntityDamageEffect("Demi1", 3, Globals.DamageTypes.Magic, Globals.Elements.Poison, new PoisonStatus(2), 50f, true)) },
                 { "Cure1", new Spell("Cure1", 2, false, 0, UsableAlignment.Positive, new EntityHealEffect("Cure1", 10, 0)) },
-                { "Ultima", new Spell("Ultima", 4, true, 0, UsableAlignment.Negative, new EntityDamageEffect("Ultima", 4, Globals.DamageTypes.Magic, Globals.Elements.Neutral, true)) },
+                { "Ultima", new Spell("Ultima", 4, true, 1, UsableAlignment.Negative, new EntityDamageEffect("Ultima", 4, Globals.DamageTypes.Magic, Globals.Elements.Neutral, true)) },
                 { "Silence1", new Spell("Silence", 2, false, 0, UsableAlignment.Negative, new EntityStatusEffect("Silence1", new SilenceStatus(2), 100f)) },
                 { "Haste1", new Spell("Haste1", 3, false, 0, UsableAlignment.Positive, new EntityStatusEffect("Haste1", new HasteStatus(3, 10), 100f)) },
                 { "Sleep1", new Spell("Sleep1", 2, false, 0, UsableAlignment.Negative, new EntityStatusEffect("Sleep1", new SleepStatus(3), 100f)) },
@@ -101,30 +91,13 @@ namespace RPG_Battle_Test
         /// <param name="Entities">The BattleEntities affected by the Spell</param>
         public void OnUse(BattleEntity User, params BattleEntity[] Entities)
         {
-            TurnsSpentCasting++;
-            if (HasCast == false)
-            {
-                Debug.Log($"{User.Name} is casting {Name}! Turns spent: {TurnsSpentCasting - 1}");
-                return;
-            }
-
             if (Entityeffect == null)
             {
                 Debug.LogError($"Spell {Name}'s EntityEffect is null!");
                 return;
             }
-
-            RefreshCastTime();
-
+            
             Entityeffect.UseEffect(new Globals.AffectableInfo(User, this), Entities);
-        }
-
-        /// <summary>
-        /// Refreshes the casting time of the Spell
-        /// </summary>
-        public void RefreshCastTime()
-        {
-            TurnsSpentCasting = 0;
         }
 
         /// <summary>

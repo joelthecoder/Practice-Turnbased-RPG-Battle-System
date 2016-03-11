@@ -124,8 +124,8 @@ namespace RPG_Battle_Test
             //Default to one action. If a StatusEffect changes this, it'll happen in the TurnStartEvent
             NumActions = 1;
 
-            OnTurnStarted();
             TurnStartEvent?.Invoke();
+            HandleTurnStart();
 
             /*NOTE: We check if NumActions is 0 here then end the turn if so. If NumActions is already 0, don't allow it
             to be set to any other value in ModifyNumActions().
@@ -150,8 +150,10 @@ namespace RPG_Battle_Test
             //If the entity is out of actions for this turn, end the turn
             if (forced == true || NumActions == 0)
             {
-                OnTurnEnded();
                 TurnEndEvent?.Invoke();
+                HandleTurnEnd();
+
+                NumActions = 0;
 
                 BattleManager.Instance.TurnEnd();
             }
@@ -173,8 +175,32 @@ namespace RPG_Battle_Test
         /// </summary>
         protected void RestartTurn()
         {
-            OnTurnEnded();
+            HandleTurnEnd();
+            HandleTurnStart();
+        }
+
+        /// <summary>
+        /// Calls OnTurnStarted() and performs anything else afterwards that should occur for all BattleEntities
+        /// </summary>
+        private void HandleTurnStart()
+        {
+            if (NumActions == 0)
+                return;
+
             OnTurnStarted();
+            if (PreviousCommand?.IsCommandFinished == false)
+            {
+                PreviousCommand.Reperform();
+                EndTurn();
+            }
+        }
+
+        /// <summary>
+        /// Calls OnTurnEnded() and performs anything else afterwards that should occur for all BattleEntities
+        /// </summary>
+        private void HandleTurnEnd()
+        {
+            OnTurnEnded();
         }
 
         /// <summary>
@@ -191,6 +217,14 @@ namespace RPG_Battle_Test
 
             NumActions = Helper.Clamp(numActions, MIN_ENTITY_TURNS, MAX_ENTITY_TURNS);
             return true;
+        }
+
+        /// <summary>
+        /// Interrupts the command the entity is using. For multi-turn commands like casting spells, this'll cancel the spell
+        /// </summary>
+        public void InterruptCommand()
+        {
+            PreviousCommand?.Interrupt();
         }
 
         /// <summary>
@@ -321,18 +355,29 @@ namespace RPG_Battle_Test
             //Death; clear all statuses and status modifiers
             if (CurHP == 0)
             {
-                ClearAllStatuses();
-                ClearStatModifiers();
-
-                EntityDeathEvent?.Invoke(this);
-
-                Debug.Log($"{Name} has fallen in battle!");
+                Kill();
             }
         }
 
         protected void ModifyMP(int value)
         {
             CurMP = Helper.Clamp(value, 0, MaxMP);
+        }
+
+        /// <summary>
+        /// Instantly kills the BattleEntity
+        /// </summary>
+        public void Kill()
+        {
+            CurHP = 0;
+
+            ClearAllStatuses();
+            ClearStatModifiers();
+            InterruptCommand();
+
+            EntityDeathEvent?.Invoke(this);
+
+            Debug.Log($"{Name} has fallen in battle!");
         }
 
         /// <summary>
@@ -615,6 +660,9 @@ namespace RPG_Battle_Test
 
         public virtual void Dispose()
         {
+            ClearAllStatuses();
+            ClearStatModifiers();
+
             TurnStartEvent = null;
             TurnEndEvent = null;
         }

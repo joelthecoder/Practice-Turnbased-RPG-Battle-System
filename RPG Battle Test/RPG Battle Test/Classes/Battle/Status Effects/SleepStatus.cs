@@ -32,6 +32,8 @@ namespace RPG_Battle_Test
             //End the turn because the Entity can't move while asleep
             Debug.Log($"{Entity.Name} is asleep and can't move! Turn: {TurnsPassed}");
             Entity.ModifyNumActions(0);
+
+            Entity.InterruptCommand();
         }
 
         protected override void OnTurnEnd()

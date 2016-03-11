@@ -29,7 +29,22 @@ namespace RPG_Battle_Test
         /// Returns whether the Command is finished or not.
         /// This is used for keeping a BattleEntity locked into a certain Command until it ends (Ex. casting time for a spell)
         /// </summary>
-        public virtual bool IsCommandFinished => true;
+        public bool IsCommandFinished => Performed;
+
+        /// <summary>
+        /// The number of turns required to complete this command
+        /// </summary>
+        protected uint TurnsRequired = 0;
+
+        /// <summary>
+        /// The number of turns used to complete this command
+        /// </summary>
+        protected uint TurnsUsed = 0;
+
+        /// <summary>
+        /// Tells whether the command has been successfully performed or not
+        /// </summary>
+        private bool Performed = false;
 
         /// <summary>
         /// The previous BattleEntity that used this command
@@ -56,7 +71,20 @@ namespace RPG_Battle_Test
             PrevAttacker = Attacker;
             PrevVictims = Victims;
 
-            Perform(Attacker, Victims);
+            //Carry out the command if it should be used
+            if (TurnsUsed >= TurnsRequired)
+            {
+                Perform(Attacker, Victims);
+
+                Interrupt();
+            }
+            //Otherwise increment the turns
+            else
+            {
+                Debug.Log($"Performing {Name}! Current turn: {TurnsUsed} out of {TurnsRequired}");
+                TurnsUsed++;
+                Performed = false;
+            }
         }
 
         /// <summary>
@@ -64,7 +92,17 @@ namespace RPG_Battle_Test
         /// </summary>
         public void Reperform()
         {
-            Perform(PrevAttacker, PrevVictims);
+            PerformAction(PrevAttacker, PrevVictims);
+        }
+
+        /// <summary>
+        /// Interrupts the BattleCommand, setting the number of turns it's been in use to 0 and stating that it has been performed.
+        /// This is used by StatusEffects, like Sleep, that interrupt multi-turn actions such as casting spells
+        /// </summary>
+        public void Interrupt()
+        {
+            TurnsUsed = 0;
+            Performed = true;
         }
 
         /// <summary>

@@ -13,6 +13,8 @@ namespace RPG_Battle_Test
         public SpellCommand(Spell spellCast) : base("Magic")
         {
             SpellCast = spellCast;
+
+            TurnsRequired = spellCast.CastTurns;
         }
 
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)

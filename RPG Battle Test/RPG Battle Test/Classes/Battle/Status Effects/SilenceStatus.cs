@@ -27,6 +27,8 @@ namespace RPG_Battle_Test
             remove the Entity's spells if something went wrong; they would just be removed for this battle*/
             EntitySpells = Entity.GetAllSpells();
             Entity.ForgetAllSpells();
+
+            Entity.InterruptCommand();
         }
 
         protected override void OnEnd()

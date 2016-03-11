@@ -45,7 +45,7 @@ namespace RPG_Battle_Test
         private static BattleManager instance = null;
 
         //Begin instance members
-        public List<BattleEntity> Entities = null;
+        public List<BattleEntity> Entities = new List<BattleEntity>();
         public List<BattleEntity> Enemies = new List<BattleEntity>();
         public List<BattleEntity> Players = new List<BattleEntity>();
         private List<BattleEntity> TurnOrder = null;
@@ -86,30 +86,10 @@ namespace RPG_Battle_Test
 
             BattleState = BattleStates.Init;
 
-            Entities = entities.ToList();
+            AddEntities(entities);
+
             TurnOrder = new List<BattleEntity>(Entities);
             TurnOrder.Sort(SortBySpeed);
-
-            int enemyindex = 0, playerindex = 0;
-
-            for (int i = 0; i < Entities.Count; i++)
-            {
-                BattleEntity entity = Entities[i];
-                if (entity.IsEnemy)
-                {
-                    Enemies.Add((BattleEnemy)entity);
-                    entity.Position = EnemyPositions[enemyindex];
-                    enemyindex++;
-                }
-                else
-                {
-                    Players.Add((BattlePlayer)entity);
-                    entity.Position = PlayerPositions[playerindex];
-                    playerindex++;
-                }
-
-                entity.OnBattleStart();
-            }
 
             BattleState = BattleStates.TurnDone;
 
@@ -141,15 +121,78 @@ namespace RPG_Battle_Test
             BattleUIManager.Instance.Dispose();
             PartyInventory.Dispose();
 
-            for (int i = 0; i < Entities.Count; i++)
-            {
-                Entities[i].Dispose();
-            }
+            RemoveEntities(Entities);
 
             //Clear instance and event
             BattleEntity.EntityDeathEvent -= OnEntityDeath;
 
             instance = null;
+        }
+        
+        /// <summary>
+        /// Adds BattleEntities to the battle. Any new entities added will not be able to move until the next turn cycle
+        /// </summary>
+        /// <param name="entities">The BattleEntities to add to the battle</param>
+        public void AddEntities(params BattleEntity[] entities)
+        {
+            //Add all entities to the global list
+            Entities.AddRange(entities);
+
+            //Go through all the entities and add them to the proper Player or Enemy lists and initialize them
+            for (int i = 0; i < entities.Length; i++)
+            {
+                BattleEntity entity = Entities[i];
+                if (entity.IsEnemy)
+                {
+                    Enemies.Add(entity);
+                    int enemyIndex = (Enemies.Count - 1) % EnemyPositions.Count;
+                    entity.Position = EnemyPositions[enemyIndex];
+                }
+                else
+                {
+                    Players.Add(entity);
+                    int playerIndex = (Players.Count - 1) % PlayerPositions.Count;
+                    entity.Position = PlayerPositions[playerIndex];
+                }
+
+                entity.OnBattleStart();
+            }
+        }
+
+        /// <summary>
+        /// Removes BattleEntities from the battle.
+        /// </summary>
+        /// <param name="entities">A list of BattleEntities to remove from the battle</param>
+        private void RemoveEntities(List<BattleEntity> entities)
+        {
+            for (int i = 0; i < entities.Count; i++)
+            {
+                BattleEntity entity = entities[i];
+                if (Entities.Remove(entity) == false)
+                {
+                    Debug.LogError($"CRITICAL ERROR! {entity.Name} is not in the {nameof(Entities)} list!");
+                    continue;
+                }
+
+                //Remove from turn order
+                TurnOrder.Remove(entity);
+
+                //Remove from the respective Enemy or Player list
+                if (entity.IsEnemy) Enemies.Remove(entity);
+                else Players.Remove(entity);
+
+                //Dispose the entity
+                entity.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Removes BattleEntities from the battle.
+        /// </summary>
+        /// <param name="entities">The BattleEntities to remove from the battle</param>
+        public void RemoveEntities(params BattleEntity[] entities)
+        {
+            RemoveEntities(new List<BattleEntity>(entities));
         }
 
         private void TurnStart()
@@ -168,7 +211,7 @@ namespace RPG_Battle_Test
 
             entity.StartTurn();
 
-            if (entity.IsTurn)
+            if (IsBattleOver == false && entity.IsTurn == true)
             {
                 BattleUIManager.Instance.SetHeaderText(entity.Name + "'s turn!");
             }
