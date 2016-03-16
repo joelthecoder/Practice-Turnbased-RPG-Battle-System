@@ -18,6 +18,11 @@ namespace RPG_Battle_Test
             
         }
 
+        protected override void OnCommandSelected(BattlePlayer player)
+        {
+            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(BattleEntity.EntityTypes.Enemy, BattleManager.EntityFilterStates.Alive), false);
+        }
+
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
             for (int i = 0; i < Victims.Length; i++)

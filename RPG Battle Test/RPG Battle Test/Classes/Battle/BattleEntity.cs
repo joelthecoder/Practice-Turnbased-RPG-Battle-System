@@ -9,6 +9,7 @@ using SFML.Window;
 using SFML.Graphics;
 using SFML.Audio;
 using static RPG_Battle_Test.Globals;
+using static RPG_Battle_Test.BattleCommand;
 
 namespace RPG_Battle_Test
 {
@@ -74,7 +75,7 @@ namespace RPG_Battle_Test
         protected readonly Dictionary<string, Spell> LearnedSpells = new Dictionary<string, Spell>();
         protected readonly Dictionary<Elements, Elements> Resistances = new Dictionary<Elements, Elements>();
         protected readonly Dictionary<Elements, Elements> Weaknesses = new Dictionary<Elements, Elements>();
-        //protected readonly Dictionary<string, BattleCommand> KnownCommands = new Dictionary<string, BattleCommand>();
+        protected readonly Dictionary<BattleActions, BattleCommand> KnownCommands = new Dictionary<BattleActions, BattleCommand>();
 
         protected readonly StatModifiers StatModifications = new StatModifiers();
 
@@ -225,6 +226,23 @@ namespace RPG_Battle_Test
         public void InterruptCommand()
         {
             PreviousCommand?.Interrupt();
+        }
+
+        /// <summary>
+        /// Toggles a BattleCommand the Entity can perform
+        /// </summary>
+        /// <param name="battleAction">The BattleAction corresponding to the BattleCommand to disable</param>
+        /// <param name="disabled">true to disable the Command, false to enable it</param>
+        public void ToggleCommand(BattleActions battleAction, bool disabled)
+        {
+            if (KnownCommands.ContainsKey(battleAction))
+            {
+                KnownCommands[battleAction].Disabled = disabled;
+            }
+            else
+            {
+                Debug.Log($"{Name} doesn't have a usable command with the action: {battleAction}");
+            }
         }
 
         /// <summary>

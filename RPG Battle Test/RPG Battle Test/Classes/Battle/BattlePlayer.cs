@@ -18,15 +18,6 @@ namespace RPG_Battle_Test
             None, CecilK, CecilP
         }
 
-        /// <summary>
-        /// Possible BattleActions for players to have.
-        /// Every character has Attack, Item, Magic, and Run, but more can be obtained or specific to characters (Ex. Steal).
-        /// </summary>
-        public enum BattleActions
-        {
-            Attack, Item, Magic, Steal, Run
-        }
-
         protected const float ArrowVerticalDist = 100f;
 
         public Characters Character { get; private set; } = Characters.None;
@@ -39,6 +30,10 @@ namespace RPG_Battle_Test
         {
             EntityType = EntityTypes.Player;
 
+            KnownCommands.Add(BattleCommand.BattleActions.Attack, new AttackCommand());
+            KnownCommands.Add(BattleCommand.BattleActions.Defend, new DefendCommand());
+            KnownCommands.Add(BattleCommand.BattleActions.Item, new ItemCommand());
+            KnownCommands.Add(BattleCommand.BattleActions.Magic, new SpellCommand());
             //AttackAnim = new LoopAnimation(LoopAnimation.CONTINOUS_LOOP, new Texture(Constants.ContentPath + "CecilK.png"), 5f, 
             //new IntRect(5, 83, 16, 23), new IntRect(25, 82, 16, 24), new IntRect(45, 82, 16, 24));
         }
@@ -64,9 +59,24 @@ namespace RPG_Battle_Test
 
             BattleUIManager.Instance.GetInputMenu().Active = true;
 
+            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
+
             //Set the basic options
-            BattleUIManager.Instance.GetInputMenu().SetElements(new BattleMenu.MenuOption("Attack", AttackSelect), new BattleMenu.MenuOption("Defend", DefendSelect),
-            new BattleMenu.MenuOption("Item", ItemSelect), new BattleMenu.MenuOption("Magic", SpellSelect));
+            foreach (KeyValuePair<BattleCommand.BattleActions, BattleCommand> command in KnownCommands)
+            {
+                Color optioncolor = Color.Black;
+                BattleMenu.MenuOption.OptionSelect commandselect = null;
+
+                if (command.Value.Disabled == false)
+                {
+                    optioncolor = Color.White;
+                    commandselect = () => command.Value.OnSelect(this);
+                }
+
+                options.Add(new BattleMenu.MenuOption(command.Value.Name, commandselect, optioncolor));
+            }
+
+            BattleUIManager.Instance.GetInputMenu().SetElements(options);
         }
 
         protected override void OnTurnEnded()
@@ -98,101 +108,9 @@ namespace RPG_Battle_Test
             else BattleUIManager.Instance.TargetMenu.Update();
         }
 
-        protected void AttackSelect()
+        public void SetCommand(BattleCommand command)
         {
-            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(EntityTypes.Enemy, BattleManager.EntityFilterStates.Alive), false);
-
-            CurrentCommand = new AttackCommand();
-        }
-
-        protected void ItemSelection(Item item)
-        {
-            EntityTypes entityType = item.GetEntityTypeBasedOnAlignment(EntityType);
-            bool multiTarget = item.MultiTarget;
-            BattleManager.EntityFilterStates filterState = item.FilterState;
-
-            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterState), multiTarget);
-
-            CurrentCommand = new ItemCommand(item);
-        }
-
-        protected void SpellSelection(Spell spell)
-        {
-            if (CurMP < spell.MPCost)
-            {
-                Debug.Log($"{Name} has {CurMP}MP but requires {spell.MPCost}MP to cast {spell.Name}!");
-                return;
-            }
-
-            EntityTypes entityType = spell.GetEntityTypeBasedOnAlignment(EntityType);
-            bool multiTarget = spell.MultiTarget;
-            BattleManager.EntityFilterStates filterState = spell.FilterState;
-
-            BattleUIManager.Instance.StartTargetSelection(BattleManager.Instance.GetEntityGroup(entityType, filterState), multiTarget);
-
-            CurrentCommand = new SpellCommand(spell);
-        }
-
-        protected void DefendSelect()
-        {
-            BattleUIManager.Instance.StartTargetSelection(new List<BattleEntity>() { this }, false);
-
-            CurrentCommand = new DefendCommand();
-        }
-
-        protected void ItemSelect()
-        {
-            BattleMenu itemMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 38),
-                                                 BattleMenu.GridTypes.Vertical);
-            itemMenu.OnOpen = PopulateItemList;
-            BattleUIManager.Instance.PushInputMenu(itemMenu);
-        }
-
-        protected void SpellSelect()
-        {
-            BattleMenu spellMenu = new BattleMenu(new Vector2f(40f, GameCore.GameWindow.Size.Y - 150), new Vector2f(100, 38), 
-                                                  BattleMenu.GridTypes.Vertical);
-            spellMenu.OnOpen = PopulateSpellList;
-            BattleUIManager.Instance.PushInputMenu(spellMenu);
-        }
-
-        protected void PopulateItemList()
-        {
-            Dictionary<Item, int> items = BattleManager.Instance.PartyInventory.GetInventory();
-            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
-
-            if (items.Count == 0)
-            {
-                options.Add(new BattleMenu.MenuOption("Empty Inventory - Exit", BattleUIManager.Instance.PopInputMenu));
-            }
-            else
-            {
-                foreach (KeyValuePair<Item, int> pair in items)
-                {
-                    options.Add(new BattleMenu.MenuOption($"{pair.Key.Name} x{pair.Value}", () => ItemSelection(pair.Key)));
-                }
-            }
-
-            BattleUIManager.Instance.GetInputMenu().SetElements(options);
-        }
-
-        protected void PopulateSpellList()
-        {
-            List<BattleMenu.MenuOption> options = new List<BattleMenu.MenuOption>();
-
-            if (LearnedSpells.Count == 0)
-            {
-                options.Add(new BattleMenu.MenuOption("No spells - Exit", BattleUIManager.Instance.PopInputMenu));
-            }
-            else
-            {
-                foreach (KeyValuePair<string, Spell> spell in LearnedSpells)
-                {
-                    options.Add(new BattleMenu.MenuOption($"{spell.Value.Name}", () => SpellSelection(spell.Value)));
-                }
-            }
-
-            BattleUIManager.Instance.GetInputMenu().SetElements(options);
+            CurrentCommand = command;
         }
 
         public void UseCommand(params BattleEntity[] victims)

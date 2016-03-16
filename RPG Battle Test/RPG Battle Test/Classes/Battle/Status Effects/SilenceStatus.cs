@@ -9,12 +9,8 @@ namespace RPG_Battle_Test
     /// <summary>
     /// Temporarily prevents use of all Magic
     /// </summary>
-    /*NOTE: This isn't the same as indicating that Magic is disabled; it's just a simple entity-independent solution that doesn't
-      require any changes in BattleEntity*/
     public sealed class SilenceStatus : StatusEffect
     {
-        private Dictionary<string, Spell> EntitySpells = null;
-
         public SilenceStatus(int turns) : base(turns)
         {
             Name = "Silence";
@@ -22,22 +18,14 @@ namespace RPG_Battle_Test
 
         public override void OnInflict()
         {
-            //Store all the entity's spells and make it forget them all
-            /*NOTE: Remember that this is battle-only, so if an entire game were implemented, this would NOT permanently
-            remove the Entity's spells if something went wrong; they would just be removed for this battle*/
-            EntitySpells = Entity.GetAllSpells();
-            Entity.ForgetAllSpells();
-
-            Entity.InterruptCommand();
+            //Disable the command for using magic
+            Entity.ToggleCommand(BattleCommand.BattleActions.Magic, true);
         }
 
         protected override void OnEnd()
         {
-            //Relearn all the Spells when the status is finished
-            foreach (KeyValuePair<string, Spell> spell in EntitySpells)
-            {
-                Entity.LearnSpell(spell.Key);
-            }
+            //Reenable the command for using magic
+            Entity.ToggleCommand(BattleCommand.BattleActions.Magic, false);
         }
 
         protected override void OnTurnStart()

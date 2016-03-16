@@ -48,7 +48,13 @@ namespace RPG_Battle_Test
             public delegate void OptionSelect();
             public OptionSelect OnOptionSelect = null;
 
-            public MenuOption(string text, OptionSelect onoptionselect) : base(text)
+            public MenuOption(string text, OptionSelect onoptionselect, Color optioncolor) : base(text)
+            {
+                OnOptionSelect = onoptionselect;
+                Color = optioncolor;
+            }
+
+            public MenuOption(string text, OptionSelect onoptionselect) : this(text, onoptionselect, Color.White)
             {
                 OnOptionSelect = onoptionselect;
             }

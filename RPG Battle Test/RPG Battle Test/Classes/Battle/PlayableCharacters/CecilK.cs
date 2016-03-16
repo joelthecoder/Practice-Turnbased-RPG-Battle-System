@@ -32,16 +32,5 @@ namespace RPG_Battle_Test
             LearnSpell("Sleep1");
             LearnSpell("Fast1");
         }
-
-        protected override void OnTurnStarted()
-        {
-            base.OnTurnStarted();
-
-            BattleUIManager.Instance.GetInputMenu().AddElements(new BattleMenu.MenuOption("Steal", () =>
-            {
-                Debug.Log($"{Name} tried to steal something, but it failed!");
-                EndTurn();
-            }));
-        }
     }
 }

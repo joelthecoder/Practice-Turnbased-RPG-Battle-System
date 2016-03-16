@@ -31,6 +31,10 @@ namespace RPG_Battle_Test
             Item.ItemUseEvent += OnItemUse;
         }
 
+        /// <summary>
+        /// Returns the party's inventory
+        /// </summary>
+        /// <returns>The actual reference of the party's inventory</returns>
         public Dictionary<Item, int> GetInventory()
         {
             return ItemDictionary;

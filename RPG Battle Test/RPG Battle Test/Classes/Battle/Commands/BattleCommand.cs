@@ -20,6 +20,16 @@ namespace RPG_Battle_Test
     public abstract class BattleCommand
     {
         /// <summary>
+        /// Possible BattleActions corresponding to the BattleCommands entities can perform in battle.
+        /// Every character can have a set of common actions, but more can be obtained from equipment
+        /// or be specific to certain characters (Ex. Steal).
+        /// </summary>
+        public enum BattleActions
+        {
+            Attack, Defend, Item, Magic, Steal, Run
+        }
+
+        /// <summary>
         /// The name of the command.
         /// For Players, this will show up in the selection menu.
         /// </summary>
@@ -32,6 +42,24 @@ namespace RPG_Battle_Test
         public bool IsCommandFinished => Performed;
 
         /// <summary>
+        /// Getter and Setter for disabling commands.
+        /// If set to true, it will interrupt the Command.
+        /// Keep in mind that Enemy AI may need to check for this flag before choosing a Command
+        /// </summary>
+        public bool Disabled
+        {
+            get { return IsDisabled; }
+            set 
+            {
+                IsDisabled = value;
+                if (IsDisabled == true)
+                {
+                    Interrupt();
+                } 
+            }
+        }
+
+        /// <summary>
         /// The number of turns required to complete this command
         /// </summary>
         protected uint TurnsRequired = 0;
@@ -40,6 +68,11 @@ namespace RPG_Battle_Test
         /// The number of turns used to complete this command
         /// </summary>
         protected uint TurnsUsed = 0;
+
+        /// <summary>
+        /// Whether the command is disabled or not
+        /// </summary>
+        private bool IsDisabled = false;
 
         /// <summary>
         /// Tells whether the command has been successfully performed or not
@@ -104,6 +137,22 @@ namespace RPG_Battle_Test
             TurnsUsed = 0;
             Performed = true;
         }
+
+        /// <summary>
+        /// Selects the command in the menu
+        /// </summary>
+        /// <param name="player">The BattleEntity that selected the command</param>
+        public void OnSelect(BattlePlayer player)
+        {
+            player.SetCommand(this);
+            OnCommandSelected(player);
+        }
+
+        /// <summary>
+        /// What occurs when the command is selected in the menu
+        /// </summary>
+        /// <param name="player">The BattlePlayer that selected the command</param>
+        protected abstract void OnCommandSelected(BattlePlayer player);
 
         /// <summary>
         /// What happens when the command is performed

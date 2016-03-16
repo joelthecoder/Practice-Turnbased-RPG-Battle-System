@@ -13,6 +13,11 @@ namespace RPG_Battle_Test
             
         }
 
+        protected override void OnCommandSelected(BattlePlayer player)
+        {
+            BattleUIManager.Instance.StartTargetSelection(new List<BattleEntity>() { player }, false);
+        }
+
         protected override void Perform(BattleEntity Attacker, params BattleEntity[] Victims)
         {
             //Grant the entity 50% more defense until its next turn
